@@ -24,13 +24,7 @@ RUN apt-get update \
   && mkdir -p /home/postgres \
   && usermod --shell /bin/bash --home /home/postgres --move-home postgres \
   && mkdir -p /home/postgres/Backups/ \
-  && mkdir -p /docker-entrypoint-initdb.d/ \
-  && curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip \
-  && unzip rclone-current-linux-amd64.zip \
-  && cd rclone-*-linux-amd64 \
-  && cp rclone /usr/local/bin/ \
-  && chown root:root /usr/local/bin/rclone \
-  && chmod 755 /usr/local/bin/rclone
+  && mkdir -p /docker-entrypoint-initdb.d/
 
 # set up restores
 COPY Backups/* /home/postgres/Backups/
