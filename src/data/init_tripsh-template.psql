@@ -1,0 +1,38 @@
+DROP TABLE IF EXISTS init_tripsh_DATE;
+CREATE TABLE init_tripsh_DATE (
+  trip_id integer,
+  block_id integer,
+  line_id integer,
+  opd_date timestamp,
+  vehicle_id text,
+  event_no integer,
+  meters integer,
+  act_dep_time integer,
+  nom_dep_time integer,
+  nom_end_time integer,
+  act_end_time integer,
+  trip_code integer,
+  master_id integer,
+  event_no_course text,
+  course_id text,
+  pattern_id text,
+  pattern_direction text,
+  trip_type text,
+  highway_type text,
+  pattern_quality text,
+  time_grp_id text,
+  driver_id text,
+  data_source text,
+  is_additional_trip text,
+  trip_role text,
+  trip_subrole text,
+  trip_purpose text
+);
+
+\copy init_tripsh_DATE from CSV_FILE with csv header
+
+-- create a primary key
+ALTER TABLE init_tripsh_DATE
+    ADD COLUMN id serial;
+ALTER TABLE init_tripsh_DATE
+    ADD CONSTRAINT init_tripsh_DATE_pkey PRIMARY KEY (id);
