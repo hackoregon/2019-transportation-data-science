@@ -1,0 +1,13 @@
+   69265064 init_cyclic_v1h 1-30NOV2017.csv
+   39544465 init_cyclic_v1h 1-30SEP2017.csv
+   71874174 init_cyclic_v1h 1-31OCT2017.csv
+     182295 init_tripsh 1-30NOV2017.csv
+     179523 init_tripsh 1-30SEP2017.csv
+     190685 init_tripsh 1-31OCT2017.csv
+   11169195 init_veh_stoph 1-30NOV2017.csv
+   11031282 init_veh_stoph 1-30SEP2017.csv
+   11667533 init_veh_stoph 1-31OCT2017.csv
+    9946818 trimet_stop_event 1-30NOV2017.csv
+    9761796 trimet_stop_event 1-30SEP2017.csv
+   10361905 trimet_stop_event 1-31OCT2017.csv
+  245174735 total
