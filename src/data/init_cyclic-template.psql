@@ -1,0 +1,30 @@
+DROP TABLE IF EXISTS init_cyclic_DATE;
+CREATE TABLE init_cyclic_DATE (
+  opd_date timestamp,
+  vehicle_id text,
+  block_code text,
+  event_no_trip integer,
+  event_no_stop integer,
+  meters integer,
+  act_time integer,
+  gps_latitude double precision,
+  gps_longitude double precision
+);
+
+\copy init_cyclic_DATE from CSV_FILE with csv header
+
+-- create a geometry from the gps_longitude and gps_latitude values in SRID 4326
+ALTER TABLE init_cyclic_DATE ADD COLUMN geom_4326 geometry;
+UPDATE init_cyclic_DATE
+  SET geom_4326 = ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326);
+
+-- transform to SRID 2913
+ALTER TABLE init_cyclic_DATE ADD COLUMN geom_2913 geometry;
+UPDATE init_cyclic_DATE
+  SET geom_2913 = ST_Transform(geom_4326, 2913);
+
+-- create a primary key
+ALTER TABLE init_cyclic_DATE
+    ADD COLUMN id serial;
+ALTER TABLE init_cyclic_DATE
+    ADD CONSTRAINT init_cyclic_DATE_pkey PRIMARY KEY (id);
