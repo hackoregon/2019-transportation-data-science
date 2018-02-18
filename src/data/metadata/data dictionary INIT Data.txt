@@ -1,3 +1,5 @@
+Annotated 2018-02-17 M. Edward (Ed) Borasky: added column types
+
 Data Dictionary
 TriMet raw data.
 Miles J. Crumley, MS - Operations Analyst: Bus Transportation/Maintenance
@@ -34,7 +36,7 @@ ACT_DEP_TIME - Actual Departure Time (integer)
 NOM_ARR_TIME - Scheduled Arrival Time (integer)
 NOM_DEP_TIME - Scheduled Departure Time (integer)
 POINT_ID - TriMet Stop ID (integer)
-DOORS_OPENING - Whether Doors Opened or not (boolean)
+DOORS_OPENING - Whether Doors Opened or not (integer)
 	0 = Open
 	1 = Closed
 STOP_TYPE  (integer)
