@@ -5,6 +5,7 @@ LABEL maintainer="M. Edward (Ed) Borasky <znmeb@znmeb.net>"
 RUN apt-get update \
   && apt-get install -qqy --no-install-recommends \
     ca-certificates \
+    curl \
     gnupg \
     mdbtools \
     mdbtools-dev \
@@ -18,11 +19,18 @@ RUN apt-get update \
     postgresql-10-python3-multicorn \
     unixodbc-dev \
     unrar-free \
+    unzip \
   && apt-get clean \
   && mkdir -p /home/postgres \
   && usermod --shell /bin/bash --home /home/postgres --move-home postgres \
   && mkdir -p /home/postgres/Backups/ \
-  && mkdir -p /docker-entrypoint-initdb.d/
+  && mkdir -p /docker-entrypoint-initdb.d/ \
+  && curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip \
+  && unzip rclone-current-linux-amd64.zip \
+  && cd rclone-*-linux-amd64 \
+  && cp rclone /usr/local/bin/ \
+  && chown root:root /usr/local/bin/rclone \
+  && chmod 755 /usr/local/bin/rclone
 
 # set up restores
 COPY Backups/* /home/postgres/Backups/
