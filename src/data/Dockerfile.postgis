@@ -20,6 +20,7 @@ RUN apt-get update \
     unixodbc-dev \
     unrar-free \
     unzip \
+    wget \
   && apt-get clean \
   && mkdir -p /home/postgres \
   && usermod --shell /bin/bash --home /home/postgres --move-home postgres \
