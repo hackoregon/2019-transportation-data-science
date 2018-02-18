@@ -1,0 +1,15 @@
+-- create a geometry from the gps_longitude and gps_latitude values in SRID 4326
+ALTER TABLE ENDDATE_init_veh_stop ADD COLUMN geom_4326 geometry;
+UPDATE ENDDATE_init_veh_stop
+  SET geom_4326 = ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326);
+
+-- transform to SRID 2913
+ALTER TABLE ENDDATE_init_veh_stop ADD COLUMN geom_2913 geometry;
+UPDATE ENDDATE_init_veh_stop
+  SET geom_2913 = ST_Transform(geom_4326, 2913);
+
+-- create a primary key
+ALTER TABLE ENDDATE_init_veh_stop
+    ADD COLUMN id serial;
+ALTER TABLE ENDDATE_init_veh_stop
+    ADD CONSTRAINT ENDDATE_init_veh_stop_pkey PRIMARY KEY (id);

@@ -1,0 +1,27 @@
+DROP TABLE IF EXISTS ENDDATE_trimet_stop_event;
+CREATE TABLE ENDDATE_trimet_stop_event (
+  service_date timestamp,
+  vehicle_number integer,
+  train text,
+  route_number integer,
+  trip_number integer,
+  direction integer,
+  service_key text,
+  stop_time integer,
+  leave_time integer,
+  arrive_time integer,
+  dwell integer,
+  location_id integer,
+  public_location_description text,
+  door integer,
+  lift integer,
+  ons integer,
+  offs integer,
+  estimated_load integer,
+  maximum_speed integer,
+  train_mileage integer,
+  pattern_distance text,
+  x_coordinate double precision,
+  y_coordinate double precision,
+  trip_id integer
+);

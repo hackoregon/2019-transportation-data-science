@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS init_tripsh_DATE;
-CREATE TABLE init_tripsh_DATE (
+DROP TABLE IF EXISTS ENDDATE_init_tripsh;
+CREATE TABLE ENDDATE_init_tripsh (
   trip_id integer,
   block_id integer,
   line_id integer,
@@ -28,11 +28,3 @@ CREATE TABLE init_tripsh_DATE (
   trip_subrole text,
   trip_purpose text
 );
-
-\copy init_tripsh_DATE from CSV_FILE with csv header
-
--- create a primary key
-ALTER TABLE init_tripsh_DATE
-    ADD COLUMN id serial;
-ALTER TABLE init_tripsh_DATE
-    ADD CONSTRAINT init_tripsh_DATE_pkey PRIMARY KEY (id);
