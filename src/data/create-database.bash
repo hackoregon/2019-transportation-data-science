@@ -3,7 +3,7 @@
 # define parameters
 export filedates=("1-30SEP2017" "1-31OCT2017" "1-30NOV2017")
 export tabledates=("ended_20170930" "ended_20171031" "ended_20171130")
-export tablenames=("init_cyclic_v1h" "init_tripsh" "init_veh_stoph" "trimet_stop_event")
+export tablenames=("init_cyclic_v1h" "init_veh_stoph" "trimet_stop_event" "init_tripsh")
 export raw="../../data/raw"
 export interim="../../data/interim"
 export PGDATABASE=trimet_congestion
@@ -40,11 +40,15 @@ do
     /usr/bin/time psql -c "\copy ${db_tablename} from '${interim}/${filename}' with csv header"
 
     # dump the table
-    /usr/bin/time pg_dump --format=custom --verbose --clean --if-exists --table=${db_tablename} \
+    /usr/bin/time pg_dump --format=custom --no-owner --verbose --clean --if-exists --table=${db_tablename} \
       > ${interim}/${db_tablename}.backup
 
   done
 done
+
+# dump the whole database
+/usr/bin/time pg_dump --format=custom --no-owner --verbose --clean --if-exists \
+  > ${interim}/${PGDATABASE}.backup
 
 # measure size after we load data
 sudo du -sh /var/lib/postgres/data
