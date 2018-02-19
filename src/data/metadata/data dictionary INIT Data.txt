@@ -20,7 +20,7 @@ Anything else that looks "weird" can likely be excluded.
 Questions - email crumleym@trimet.org
 
 Table: init_veh_stop - INIT Stop Level Data
-OPD_DATE- Service Date (timestamp)
+OPD_DATE- Service Date (text)
 VEHICLE_ID - Vehicle ID, most likely coded as text (text)
 BLOCK_CODE - Our Assigned block . Service Key  (text)
 	Blocks that end in 99 are generally extra service blocks or unscheduled blocks for broken service.
@@ -55,7 +55,7 @@ GPS_LONGITUDE - Recorded Longitude in WGS1984 (4326) (double precision)
 DOOR_OPEN_TIME - How long the door was open. This is the true "dwell" and is normally less than the difference between act_dep_time and act_arr_time (integer)
 
 Table: init_cyclic - INIT Moving Data
-OPD_DATE - Service Date (timestamp)
+OPD_DATE - Service Date (text)
 VEHICLE_ID - Vehicle Number, most likely coded as text (text)
 BLOCK_CODE - Our Assigned block . Service Key  (text)
 	Blocks that end in 99 are generally extra service blocks or unscheduled blocks for broken service.
@@ -75,7 +75,7 @@ Table: init_tripsh  - Block Information, denotes start and run time of blocks
 TRIP_ID - INIT Trip ID (integer)
 BLOCK_ID - INIT Block ID (integer)
 LINE_ID - Route Number (integer)
-OPD_DATE- Service Date (timestamp)
+OPD_DATE- Service Date (text)
 VEHICLE_ID - Vehicle Number, most likely coded as text (text)
 EVENT_NO - Joins to Table: init_veh_stop.EVENT_NO_TRIP (integer)
 METERS - Distance travelled in meters (integer)
@@ -103,7 +103,7 @@ TRIP_PURPOSE - Ignore (text)
 
 
 Table: trimet_stop_event - TriMet Stop Event Data
-SERVICE_DATE - Service Date (timestamp)
+SERVICE_DATE - Service Date (text)
 VEHICLE_NUMBER - Vehicle Number (integer)
 TRAIN - Train or Block (text)
 ROUTE_NUMBER - Route Number (integer)
