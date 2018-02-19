@@ -1,0 +1,141 @@
+~/Projects/transportation-congestion-analysis/data/interim ~/Projects/transportation-congestion-analysis/src/data
+Unpacking the archive
+120.18user 22.81system 3:29.03elapsed 68%CPU (0avgtext+0avgdata 8008maxresident)k
+3404960inputs+48403272outputs (3major+787minor)pagefaults 0swaps
+~/Projects/transportation-congestion-analysis/src/data
+7.8G	/var/lib/postgres/data
+file: init_cyclic_v1h 1-30SEP2017.csv => table: ended_20170930_init_cyclic_v1h
+NOTICE:  table "ended_20170930_init_cyclic_v1h" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20170930_init_cyclic_v1h from '../../data/interim/init_cyclic_v1h 1-30SEP2017.csv' with csv header
+COPY 39544464
+17.67user 7.14system 3:24.50elapsed 12%CPU (0avgtext+0avgdata 5660maxresident)k
+6833992inputs+0outputs (0major+289minor)pagefaults 0swaps
+VACUUM
+170.28user 2.84system 2:57.74elapsed 97%CPU (0avgtext+0avgdata 6276maxresident)k
+768inputs+1396024outputs (2major+638minor)pagefaults 0swaps
+file: init_veh_stoph 1-30SEP2017.csv => table: ended_20170930_init_veh_stoph
+NOTICE:  table "ended_20170930_init_veh_stoph" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20170930_init_veh_stoph from '../../data/interim/init_veh_stoph 1-30SEP2017.csv' with csv header
+COPY 11031281
+5.40user 2.12system 1:13.80elapsed 10%CPU (0avgtext+0avgdata 5736maxresident)k
+0inputs+0outputs (0major+291minor)pagefaults 0swaps
+VACUUM
+106.46user 1.16system 1:48.39elapsed 99%CPU (0avgtext+0avgdata 6104maxresident)k
+0inputs+1006440outputs (0major+635minor)pagefaults 0swaps
+file: trimet_stop_event 1-30SEP2017.csv => table: ended_20170930_trimet_stop_event
+NOTICE:  table "ended_20170930_trimet_stop_event" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20170930_trimet_stop_event from '../../data/interim/trimet_stop_event 1-30SEP2017.csv' with csv header
+COPY 9761795
+4.79user 2.60system 1:20.58elapsed 9%CPU (0avgtext+0avgdata 5532maxresident)k
+2388704inputs+0outputs (0major+292minor)pagefaults 0swaps
+VACUUM
+69.81user 1.00system 1:12.43elapsed 97%CPU (0avgtext+0avgdata 6276maxresident)k
+0inputs+674888outputs (0major+635minor)pagefaults 0swaps
+file: init_tripsh 1-30SEP2017.csv => table: ended_20170930_init_tripsh
+NOTICE:  table "ended_20170930_init_tripsh" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20170930_init_tripsh from '../../data/interim/init_tripsh 1-30SEP2017.csv' with csv header
+COPY 179522
+0.09user 0.03system 0:01.02elapsed 11%CPU (0avgtext+0avgdata 5788maxresident)k
+0inputs+0outputs (0major+292minor)pagefaults 0swaps
+VACUUM
+1.68user 0.00system 0:01.75elapsed 95%CPU (0avgtext+0avgdata 6284maxresident)k
+0inputs+12736outputs (0major+637minor)pagefaults 0swaps
+file: init_cyclic_v1h 1-31OCT2017.csv => table: ended_20171031_init_cyclic_v1h
+NOTICE:  table "ended_20171031_init_cyclic_v1h" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171031_init_cyclic_v1h from '../../data/interim/init_cyclic_v1h 1-31OCT2017.csv' with csv header
+COPY 71874173
+31.13user 12.71system 5:45.84elapsed 12%CPU (0avgtext+0avgdata 5632maxresident)k
+12418728inputs+0outputs (0major+293minor)pagefaults 0swaps
+VACUUM
+307.00user 4.21system 5:15.16elapsed 98%CPU (0avgtext+0avgdata 6224maxresident)k
+24inputs+2538552outputs (1major+634minor)pagefaults 0swaps
+file: init_veh_stoph 1-31OCT2017.csv => table: ended_20171031_init_veh_stoph
+NOTICE:  table "ended_20171031_init_veh_stoph" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171031_init_veh_stoph from '../../data/interim/init_veh_stoph 1-31OCT2017.csv' with csv header
+COPY 11667532
+6.40user 3.66system 1:32.40elapsed 10%CPU (0avgtext+0avgdata 5628maxresident)k
+3322792inputs+0outputs (0major+293minor)pagefaults 0swaps
+VACUUM
+110.67user 1.40system 1:52.86elapsed 99%CPU (0avgtext+0avgdata 6140maxresident)k
+0inputs+1064256outputs (0major+639minor)pagefaults 0swaps
+file: trimet_stop_event 1-31OCT2017.csv => table: ended_20171031_trimet_stop_event
+NOTICE:  table "ended_20171031_trimet_stop_event" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171031_trimet_stop_event from '../../data/interim/trimet_stop_event 1-31OCT2017.csv' with csv header
+COPY 10361904
+5.05user 2.85system 1:26.50elapsed 9%CPU (0avgtext+0avgdata 5632maxresident)k
+2534968inputs+0outputs (0major+293minor)pagefaults 0swaps
+VACUUM
+73.06user 0.91system 1:14.60elapsed 99%CPU (0avgtext+0avgdata 6140maxresident)k
+0inputs+715144outputs (0major+637minor)pagefaults 0swaps
+file: init_tripsh 1-31OCT2017.csv => table: ended_20171031_init_tripsh
+NOTICE:  table "ended_20171031_init_tripsh" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171031_init_tripsh from '../../data/interim/init_tripsh 1-31OCT2017.csv' with csv header
+COPY 190684
+0.12user 0.05system 0:01.13elapsed 15%CPU (0avgtext+0avgdata 5524maxresident)k
+57040inputs+0outputs (0major+292minor)pagefaults 0swaps
+VACUUM
+1.74user 0.04system 0:01.86elapsed 96%CPU (0avgtext+0avgdata 6240maxresident)k
+0inputs+13552outputs (0major+639minor)pagefaults 0swaps
+file: init_cyclic_v1h 1-30NOV2017.csv => table: ended_20171130_init_cyclic_v1h
+NOTICE:  table "ended_20171130_init_cyclic_v1h" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171130_init_cyclic_v1h from '../../data/interim/init_cyclic_v1h 1-30NOV2017.csv' with csv header
+COPY 69265063
+29.63user 13.11system 5:35.14elapsed 12%CPU (0avgtext+0avgdata 5740maxresident)k
+11979504inputs+0outputs (0major+292minor)pagefaults 0swaps
+VACUUM
+295.00user 4.56system 5:06.89elapsed 97%CPU (0avgtext+0avgdata 6244maxresident)k
+8inputs+2444976outputs (1major+638minor)pagefaults 0swaps
+file: init_veh_stoph 1-30NOV2017.csv => table: ended_20171130_init_veh_stoph
+NOTICE:  table "ended_20171130_init_veh_stoph" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171130_init_veh_stoph from '../../data/interim/init_veh_stoph 1-30NOV2017.csv' with csv header
+COPY 11169194
+6.16user 3.53system 1:27.76elapsed 11%CPU (0avgtext+0avgdata 5640maxresident)k
+3183760inputs+0outputs (0major+294minor)pagefaults 0swaps
+VACUUM
+106.43user 1.30system 1:51.77elapsed 96%CPU (0avgtext+0avgdata 6136maxresident)k
+0inputs+1018656outputs (0major+640minor)pagefaults 0swaps
+file: trimet_stop_event 1-30NOV2017.csv => table: ended_20171130_trimet_stop_event
+NOTICE:  table "ended_20171130_trimet_stop_event" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171130_trimet_stop_event from '../../data/interim/trimet_stop_event 1-30NOV2017.csv' with csv header
+COPY 9946817
+4.81user 2.80system 1:19.28elapsed 9%CPU (0avgtext+0avgdata 5596maxresident)k
+2431824inputs+0outputs (0major+292minor)pagefaults 0swaps
+VACUUM
+70.32user 0.98system 1:12.71elapsed 98%CPU (0avgtext+0avgdata 6136maxresident)k
+0inputs+684912outputs (0major+641minor)pagefaults 0swaps
+file: init_tripsh 1-30NOV2017.csv => table: ended_20171130_init_tripsh
+NOTICE:  table "ended_20171130_init_tripsh" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+\copy ended_20171130_init_tripsh from '../../data/interim/init_tripsh 1-30NOV2017.csv' with csv header
+COPY 182294
+0.11user 0.04system 0:01.17elapsed 13%CPU (0avgtext+0avgdata 5752maxresident)k
+54552inputs+0outputs (0major+291minor)pagefaults 0swaps
+VACUUM
+1.69user 0.00system 0:01.81elapsed 93%CPU (0avgtext+0avgdata 6200maxresident)k
+8inputs+12960outputs (1major+643minor)pagefaults 0swaps
+1321.06user 17.65system 22:52.10elapsed 97%CPU (0avgtext+0avgdata 6352maxresident)k
+40inputs+11583024outputs (0major+661minor)pagefaults 0swaps
+35G	/var/lib/postgres/data
