@@ -1,0 +1,5 @@
+-- create a primary key
+ALTER TABLE ENDDATE_init_cyclic_v1h
+    ADD COLUMN id serial;
+ALTER TABLE ENDDATE_init_cyclic_v1h
+    ADD CONSTRAINT ENDDATE_init_cyclic_v1h_pkey PRIMARY KEY (id);
