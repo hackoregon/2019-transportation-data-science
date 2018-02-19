@@ -40,14 +40,14 @@ do
     /usr/bin/time psql -c "\copy ${db_tablename} from '${interim}/${filename}' with csv header"
 
     # dump the table
-    /usr/bin/time pg_dump --format=custom --no-owner --verbose --clean --if-exists --table=${db_tablename} \
+    /usr/bin/time pg_dump --format=custom --no-owner --clean --if-exists --table=${db_tablename} \
       > ${interim}/${db_tablename}.backup
 
   done
 done
 
 # dump the whole database
-/usr/bin/time pg_dump --format=custom --no-owner --verbose --clean --if-exists \
+/usr/bin/time pg_dump --format=custom --no-owner --clean --if-exists \
   > ${interim}/${PGDATABASE}.backup
 
 # measure size after we load data
