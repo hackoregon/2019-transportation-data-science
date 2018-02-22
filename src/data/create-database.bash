@@ -42,16 +42,8 @@ do
     /usr/bin/time psql -c "${copy_command}"
     psql -c "VACUUM ANALYZE ${db_tablename};"
 
-    # dump the table
-    /usr/bin/time pg_dump --format=custom --no-owner --clean --if-exists --table=${db_tablename} \
-      > ${interim}/${db_tablename}.backup
-
   done
 done
-
-# dump the whole database
-/usr/bin/time pg_dump --format=custom --no-owner --clean --if-exists \
-  > ${interim}/${PGDATABASE}.backup
 
 # measure size after we load data
 sudo du -sh /var/lib/postgres/data
