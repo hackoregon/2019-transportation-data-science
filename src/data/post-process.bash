@@ -7,6 +7,10 @@ export tablenames=("init_cyclic_v1h" "init_veh_stoph" "trimet_stop_event" "init_
 export raw="../../data/raw"
 export interim="../../data/interim"
 export PGDATABASE=trimet_congestion
+export backups=${interim}/backups-post
+
+# rclone requires a directory for bulk uploads
+mkdir -p ${backups}
 
 for datex in 0 1 2
 do
@@ -20,16 +24,17 @@ do
     echo "file: $filename => table: $db_tablename"
 
     # run the post-processing
-    sed "s;ENDDATE;${tabledate};" ${tablename}.post | psql
+    echo "pkey processing"
+    sed "s;ENDDATE;${tabledate};" ${tablename}.pkey | /usr/bin/time psql
+    echo "timestamp processing"
+    sed "s;ENDDATE;${tabledate};" ${tablename}.timestamp | /usr/bin/time psql
+    echo "geom processing"
+    sed "s;ENDDATE;${tabledate};" ${tablename}.geom | /usr/bin/time psql
     psql -c "VACUUM ANALYZE ${db_tablename};"
 
     # dump the table
     /usr/bin/time pg_dump --format=custom --no-owner --clean --if-exists --table=${db_tablename} \
-      > ${interim}/${db_tablename}.backup
+      > ${backups}/${db_tablename}.backup
 
   done
 done
-
-# dump the whole database
-/usr/bin/time pg_dump --format=custom --no-owner --clean --if-exists \
-  > ${interim}/${PGDATABASE}.backup
