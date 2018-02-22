@@ -16,12 +16,10 @@ popd
 
 # create a fresh database
 dropdb ${PGDATABASE} || true
+sudo du -sh /var/lib/postgres/data # size before loading data
 createdb ${PGDATABASE}
 
-# measure size before we load data
-sudo du -sh /var/lib/postgres/data
-
-# load and back up the tables
+# load the tables
 for datex in 0 1 2
 do
   filedate=${filedates[$datex]}
