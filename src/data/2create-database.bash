@@ -19,4 +19,5 @@ done
 
 # measure size after we load data
 wait
+/usr/bin/time psql -c "VACUUM ANALYZE ${PGDATABASE};"
 sudo du -sh /var/lib/postgres/data
