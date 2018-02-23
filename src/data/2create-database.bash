@@ -1,13 +1,20 @@
 #! /bin/bash
 
+# for PostgreSQL superuser connection you need to define the connection parameters outside this script
+# export PGHOST=
+# export PGPORT=
+# export PGUSER=postgres
+# export PGPASSWORD=
+
 # define parameters
 export interim="../../data/interim"
+export DBOWNER=postgres
 export PGDATABASE=trimet_congestion
 
 # create a fresh database
 dropdb ${PGDATABASE} || true
 sudo du -sh /var/lib/postgres/data # size before loading data
-createdb ${PGDATABASE}
+createdb --owner=${DBOWNER} ${PGDATABASE}
 
 # load the tables
 for tablename in init_cyclic_v1h init_veh_stoph trimet_stop_event init_tripsh
