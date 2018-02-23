@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS ENDDATE_init_cyclic_v1h;
-CREATE TABLE ENDDATE_init_cyclic_v1h (
+DROP TABLE IF EXISTS init_cyclic_v1h;
+CREATE TABLE init_cyclic_v1h (
   event_no_trip integer,
   event_no_stop integer,
   opd_date_text text,

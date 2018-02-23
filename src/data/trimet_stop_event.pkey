@@ -1,5 +1,5 @@
 -- create a primary key
-ALTER TABLE ENDDATE_trimet_stop_event
+ALTER TABLE trimet_stop_event
     ADD COLUMN id serial;
-ALTER TABLE ENDDATE_trimet_stop_event
-    ADD CONSTRAINT ENDDATE_trimet_stop_event_pkey PRIMARY KEY (id);
+ALTER TABLE trimet_stop_event
+    ADD CONSTRAINT trimet_stop_event_pkey PRIMARY KEY (id);

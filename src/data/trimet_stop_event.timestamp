@@ -1,5 +1,5 @@
 -- parse text timestamp
-ALTER TABLE ENDDATE_trimet_stop_event
+ALTER TABLE trimet_stop_event
   ADD COLUMN service_date timestamp;
-UPDATE ENDDATE_trimet_stop_event
+UPDATE trimet_stop_event
   SET service_date = to_timestamp(service_date_text, 'DDMonYYYY:HH24:MI:SS');

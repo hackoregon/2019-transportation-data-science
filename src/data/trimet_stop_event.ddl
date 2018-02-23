@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS ENDDATE_trimet_stop_event;
-CREATE TABLE ENDDATE_trimet_stop_event (
+DROP TABLE IF EXISTS trimet_stop_event;
+CREATE TABLE trimet_stop_event (
   service_date_text text,
   vehicle_number integer,
   leave_time integer,

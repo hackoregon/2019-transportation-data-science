@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS ENDDATE_init_tripsh;
-CREATE TABLE ENDDATE_init_tripsh (
+DROP TABLE IF EXISTS init_tripsh;
+CREATE TABLE init_tripsh (
   opd_date_text text,
   vehicle_id integer,
   master_id integer,

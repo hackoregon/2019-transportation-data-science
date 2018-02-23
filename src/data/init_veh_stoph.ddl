@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS ENDDATE_init_veh_stoph;
-CREATE TABLE ENDDATE_init_veh_stoph (
+DROP TABLE IF EXISTS init_veh_stoph;
+CREATE TABLE init_veh_stoph (
   event_no integer,
   event_no_trip integer,
   event_no_prev integer,
