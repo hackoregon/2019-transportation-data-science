@@ -17,6 +17,6 @@ dropdb ${PGDATABASE} || true
 sudo du -sh /var/lib/postgres/data # size before loading data
 createdb --owner=${DBOWNER} ${PGDATABASE}
 
-/usr/bin/time pg_restore --jobs=${JOBS} --dbname=${PGDATABASE} --no-owner \
+pg_restore --jobs=${JOBS} --dbname=${PGDATABASE} --no-owner \
   ${interim}/trimet_congestion.backup
-/usr/bin/time psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
+psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
