@@ -5,7 +5,7 @@ CREATE TABLE trimet_stop_event (
   leave_time integer,
   train integer,
   badge integer,
-  route_number text,
+  route_number integer,
   direction integer,
   service_key text,
   trip_number integer,
