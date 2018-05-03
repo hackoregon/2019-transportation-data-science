@@ -9,6 +9,7 @@ export DBOWNER=postgres
 export PGDATABASE=trimet_congestion
 
 # create a fresh database
+echo "Creating ${PGDATABASE} - ignore error if it doesn't exist"
 dropdb ${PGDATABASE} || true
 createdb --owner=${DBOWNER} ${PGDATABASE}
 
@@ -17,9 +18,12 @@ for tablename in init_cyclic_v1h init_veh_stoph trimet_stop_event init_tripsh
 do
   psql -f "${tablename}.ddl"
   export copy_command="\copy ${tablename} from '${interim}/${tablename}.csv' with csv"
+  echo "Starting background load of table ${tablename}"
   psql -c "${copy_command}" &
 done
 
 # measure size after we load data
+echo "Waiting for table loads"
 wait
+echo "VACUUM ANALYZE"
 psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
