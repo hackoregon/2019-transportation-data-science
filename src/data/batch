@@ -1,6 +1,0 @@
-#! /bin/bash
-
-/usr/bin/time ./1unpack-archive.bash
-/usr/bin/time ./2consolidate-csvs.bash
-/usr/bin/time ./3create-database.bash
-/usr/bin/time ./4backup-database.bash
