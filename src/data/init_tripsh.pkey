@@ -1,5 +1,7 @@
 -- create a primary key
 ALTER TABLE init_tripsh
+    DROP COLUMN IF EXISTS id;
+ALTER TABLE init_tripsh
     ADD COLUMN id serial;
 ALTER TABLE init_tripsh
     ADD CONSTRAINT init_tripsh_pkey PRIMARY KEY (id);

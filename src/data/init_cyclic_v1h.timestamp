@@ -1,5 +1,7 @@
 -- parse text timestamp
 ALTER TABLE init_cyclic_v1h
+  DROP COLUMN IF EXISTS opd_date;
+ALTER TABLE init_cyclic_v1h
   ADD COLUMN opd_date timestamp;
 UPDATE init_cyclic_v1h
   SET opd_date = to_timestamp(opd_date_text, 'DDMonYYYY:HH24:MI:SS');

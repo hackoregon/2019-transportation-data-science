@@ -1,5 +1,7 @@
 -- create a primary key
 ALTER TABLE trimet_stop_event
+    DROP COLUMN IF EXISTS id;
+ALTER TABLE trimet_stop_event
     ADD COLUMN id serial;
 ALTER TABLE trimet_stop_event
     ADD CONSTRAINT trimet_stop_event_pkey PRIMARY KEY (id);
