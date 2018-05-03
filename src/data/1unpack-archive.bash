@@ -6,5 +6,5 @@ export raw="../../data/raw"
 # unpack the raw data
 pushd ${raw}
 echo "Unpacking the archive"
-7z e scrapes.rar
+time 7z e scrapes.rar
 popd
