@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS trimet_stop_event;
 CREATE TABLE trimet_stop_event (
   service_date_text text,
   vehicle_number integer,
-  leave_time text,
+  leave_time integer,
   train integer,
   badge integer,
   route_number text,
