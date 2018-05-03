@@ -13,5 +13,5 @@ export JOBS=7 # one less than your processor / thread count - a four-core / eigh
 
 # using 9.6 dump program!
 export PATH=/d/opt/PostgreSQL/9.6/bin/:$PATH
-time pg_dump --format=directory --jobs=${JOBS} \
+pg_dump --format=directory --jobs=${JOBS} \
   --file=${interim}/trimet_congestion.backup ${PGDATABASE}
