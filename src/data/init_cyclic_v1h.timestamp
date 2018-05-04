@@ -5,3 +5,5 @@ ALTER TABLE init_cyclic_v1h
   ADD COLUMN opd_date timestamp;
 UPDATE init_cyclic_v1h
   SET opd_date = to_timestamp(opd_date_text, 'DDMonYYYY:HH24:MI:SS');
+CREATE INDEX ON init_cyclic_v1h (opd_date);
+CREATE INDEX ON init_cyclic_v1h (act_time);
