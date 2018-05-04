@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# for PostgreSQL superuser connection you need to define the connection parameters outside this script
+# for PostgreSQL superuser connection you need to define these connection parameters
 # export PGHOST=
 # export PGPORT=
 # export PGUSER=postgres
