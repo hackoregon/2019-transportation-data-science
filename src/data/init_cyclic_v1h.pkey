@@ -5,4 +5,3 @@ ALTER TABLE init_cyclic_v1h
     ADD COLUMN id serial;
 ALTER TABLE init_cyclic_v1h
     ADD CONSTRAINT init_cyclic_v1h_pkey PRIMARY KEY (id);
-CREATE INDEX ON init_cyclic_v1h (vehicle_id);
