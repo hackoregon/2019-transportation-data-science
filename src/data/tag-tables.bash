@@ -9,7 +9,7 @@ export PGDATABASE=trimet_congestion
 # tag the tables
 for suffix in timestamp geom pkey
 do
-  for tablename in init_cyclic_v1h init_veh_stoph trimet_stop_event init_tripsh
+  for tablename in init_cyclic_v1h
   do
     echo "Running ${tablename}.${suffix} in the background"
     psql -f "${tablename}.${suffix}" &
