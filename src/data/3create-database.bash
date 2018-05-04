@@ -25,7 +25,6 @@ do
   psql -c "${copy_command}" &
 done
 
-# measure size after we load data
 echo "Waiting for table loads"
 wait
 echo "VACUUM ANALYZE"
