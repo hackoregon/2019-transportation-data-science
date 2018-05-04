@@ -10,7 +10,7 @@ psql -d ${PGDATABASE} -c "CREATE EXTENSION postgis;"
 # tag the tables
 for tablename in init_cyclic_v1h
 do
-  for suffix in geom timestamp index pkey
+  for suffix in pkey geom timestamp index
   do
     echo "Running ${tablename}.${suffix}"
     /usr/bin/time psql -f "${tablename}.${suffix}"
