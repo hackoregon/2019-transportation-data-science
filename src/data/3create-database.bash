@@ -11,7 +11,10 @@ export PGDATABASE=trimet_congestion
 # create a fresh database
 echo "Creating ${PGDATABASE} - ignore error if it doesn't exist"
 dropdb ${PGDATABASE} || true
-createdb --owner=${DBOWNER} ${PGDATABASE}
+sudo mkdir -p /ssdpg
+sudo chown -R postgres:postgres /ssdpg
+psql -c "CREATE TABLESPACE ssdpg LOCATION '/ssdpg';"
+createdb --owner=${DBOWNER} --tablespace=ssdpg ${PGDATABASE}
 
 # load the tables
 for tablename in init_cyclic_v1h init_veh_stoph trimet_stop_event init_tripsh
