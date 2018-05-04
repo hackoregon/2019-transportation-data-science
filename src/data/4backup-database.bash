@@ -14,3 +14,4 @@ rm -fr $interim}/trimet_congestion.backup
 echo "Making a backup"
 pg_dump --format=directory --jobs=${JOBS} \
   --file=${interim}/trimet_congestion.backup ${PGDATABASE}
+pg_restore --list ${interim}/trimet_congestion.backup
