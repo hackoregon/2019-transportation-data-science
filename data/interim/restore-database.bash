@@ -17,5 +17,5 @@ dropdb ${PGDATABASE} || true
 createdb --owner=${DBOWNER} ${PGDATABASE}
 
 echo "Restoring ${PGDATABASE} using ${JOBS} jobs"
-/usr/bin/time pg_restore --jobs=${JOBS} --dbname=${PGDATABASE} --no-owner trimet_congestion.backup
-/usr/bin/time psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
+pg_restore --jobs=${JOBS} --dbname=${PGDATABASE} --no-owner trimet_congestion.backup
+psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
