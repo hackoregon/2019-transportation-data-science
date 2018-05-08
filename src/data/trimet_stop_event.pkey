@@ -5,3 +5,4 @@ ALTER TABLE trimet_stop_event
     ADD COLUMN id serial;
 ALTER TABLE trimet_stop_event
     ADD CONSTRAINT trimet_stop_event_pkey PRIMARY KEY (id);
+CREATE INDEX ON trimet_stop event (route_number);
