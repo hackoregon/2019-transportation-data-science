@@ -7,4 +7,5 @@ export raw="../../data/raw"
 pushd ${raw}
 echo "Unpacking the archive"
 7z e scrapes.rar
+dos2unix *.csv
 popd
