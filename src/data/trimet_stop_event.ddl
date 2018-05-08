@@ -1,6 +1,5 @@
-DROP TABLE IF EXISTS trimet_stop_event;
 CREATE TABLE trimet_stop_event (
-  service_date_text text,
+  service_date timestamp without time zone,
   vehicle_number integer,
   leave_time integer,
   train integer,
@@ -25,5 +24,8 @@ CREATE TABLE trimet_stop_event (
   x_coordinate double precision,
   y_coordinate double precision,
   data_source integer,
-  schedule_status integer
+  schedule_status integer,
+  stop_hour double precision,
+  arrive_hour double precision,
+  leave_hour double precision
 );
