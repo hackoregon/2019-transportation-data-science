@@ -81,3 +81,4 @@ target/
 # RStudio ignorance
 .R*
 .Rproj.user
+*.html
