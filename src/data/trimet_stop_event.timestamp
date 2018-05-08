@@ -7,17 +7,17 @@ CREATE INDEX ON trimet_stop_event (service_date);
 
 -- convert seconds to hours of day
 ALTER TABLE trimet_stop_event
-  ADD COLUMN stop hours double_precision;
+  ADD COLUMN stop hours double precision;
 UPDATE trimet_stop_event
   SET stop_hours = stop_time / 3600;
 
 ALTER TABLE trimet_stop_event
-  ADD COLUMN arrive hours double_precision;
+  ADD COLUMN arrive hours double precision;
 UPDATE trimet_stop_event
   SET arrive_hours = arrive_time / 3600;
 CREATE INDEX ON trimet_stop_event (arrive_hours);
 
 ALTER TABLE trimet_stop_event
-  ADD COLUMN leave hours double_precision;
+  ADD COLUMN leave hours double precision;
 UPDATE trimet_stop_event
   SET leave_hours = leave_time / 3600;
