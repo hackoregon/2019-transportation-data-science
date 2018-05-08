@@ -17,7 +17,7 @@ psql -c "CREATE TABLESPACE ssdpg LOCATION '/ssdpg';"
 createdb --owner=${DBOWNER} --tablespace=ssdpg ${PGDATABASE}
 
 # load the tables
-for tablename in init_cyclic_v1h init_veh_stoph trimet_stop_event init_tripsh
+for tablename in trimet_stop_event
 do
   psql -f "${tablename}.ddl"
   export copy_command="\copy ${tablename} from '${interim}/${tablename}.csv' with csv header"
@@ -27,5 +27,12 @@ done
 
 echo "Waiting for table loads"
 wait
+
+echo "Converting timestamps"
+/usr/bin/time psql -f "trimet_stop_event.timestamp"
+echo "Geotagging"
+/usr/bin/time psql -f "trimet_stop_event.geom"
+echo "Creating pkey"
+/usr/bin/time psql -f "trimet_stop_event.pkey"
 echo "VACUUM ANALYZE"
 /usr/bin/time psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"

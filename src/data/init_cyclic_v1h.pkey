@@ -1,7 +1,0 @@
--- create a primary key
-ALTER TABLE init_cyclic_v1h
-    DROP COLUMN IF EXISTS id;
-ALTER TABLE init_cyclic_v1h
-    ADD COLUMN id serial;
-ALTER TABLE init_cyclic_v1h
-    ADD PRIMARY KEY (id);

@@ -1,5 +1,0 @@
-CREATE INDEX ON init_cyclic_v1h (geom_4326);
-CREATE INDEX ON init_cyclic_v1h (meters);
-CREATE INDEX ON init_cyclic_v1h (vehicle_id);
-CREATE INDEX ON init_cyclic_v1h (opd_date);
-CREATE INDEX ON init_cyclic_v1h (act_time);

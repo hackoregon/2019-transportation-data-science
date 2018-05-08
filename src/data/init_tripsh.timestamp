@@ -1,7 +1,0 @@
--- parse text timestamp
-ALTER TABLE init_tripsh
-  DROP COLUMN IF EXISTS opd_date;
-ALTER TABLE init_tripsh
-  ADD COLUMN opd_date timestamp;
-UPDATE init_tripsh
-  SET opd_date = to_timestamp(opd_date_text, 'DDMonYYYY:HH24:MI:SS');
