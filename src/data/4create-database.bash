@@ -17,19 +17,13 @@ psql -c "CREATE TABLESPACE ssdpg LOCATION '/ssdpg';"
 createdb --owner=${DBOWNER} --tablespace=ssdpg ${PGDATABASE}
 psql -c "CREATE EXTENSION postgis CASCADE;" -d ${PGDATABASE}
 
-# load the tables
-for tablename in trimet_stop_event
-do
-  psql -f "${tablename}.ddl"
-  export copy_command="\copy ${tablename} from '${interim}/${tablename}.csv' with csv header"
-  echo "Starting background load of table ${tablename}"
-  /usr/bin/time psql -c "${copy_command}" &
-done
+echo "Creating the table"
+psql -f "trimet_stop_event.ddl"
+echo "Loading the data"
+export copy_command="\copy trimet_stop_event from '${interim}/tidy_trimet_stop_event.csv' with csv header"
+/usr/bin/time psql -c "${copy_command}"
 
-echo "Waiting for table loads"
-wait
-
-echo "Converting timestamps"
+echo "Indexing timestamps"
 /usr/bin/time psql -f "trimet_stop_event.timestamp"
 echo "Geotagging"
 /usr/bin/time psql -f "trimet_stop_event.geom"
