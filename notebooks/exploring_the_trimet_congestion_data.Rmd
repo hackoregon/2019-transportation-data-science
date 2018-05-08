@@ -1,0 +1,18 @@
+---
+title: "Exploring the TriMet Congestion Data"
+author: "M. Edward (Ed) Borasky"
+output: html_notebook
+---
+
+## Load the stop events and ridership data
+```{r}
+library(readr)
+trimet_stop_event_1_30SEP2017 <- read_csv("data/raw/trimet_stop_event 1-30SEP2017.csv",
+col_types = cols(SERVICE_DATE = col_datetime(format = "%d%b%Y:%H:%M:%S")))
+View(trimet_stop_event_1_30SEP2017)
+passenger_census <- read_csv("data/raw/passenger_census.csv",
+col_types = cols(SUMMARY_BEGIN_DATE = col_date(format = "%d-%b-%y")))
+View(passenger_census)
+
+```
+
