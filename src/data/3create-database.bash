@@ -15,6 +15,7 @@ sudo mkdir -p /ssdpg
 sudo chown -R postgres:postgres /ssdpg
 psql -c "CREATE TABLESPACE ssdpg LOCATION '/ssdpg';"
 createdb --owner=${DBOWNER} --tablespace=ssdpg ${PGDATABASE}
+psql -c "CREATE EXTENSION postgis CASCADE;" -d ${PGDATABASE}
 
 # load the tables
 for tablename in trimet_stop_event
