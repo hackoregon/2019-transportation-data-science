@@ -6,7 +6,7 @@ load_csv <- function(path) {
     path,
     col_types = cols(
       PATTERN_DISTANCE = col_double(),
-      SERVICE_DATE = col_datetime(format = "%d%b%Y:%H:%M:%S")
+      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S")
     )
   ) %>%
     filter(!is.na(SERVICE_KEY)) %>%

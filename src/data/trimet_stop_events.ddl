@@ -1,5 +1,5 @@
 CREATE TABLE trimet_stop_events (
-  service_date timestamp without time zone,
+  service_date date,
   vehicle_number integer,
   leave_time integer,
   train integer,
