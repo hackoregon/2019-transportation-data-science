@@ -1,3 +1,0 @@
--- index the timestamps
-CREATE INDEX ON trimet_stop_event (service_date);
-CREATE INDEX ON trimet_stop_event (arrive_time);

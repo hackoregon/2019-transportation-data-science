@@ -1,4 +1,4 @@
-CREATE TABLE trimet_stop_event (
+CREATE TABLE trimet_stop_events (
   service_date timestamp without time zone,
   vehicle_number integer,
   leave_time integer,
