@@ -7,7 +7,7 @@ source .env
 export interim="../../data/interim"
 export external="../../data/external"
 export DBOWNER=postgres
-export PGDATABASE=trimet_congestion
+export PGDATABASE=transportation-systems-trimet-congestion
 
 # create a fresh database
 echo "Creating ${PGDATABASE} - ignore error if it doesn't exist"
@@ -16,7 +16,7 @@ sudo mkdir -p /ssdpg
 sudo chown -R postgres:postgres /ssdpg
 psql -c "CREATE TABLESPACE ssdpg LOCATION '/ssdpg';"
 createdb --owner=${DBOWNER} --tablespace=ssdpg ${PGDATABASE}
-psql -c "CREATE EXTENSION postgis CASCADE;" -d ${PGDATABASE}
+psql -d ${PGDATABASE} -c "CREATE EXTENSION postgis CASCADE;"
 
 # import TriMet shapefiles
 echo "Importing TriMet shapefiles"
@@ -36,9 +36,9 @@ done
 popd
 
 echo "Creating the 'trimet_stop_events' table"
-psql -f "trimet_stop_events.ddl"
+psql -d ${PGDATABASE} -f "trimet_stop_events.ddl"
 echo "Loading the data"
 export copy_command="\copy trimet_stop_events from '${interim}/trimet_stop_events.csv' with csv header"
-/usr/bin/time psql -c "${copy_command}"
+/usr/bin/time psql -d ${PGDATABASE} -c "${copy_command}"
 echo "VACUUM ANALYZE"
 /usr/bin/time psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
