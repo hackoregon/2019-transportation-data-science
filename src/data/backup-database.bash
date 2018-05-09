@@ -5,14 +5,13 @@ source .env
 
 # define parameters
 export interim="../../data/interim"
-export PGDATABASE=trimet_congestion
-export JOBS=7 # one less than your processor / thread count - a four-core / eight-thread would use seven
+export PGDATABASE=transportation-systems-trimet-congestion
 
-echo "Removing previous backup directory if any"
-rm -fr ${interim}/trimet_congestion.backup
+echo "Removing previous backup if any"
+rm -fr ${interim}/${PGDATABASE}.backup
 echo "Making a backup"
-pg_dump --format=directory --jobs=${JOBS} \
-  --file=${interim}/trimet_congestion.backup ${PGDATABASE}
+pg_dump --format=custom \
+  --file=${interim}/${PGDATABASE}.backup ${PGDATABASE}
+pg_restore --list ${interim}/${PGDATABASE}.backup
 echo "How big is the backup?"
-du -sh ${interim}/trimet_congestion.backup
-pg_restore --list ${interim}/trimet_congestion.backup
+du -sh ${interim}/${PGDATABASE}.backup
