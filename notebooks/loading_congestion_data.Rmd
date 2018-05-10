@@ -18,7 +18,7 @@ load_csv <- function(path) {
       TRIP_NUMBER = col_character(),
       LOCATION_ID = col_character(),
       PATTERN_DISTANCE = col_double(),
-      LOCATION_DISTANCE = col_double(),
+      LOCATION_DISTANCE = col_character(),
       SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S")
     )
   ) %>%
@@ -54,10 +54,10 @@ group_by_trips <- function(stop_events) {
 compute_lagged_columns <- function(stop_events) {
   stop_events %>% 
     mutate(
+      SECONDS_LATE = ARRIVE_TIME - STOP_TIME,
       PREVIOUS_LOCATION = lag(LOCATION_ID),
       PREVIOUS_LEAVE_TIME = lag(LEAVE_TIME),
       PREVIOUS_DISTANCE = lag(PATTERN_DISTANCE),
-      SECONDS_LATE = STOP_TIME - ARRIVE_TIME,
       TRAVEL_DISTANCE = PATTERN_DISTANCE - PREVIOUS_DISTANCE,
       TRAVEL_SECONDS = ARRIVE_TIME - PREVIOUS_LEAVE_TIME,
       TRAVEL_VELOCITY = TRAVEL_DISTANCE / TRAVEL_SECONDS
@@ -76,14 +76,17 @@ We do the load in three steps so we can run a garbage collection after each one:
 trimet_stop_events <- 
   load_csv("../data/raw/trimet_stop_event 1-30SEP2017.csv")
 gc(full = TRUE, verbose = TRUE)
-# trimet_stop_events <- trimet_stop_events %>% bind_rows(
-#   load_csv("../data/raw/trimet_stop_event 1-31OCT2017.csv")
-# )
-# gc(full = TRUE, verbose = TRUE)
-# trimet_stop_events <- trimet_stop_events %>% bind_rows(
-#   load_csv("../data/raw/trimet_stop_event 1-30NOV2017.csv")
-# )
-# gc(full = TRUE, verbose = TRUE)
+
+trimet_stop_events <- trimet_stop_events %>% bind_rows(
+ load_csv("../data/raw/trimet_stop_event 1-31OCT2017.csv")
+)
+gc(full = TRUE, verbose = TRUE)
+
+trimet_stop_events <- trimet_stop_events %>% bind_rows(
+ load_csv("../data/raw/trimet_stop_event 1-30NOV2017.csv")
+)
+gc(full = TRUE, verbose = TRUE)
+
 trimet_stop_events <- trimet_stop_events %>% 
   group_by_trips() %>% 
   compute_lagged_columns()
