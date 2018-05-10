@@ -1,0 +1,92 @@
+---
+title: "Loading the TriMet Congestion Data"
+output: html_notebook
+---
+
+First, we define some functions:
+```{r}
+
+# load one of the trimet_stop_event CSV files
+load_csv <- function(path) {
+  read_csv(
+    path,
+    col_types = cols(
+      VEHICLE_NUMBER = col_character(),
+      TRAIN = col_character(),
+      BADGE = col_character(),
+      ROUTE_NUMBER = col_character(),
+      TRIP_NUMBER = col_character(),
+      LOCATION_ID = col_character(),
+      PATTERN_DISTANCE = col_double(),
+      LOCATION_DISTANCE = col_double(),
+      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S")
+    )
+  ) %>%
+    
+    # we're analyzing congestion, so weekdays only
+    # no deadhead routes
+    # no location zero
+    filter(
+      SERVICE_KEY == "W",
+      LOCATION_ID != "0",
+      ROUTE_NUMBER != "921",
+      ROUTE_NUMBER != "922",
+    ) %>%
+    
+    # add some conveniences for visualization
+    mutate(
+      WEEKDAY = lubridate::wday(SERVICE_DATE),
+      STOP_HOURS = STOP_TIME / 3600.0,
+      ARRIVE_HOURS = ARRIVE_TIME / 3600.0,
+      LEAVE_HOURS = LEAVE_TIME / 3600.0
+    )
+}
+
+# group by trips
+group_by_trips <- function(stop_events) {
+  stop_events %>% 
+    arrange(
+      SERVICE_DATE, VEHICLE_NUMBER, TRIP_NUMBER, ARRIVE_TIME) %>% 
+    group_by(SERVICE_DATE, VEHICLE_NUMBER, TRIP_NUMBER)
+}
+
+# lagged data calculations
+compute_lagged_columns <- function(stop_events) {
+  stop_events %>% 
+    mutate(
+      PREVIOUS_LOCATION = lag(LOCATION_ID),
+      PREVIOUS_LEAVE_TIME = lag(LEAVE_TIME),
+      PREVIOUS_DISTANCE = lag(PATTERN_DISTANCE),
+      SECONDS_LATE = STOP_TIME - ARRIVE_TIME,
+      TRAVEL_DISTANCE = PATTERN_DISTANCE - PREVIOUS_DISTANCE,
+      TRAVEL_SECONDS = ARRIVE_TIME - PREVIOUS_LEAVE_TIME,
+      TRAVEL_VELOCITY = TRAVEL_DISTANCE / TRAVEL_SECONDS
+   )
+}
+```
+
+Make sure we have the tidyverse:
+```{r}
+if (!require(tidyverse)) install.packages("tidyverse")
+library(tidyverse)
+```
+
+We do the load in three steps so we can run a garbage collection after each one:
+```{r}
+trimet_stop_events <- 
+  load_csv("../data/raw/trimet_stop_event 1-30SEP2017.csv")
+gc(full = TRUE, verbose = TRUE)
+# trimet_stop_events <- trimet_stop_events %>% bind_rows(
+#   load_csv("../data/raw/trimet_stop_event 1-31OCT2017.csv")
+# )
+# gc(full = TRUE, verbose = TRUE)
+# trimet_stop_events <- trimet_stop_events %>% bind_rows(
+#   load_csv("../data/raw/trimet_stop_event 1-30NOV2017.csv")
+# )
+# gc(full = TRUE, verbose = TRUE)
+trimet_stop_events <- trimet_stop_events %>% 
+  group_by_trips() %>% 
+  compute_lagged_columns()
+gc(full = TRUE, verbose = TRUE)
+```
+
