@@ -8,13 +8,14 @@ First, we define some functions:
 
 # load one of the trimet_stop_event CSV files
 load_csv <- function(path) {
-  read_csv(
+  temp <- read_csv(
     path,
     col_types = cols(
       VEHICLE_NUMBER = col_character(),
       TRAIN = col_character(),
       BADGE = col_character(),
       ROUTE_NUMBER = col_character(),
+      DIRECTION = col_character(),
       TRIP_NUMBER = col_character(),
       LOCATION_ID = col_character(),
       PATTERN_DISTANCE = col_double(),
@@ -23,31 +24,46 @@ load_csv <- function(path) {
     )
   ) %>%
     
-    # we're analyzing congestion, so weekdays only
     # no deadhead routes
-    # no location zero
     filter(
-      SERVICE_KEY == "W",
-      LOCATION_ID != "0",
-      ROUTE_NUMBER != "921",
-      ROUTE_NUMBER != "922",
+      SERVICE_KEY == "W" |
+        SERVICE_KEY == "S" |
+        SERVICE_KEY == "U" |
+        SERVICE_KEY == "X",
+      ROUTE_NUMBER <= 291,
     ) %>%
     
     # add some conveniences for visualization
     mutate(
       WEEKDAY = lubridate::wday(SERVICE_DATE),
-      STOP_HOURS = STOP_TIME / 3600.0,
-      ARRIVE_HOURS = ARRIVE_TIME / 3600.0,
-      LEAVE_HOURS = LEAVE_TIME / 3600.0
+      STOP_HOURS = round(STOP_TIME / 3600.0, 2),
+      ARRIVE_HOURS = round(ARRIVE_TIME / 3600.0, 2),
+      LEAVE_HOURS = round(LEAVE_TIME / 3600.0, 2)
     )
+  temp$SERVICE_DATE <- as.character(temp$SERVICE_DATE)
+  return(temp)
 }
 
 # group by trips
 group_by_trips <- function(stop_events) {
-  stop_events %>% 
-    arrange(
-      SERVICE_DATE, VEHICLE_NUMBER, TRIP_NUMBER, ARRIVE_TIME) %>% 
-    group_by(SERVICE_DATE, VEHICLE_NUMBER, TRIP_NUMBER)
+  stop_events %>% arrange(
+    SERVICE_DATE,
+    ROUTE_NUMBER,
+    DIRECTION,
+    VEHICLE_NUMBER,
+    TRAIN,
+    BADGE,
+    TRIP_NUMBER, 
+    ARRIVE_TIME
+  ) %>% 
+    group_by(  
+    SERVICE_DATE,
+    ROUTE_NUMBER,
+    DIRECTION,
+    VEHICLE_NUMBER,
+    TRAIN,
+    BADGE,
+    TRIP_NUMBER)
 }
 
 # lagged data calculations
@@ -57,18 +73,24 @@ compute_lagged_columns <- function(stop_events) {
       SECONDS_LATE = ARRIVE_TIME - STOP_TIME,
       PREVIOUS_LOCATION = lag(LOCATION_ID),
       PREVIOUS_LEAVE_TIME = lag(LEAVE_TIME),
-      PREVIOUS_DISTANCE = lag(PATTERN_DISTANCE),
-      TRAVEL_DISTANCE = PATTERN_DISTANCE - PREVIOUS_DISTANCE,
-      TRAVEL_SECONDS = ARRIVE_TIME - PREVIOUS_LEAVE_TIME,
-      TRAVEL_VELOCITY = TRAVEL_DISTANCE / TRAVEL_SECONDS
+      TRAVEL_SECONDS = ARRIVE_TIME - PREVIOUS_LEAVE_TIME
    )
 }
 ```
 
-Make sure we have the tidyverse:
+Make sure we have the tidyverse and sf:
 ```{r}
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
+if (!require(sf)) install.packages("sf")
+library(sf)
+```
+
+Load the TriMet shapefiles:
+```{r}
+routes <- read_sf("../data/external/tm_routes/tm_routes.shp")
+route_stops <- read_sf("../data/external/tm_route_stops/tm_route_stops.shp")
+
 ```
 
 We do the load in three steps so we can run a garbage collection after each one:
@@ -77,19 +99,73 @@ trimet_stop_events <-
   load_csv("../data/raw/trimet_stop_event 1-30SEP2017.csv")
 gc(full = TRUE, verbose = TRUE)
 
-trimet_stop_events <- trimet_stop_events %>% bind_rows(
- load_csv("../data/raw/trimet_stop_event 1-31OCT2017.csv")
-)
-gc(full = TRUE, verbose = TRUE)
-
-trimet_stop_events <- trimet_stop_events %>% bind_rows(
- load_csv("../data/raw/trimet_stop_event 1-30NOV2017.csv")
-)
-gc(full = TRUE, verbose = TRUE)
+# trimet_stop_events <- trimet_stop_events %>% bind_rows(
+#  load_csv("../data/raw/trimet_stop_event 1-31OCT2017.csv")
+# )
+# gc(full = TRUE, verbose = TRUE)
+# 
+# trimet_stop_events <- trimet_stop_events %>% bind_rows(
+#  load_csv("../data/raw/trimet_stop_event 1-30NOV2017.csv")
+# )
+# gc(full = TRUE, verbose = TRUE)
 
 trimet_stop_events <- trimet_stop_events %>% 
-  group_by_trips() %>% 
-  compute_lagged_columns()
+  group_by_trips()
 gc(full = TRUE, verbose = TRUE)
+```
+
+Filter out the short trips:
+```{r}
+trips <- trimet_stop_events %>% 
+  summarize(
+    STOP_COUNT = n(),
+    PATTERN_ZEROES = sum(PATTERN_DISTANCE == 0)
+  )
+cutoffs <- trips %>% 
+  group_by(ROUTE_NUMBER) %>% 
+  summarize(
+    cutoff = quantile(STOP_COUNT, probs = 0.05, names = FALSE)
+  ) 
+trips <- trips %>% left_join(cutoffs, by = "ROUTE_NUMBER")
+short_trips <- trips %>% filter(STOP_COUNT < cutoff)
+trimet_stop_events <- trimet_stop_events %>% 
+  anti_join(short_trips)
+```
+
+Compute the travel times between stops:
+```{r}
+trimet_stop_events <- trimet_stop_events %>%
+  compute_lagged_columns()
+```
+
+Regroup by route / direction and endpoints
+```{r}
+edge_data <- trimet_stop_events %>%
+  ungroup() %>%
+  filter(
+    !is.na(TRAVEL_SECONDS),
+    TRAVEL_SECONDS > 20
+  ) %>% 
+  select(
+    SERVICE_DATE,
+    ROUTE_NUMBER,
+    DIRECTION,
+    SERVICE_KEY,
+    LOCATION_ID,
+    PREVIOUS_LOCATION,
+    WEEKDAY,
+    STOP_HOURS,
+    ARRIVE_HOURS,
+    LEAVE_HOURS,
+    SECONDS_LATE,
+    TRAVEL_SECONDS
+  ) %>% 
+  group_by(
+    ROUTE_NUMBER,
+    DIRECTION,
+    SERVICE_KEY,
+    LOCATION_ID,
+    PREVIOUS_LOCATION
+  )
 ```
 
