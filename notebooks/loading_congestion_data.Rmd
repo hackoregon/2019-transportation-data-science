@@ -129,6 +129,7 @@ trimet_stop_events <- trimet_stop_events %>% bind_rows(
  load_csv("../data/raw/trimet_stop_event 1-30NOV2017.csv")
 )
 gc(full = TRUE, verbose = TRUE)
+
 ```
 
 Group the rows by trips:
