@@ -11,42 +11,59 @@ First, we define some functions:
 #'
 #' @param path path to a TriMet "trimet_stop_event" CSV file
 #'
-#' @return a tibble with the data from the file, with some filtering and added columns
+#' @return a tibble with the data from the file, with some added columns
 
 load_csv <- function(path) {
   temp <- read_csv(
     path,
 
-    # we use characters for most of the columns because it makes filtering easier
+    # we use characters for most of the columns because it makes filtering in the "View" windows easier
     col_types = cols(
-      VEHICLE_NUMBER = col_character(),
-      TRAIN = col_character(),
-      BADGE = col_character(),
-      ROUTE_NUMBER = col_character(),
-      DIRECTION = col_character(),
-      TRIP_NUMBER = col_character(),
-      LOCATION_ID = col_character(),
+      .default = col_character(),
+      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
+      LEAVE_TIME = col_integer(),
+      ROUTE_NUMBER = col_integer(),
+      STOP_TIME = col_integer(),
+      ARRIVE_TIME = col_integer(),
+      DWELL = col_integer(),
+      DOOR = col_integer(),
+      LIFT= col_integer(), 
+      ONS= col_integer(),
+      OFFS= col_integer(),
+      ESTIMATED_LOAD = col_integer(),
+      MAXIMUM_SPEED = col_double(),
+      TRAIN_MILEAGE = col_double(),
       PATTERN_DISTANCE = col_double(),
-      LOCATION_DISTANCE = col_character(),
-      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S")
+      LOCATION_DISTANCE = col_double(),
+      X_COORDINATE = col_double(),
+      Y_COORDINATE = col_double()
     )
   ) %>%
     
-    # no deadhead routes
     filter(
+      LOCATION_ID != 0,
+      ROUTE_NUMBER > 0,
+      ROUTE_NUMBER <= 291,
       SERVICE_KEY == "W" |
         SERVICE_KEY == "S" |
         SERVICE_KEY == "U" |
-        SERVICE_KEY == "X",
-      ROUTE_NUMBER <= 291,
-    ) %>%
+        SERVICE_KEY == "X"
+    ) %>% 
     
     # add some conveniences for visualization
     mutate(
       WEEKDAY = lubridate::wday(SERVICE_DATE),
       STOP_HOURS = round(STOP_TIME / 3600.0),
       ARRIVE_HOURS = round(ARRIVE_TIME / 3600.0),
-      LEAVE_HOURS = round(LEAVE_TIME / 3600.0)
+      LEAVE_HOURS = round(LEAVE_TIME / 3600.0),
+      TRIP_KEY = paste(
+        SERVICE_DATE,
+        VEHICLE_NUMBER,
+        ROUTE_NUMBER,
+        DIRECTION,
+        TRIP_NUMBER,
+        sep = "_"
+      )
     )
   
   # convert the service data to a character string
@@ -61,25 +78,13 @@ load_csv <- function(path) {
 #' @return the tibble grouped by trips
 group_by_trips <- function(stop_events) {
   
-  # sort first to get each trips in chronological order
+  # sort first to get each trip in chronological order
   stop_events %>% arrange(
-    SERVICE_DATE,
-    ROUTE_NUMBER,
-    DIRECTION,
     VEHICLE_NUMBER,
-    TRAIN,
-    BADGE,
-    TRIP_NUMBER, 
+    SERVICE_DATE,
     ARRIVE_TIME
   ) %>% 
-    group_by(  
-    SERVICE_DATE,
-    ROUTE_NUMBER,
-    DIRECTION,
-    VEHICLE_NUMBER,
-    TRAIN,
-    BADGE,
-    TRIP_NUMBER)
+    group_by(TRIP_KEY)
 }
 
 #' Compute lagged columns
@@ -93,9 +98,9 @@ compute_lagged_columns <- function(stop_events) {
   stop_events %>% 
     mutate(
       SECONDS_LATE = ARRIVE_TIME - STOP_TIME,
-      FROM_LOCATION_ID = lag(LOCATION_ID),
-      PREVIOUS_LEAVE_TIME = lag(LEAVE_TIME),
-      TRAVEL_SECONDS = ARRIVE_TIME - PREVIOUS_LEAVE_TIME
+      FROM_LOCATION = lag(LOCATION_ID),
+      LEFT_THERE = lag(LEAVE_TIME),
+      TRAVEL_SECONDS = ARRIVE_TIME - LEFT_THERE
    )
 }
 ```
@@ -139,84 +144,54 @@ trimet_stop_events <- trimet_stop_events %>%
 gc(full = TRUE, verbose = TRUE)
 ```
 
-Filter out the short trips:
-```{r}
-# tabulate the trips
-trips <- trimet_stop_events %>% 
-  summarize(STOP_COUNT = n())
-
-# we want to drop any trips with fewer than P05 for the route
-cutoffs <- trips %>% 
-  group_by(ROUTE_NUMBER) %>% 
-  summarize(
-    cutoff = quantile(STOP_COUNT, probs = 0.05, names = FALSE)
-  ) 
-trips <- trips %>% left_join(cutoffs, by = "ROUTE_NUMBER")
-short_trips <- trips %>% filter(STOP_COUNT < cutoff)
-trimet_stop_events <- trimet_stop_events %>% 
-  anti_join(short_trips)
-gc(full = TRUE, verbose = TRUE)
-cat(
-  "\nTotal trips: ", 
-  nrow(trips), 
-  "short trips: ", 
-  nrow(short_trips),
-  "remaining trips: ", 
-  nrow(trips) - nrow(short_trips),
-  "\n"
-)
-```
-
 Compute the travel times between stops:
 ```{r}
 trimet_stop_events <- trimet_stop_events %>%
-  compute_lagged_columns()
-gc(full = TRUE, verbose = TRUE)
-```
-
-Now we have the finished raw data - compute the edges of the network with their travel times:
-```{r}
-edge_data <- trimet_stop_events %>%
-  ungroup() %>%
+  compute_lagged_columns() %>% 
   filter(
     !is.na(TRAVEL_SECONDS),
-    TRAVEL_SECONDS > 20
-  ) %>% 
-  select(
-    SERVICE_DATE,
-    ROUTE_NUMBER,
-    DIRECTION,
-    SERVICE_KEY,
-    FROM_LOCATION_ID,
-    TO_LOCATION_ID = LOCATION_ID,
-    WEEKDAY,
-    STOP_HOURS,
-    ARRIVE_HOURS,
-    LEAVE_HOURS,
-    SECONDS_LATE,
-    TRAVEL_SECONDS
-  ) %>% 
-  group_by(
-    SERVICE_KEY,
-    STOP_HOURS,
-    FROM_LOCATION_ID,
-    TO_LOCATION_ID,
+    TRAVEL_SECONDS > 0
   )
-
-# just do a five-number summary for now
-edge_stats <- edge_data %>% summarize(
-  COUNT = n(),
-  P05 = quantile(TRAVEL_SECONDS, probs = 0.05, names = FALSE),
-  P25 = quantile(TRAVEL_SECONDS, probs = 0.25, names = FALSE),
-  P50 = quantile(TRAVEL_SECONDS, probs = 0.50, names = FALSE),
-  P75 = quantile(TRAVEL_SECONDS, probs = 0.75, names = FALSE),
-  P95 = quantile(TRAVEL_SECONDS, probs = 0.95, names = FALSE)
-) %>% 
-  filter(COUNT > 20)
 gc(full = TRUE, verbose = TRUE)
 ```
 
-Save the "edge_stats" as CSV
+Now we have the finished raw data - collect the edges of the network with their travel times:
 ```{r}
-edge_stats %>% write_csv(path = "edge_stats.csv")
+edge_data <- trimet_stop_events %>% select(
+  SERVICE_DATE,
+  ROUTE_NUMBER,
+  DIRECTION,
+  SERVICE_KEY,
+  FROM_LOCATION,
+  LOCATION_ID,
+  WEEKDAY,
+  ARRIVE_HOURS,
+  SECONDS_LATE,
+  TRAVEL_SECONDS,
+  TRIP_KEY
+) %>% 
+ungroup() %>% 
+write_csv(path = "../data/interim/edge_data.csv")
+
+```
+
+Do a five-number summary of TRAVEL_SECONDS for each edge:
+```{r}
+edge_stats <- edge_data %>% 
+  group_by(
+    SERVICE_KEY,
+    FROM_LOCATION,
+    LOCATION_ID
+  ) %>% 
+  summarize(
+    COUNT = n(),
+    P05 = quantile(TRAVEL_SECONDS, probs = 0.05, names = FALSE),
+    P25 = quantile(TRAVEL_SECONDS, probs = 0.25, names = FALSE),
+    P50 = quantile(TRAVEL_SECONDS, probs = 0.50, names = FALSE),
+    P75 = quantile(TRAVEL_SECONDS, probs = 0.75, names = FALSE),
+    P95 = quantile(TRAVEL_SECONDS, probs = 0.95, names = FALSE)
+  ) %>%
+  filter(COUNT > 20)
+gc(full = TRUE, verbose = TRUE)
+
 ```
