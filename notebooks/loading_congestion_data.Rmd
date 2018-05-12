@@ -18,7 +18,8 @@ load_csv <- function(path) {
     path,
 
     col_types = cols(
-      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S")
+      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
+      PATTERN_DISTANCE = col_double()
     )
   ) %>%
 
