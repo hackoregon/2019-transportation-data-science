@@ -8,13 +8,15 @@
 #' @return a tibble with the data from the file, with some added columns
 
 load_csv <- function(path) {
-  read_csv(
+  temp <- read_csv(
     path,
     col_types = cols(
       SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
       PATTERN_DISTANCE = col_double()
     )
   )
+  temp$SERVICE_DATE <- as.character(temp$SERVICE_DATE)
+  return(temp)
 }
 
 ## drop unusued columns
@@ -46,28 +48,6 @@ filter_unwanted_rows <- function(stop_events) {
   )
 }
 
-## add conventiences for analysis
-add_conveniences <- function(stop_events) {
-
-  temp <- stop_events
-
-  # convert the service data to a character string
-  temp$SERVICE_DATE <- as.character(temp$SERVICE_DATE)
-
-  temp <- temp %>% mutate(
-    WEEKDAY = lubridate::wday(SERVICE_DATE),
-    TRIP_KEY = paste(
-      SERVICE_DATE,
-      VEHICLE_NUMBER,
-      ROUTE_NUMBER,
-      DIRECTION,
-      TRIP_NUMBER,
-      sep = "_"
-    )
-  )
-  return(temp)
-}
-
 #' Group by trips
 #'
 #' @param stop_events a "stop events" tibble
@@ -81,7 +61,13 @@ group_by_trips <- function(stop_events) {
     SERVICE_DATE,
     ARRIVE_TIME
   ) %>%
-    group_by(TRIP_KEY)
+    group_by(
+      SERVICE_DATE,
+      VEHICLE_NUMBER,
+      ROUTE_NUMBER,
+      DIRECTION,
+      TRIP_NUMBER
+    )
 }
 
 #' Compute lagged columns
@@ -104,3 +90,11 @@ compute_lagged_columns <- function(stop_events) {
      TRAVEL_SECONDS > 0
    )
 }
+
+## define the month table
+month_table <- tibble::tribble(
+  ~table_prefix, ~input_file,
+  "m2017_09", "trimet_stop_event 1-30SEP2017.csv",
+  "m2017_10", "trimet_stop_event 1-31OCT2017.csv",
+  "m2017_11", "trimet_stop_event 1-30NOV2017.csv"
+)
