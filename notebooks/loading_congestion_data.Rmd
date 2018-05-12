@@ -16,14 +16,12 @@ First, we define some functions:
 load_csv <- function(path) {
   temp <- read_csv(
     path,
-
     col_types = cols(
       SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
       PATTERN_DISTANCE = col_double()
     )
   ) %>%
 
-  # drop unused columns now!
   select(
     -BADGE,
     -MAXIMUM_SPEED
@@ -36,7 +34,7 @@ load_csv <- function(path) {
     -SCHEDULE_STATUS
   ) %>%   
   filter(
-    LOCATION_ID != 0,
+    LOCATION_ID > 0,
     ROUTE_NUMBER > 0,
     ROUTE_NUMBER <= 291,
     SERVICE_KEY == "W" |
@@ -126,19 +124,20 @@ Now we can do the edge data extraction.
 
 for (i in 1:nrow(month_table)) {
 
+  gc(full = TRUE, verbose = TRUE)
   trimet_stop_events <- load_csv(
     paste("../data/raw", month_table$input_file[i], sep = "/")
   )  
-  gc(full = TRUE, verbose = TRUE)
 
+  gc(full = TRUE, verbose = TRUE)
   trimet_stop_events <- trimet_stop_events %>% 
   group_by_trips()
-  gc(full = TRUE, verbose = TRUE)
 
+  gc(full = TRUE, verbose = TRUE)
   trimet_stop_events <- trimet_stop_events %>%
     compute_lagged_columns()
-  gc(full = TRUE, verbose = TRUE)
 
+  gc(full = TRUE, verbose = TRUE)
   edge_data <- trimet_stop_events %>% select(
     SERVICE_DATE,
     ROUTE_NUMBER,
@@ -154,6 +153,7 @@ for (i in 1:nrow(month_table)) {
   ) %>% 
   ungroup()
 
+  gc(full = TRUE, verbose = TRUE)
   colnames(edge_data) <- tolower(colnames(edge_data))
   write_csv(paste(
     "../data/interim",
