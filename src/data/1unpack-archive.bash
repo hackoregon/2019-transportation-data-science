@@ -7,5 +7,5 @@ export raw="../../data/raw"
 pushd ${raw}
 rm -f *.csv *.txt *.xlsx
 echo "Unpacking the archive"
-unrar e scrapes.rar
+7z e scrapes.rar
 popd
