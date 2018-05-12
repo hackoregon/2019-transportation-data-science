@@ -17,58 +17,52 @@ load_csv <- function(path) {
   temp <- read_csv(
     path,
 
-    # we use characters for most of the columns because it makes filtering in the "View" windows easier
     col_types = cols(
-      .default = col_character(),
-      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
-      LEAVE_TIME = col_integer(),
-      ROUTE_NUMBER = col_integer(),
-      STOP_TIME = col_integer(),
-      ARRIVE_TIME = col_integer(),
-      DWELL = col_integer(),
-      DOOR = col_integer(),
-      LIFT= col_integer(), 
-      ONS= col_integer(),
-      OFFS= col_integer(),
-      ESTIMATED_LOAD = col_integer(),
-      MAXIMUM_SPEED = col_double(),
-      TRAIN_MILEAGE = col_double(),
-      PATTERN_DISTANCE = col_double(),
-      LOCATION_DISTANCE = col_double(),
-      X_COORDINATE = col_double(),
-      Y_COORDINATE = col_double()
+      SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S")
     )
   ) %>%
-    
-    filter(
-      LOCATION_ID != 0,
-      ROUTE_NUMBER > 0,
-      ROUTE_NUMBER <= 291,
-      SERVICE_KEY == "W" |
-        SERVICE_KEY == "S" |
-        SERVICE_KEY == "U" |
-        SERVICE_KEY == "X"
-    ) %>% 
-    
-    # add some conveniences for visualization
-    mutate(
-      WEEKDAY = lubridate::wday(SERVICE_DATE),
-      STOP_HOURS = round(STOP_TIME / 3600.0),
-      ARRIVE_HOURS = round(ARRIVE_TIME / 3600.0),
-      LEAVE_HOURS = round(LEAVE_TIME / 3600.0),
-      TRIP_KEY = paste(
-        SERVICE_DATE,
-        VEHICLE_NUMBER,
-        ROUTE_NUMBER,
-        DIRECTION,
-        TRIP_NUMBER,
-        sep = "_"
-      )
-    )
+
+  # drop unused columns now!
+  select(
+    -BADGE,
+    -MAXIMUM_SPEED
+    -TRAIN_MILEAGE
+    -PATTERN_DISTANCE
+    -LOCATION_DISTANCE
+    -X_COORDINATE
+    -Y_COORDINATE
+    -DATA_SOURCE
+    -SCHEDULE_STATUS
+  ) %>%   
+  filter(
+    LOCATION_ID != 0,
+    ROUTE_NUMBER > 0,
+    ROUTE_NUMBER <= 291,
+    SERVICE_KEY == "W" |
+      SERVICE_KEY == "S" |
+      SERVICE_KEY == "U" |
+      SERVICE_KEY == "X"
+  ) 
   
   # convert the service data to a character string
   temp$SERVICE_DATE <- as.character(temp$SERVICE_DATE)
-  return(temp)
+    
+  # add some conveniences for visualization
+  temp <- temp %>% mutate(
+    WEEKDAY = lubridate::wday(SERVICE_DATE),
+    STOP_HOURS = round(STOP_TIME / 3600.0),
+    ARRIVE_HOURS = round(ARRIVE_TIME / 3600.0),
+    LEAVE_HOURS = round(LEAVE_TIME / 3600.0),
+    TRIP_KEY = paste(
+      SERVICE_DATE,
+      VEHICLE_NUMBER,
+      ROUTE_NUMBER,
+      DIRECTION,
+      TRIP_NUMBER,
+      sep = "_"
+    )
+  )
+return(temp)
 }
 
 #' Group by trips
@@ -101,97 +95,71 @@ compute_lagged_columns <- function(stop_events) {
       FROM_LOCATION = lag(LOCATION_ID),
       LEFT_THERE = lag(LEAVE_TIME),
       TRAVEL_SECONDS = ARRIVE_TIME - LEFT_THERE
-   )
+   ) %>% 
+    filter(
+      !is.na(TRAVEL_SECONDS),
+      TRAVEL_SECONDS > 0
+    )
 }
 ```
 
-Make sure we have the tidyverse and sf:
+Make sure we have the tidyverse and sf.
 ```{r}
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
-if (!require(sf)) install.packages("sf")
-library(sf)
 ```
 
-Load the TriMet shapefiles:
+Many of our machines don't have enough RAM to deal with the whole dataset. It turns out there are no dependencies between the months so we can easily process one month at a time.
 ```{r}
-routes <- read_sf("../data/external/tm_routes/tm_routes.shp")
-route_stops <- read_sf("../data/external/tm_route_stops/tm_route_stops.shp")
+
+month_table <- tribble(
+  ~table_prefix, ~input_file,
+  "m2017_09", "trimet_stop_event 1-30SEP2017.csv",
+  "m2017_10", "trimet_stop_event 1-31OCT2017.csv",
+  "m2017_11", "trimet_stop_event 1-30NOV2017.csv"
+) 
 ```
 
-We load the CSVs in three steps so we can run a garbage collection after each one:
+Now we can do the edge data extraction.
 ```{r}
-trimet_stop_events <- 
-  load_csv("../data/raw/trimet_stop_event 1-30SEP2017.csv")
-gc(full = TRUE, verbose = TRUE)
 
-trimet_stop_events <- trimet_stop_events %>% bind_rows(
- load_csv("../data/raw/trimet_stop_event 1-31OCT2017.csv")
-)
-gc(full = TRUE, verbose = TRUE)
+for (i in nrow(month_table)) {
 
-trimet_stop_events <- trimet_stop_events %>% bind_rows(
- load_csv("../data/raw/trimet_stop_event 1-30NOV2017.csv")
-)
-gc(full = TRUE, verbose = TRUE)
+  trimet_stop_events <- load_csv(
+    paste("../data/raw", month_table$input_file[i], sep = "/")
+  )  
+  gc(full = TRUE, verbose = TRUE)
 
-```
-
-Group the rows by trips:
-```{r}
-trimet_stop_events <- trimet_stop_events %>% 
+  trimet_stop_events <- trimet_stop_events %>% 
   group_by_trips()
-gc(full = TRUE, verbose = TRUE)
-```
+  gc(full = TRUE, verbose = TRUE)
 
-Compute the travel times between stops:
-```{r}
-trimet_stop_events <- trimet_stop_events %>%
-  compute_lagged_columns() %>% 
-  filter(
-    !is.na(TRAVEL_SECONDS),
-    TRAVEL_SECONDS > 0
-  )
-gc(full = TRUE, verbose = TRUE)
-```
+  trimet_stop_events <- trimet_stop_events %>%
+    compute_lagged_columns()
+  gc(full = TRUE, verbose = TRUE)
 
-Now we have the finished raw data - collect the edges of the network with their travel times:
-```{r}
-edge_data <- trimet_stop_events %>% select(
-  SERVICE_DATE,
-  ROUTE_NUMBER,
-  DIRECTION,
-  SERVICE_KEY,
-  FROM_LOCATION,
-  LOCATION_ID,
-  WEEKDAY,
-  ARRIVE_HOURS,
-  SECONDS_LATE,
-  TRAVEL_SECONDS,
-  TRIP_KEY
-) %>% 
-ungroup() %>% 
-write_csv(path = "../data/interim/edge_data.csv")
-
-```
-
-Do a five-number summary of TRAVEL_SECONDS for each edge:
-```{r}
-edge_stats <- edge_data %>% 
-  group_by(
+  edge_data <- trimet_stop_events %>% select(
+    SERVICE_DATE,
+    ROUTE_NUMBER,
+    DIRECTION,
     SERVICE_KEY,
     FROM_LOCATION,
-    LOCATION_ID
+    LOCATION_ID,
+    WEEKDAY,
+    ARRIVE_HOURS,
+    SECONDS_LATE,
+    TRAVEL_SECONDS,
+    TRIP_KEY
   ) %>% 
-  summarize(
-    COUNT = n(),
-    P05 = quantile(TRAVEL_SECONDS, probs = 0.05, names = FALSE),
-    P25 = quantile(TRAVEL_SECONDS, probs = 0.25, names = FALSE),
-    P50 = quantile(TRAVEL_SECONDS, probs = 0.50, names = FALSE),
-    P75 = quantile(TRAVEL_SECONDS, probs = 0.75, names = FALSE),
-    P95 = quantile(TRAVEL_SECONDS, probs = 0.95, names = FALSE)
-  ) %>%
-  filter(COUNT > 20)
-gc(full = TRUE, verbose = TRUE)
+  ungroup()
+
+  colnames(edge_data) <- tolower(colnames(edge_data))
+  write_csv(paste(
+    "../data/interim",
+    month_table$table_prefix[i],
+    edge_data.csv,
+    sep = "/"
+  ))
+}
 
 ```
