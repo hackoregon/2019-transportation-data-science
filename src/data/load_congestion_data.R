@@ -57,7 +57,7 @@ for (i in 1) {
   write_csv(paste(
     "../data/interim",
     month_table$table_prefix[i],
-    trimet_stop_events.csv,
+    "trimet_stop_events.csv",
     sep = "/"
   ))
   gc(full = TRUE, verbose = TRUE)
