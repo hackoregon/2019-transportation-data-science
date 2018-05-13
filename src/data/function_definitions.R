@@ -91,6 +91,32 @@ compute_lagged_columns <- function(stop_events) {
    )
 }
 
+select_output_columns <- function(stop_events) {
+  stop_events %>% select(
+    SERVICE_DATE,
+    VEHICLE_NUMBER,
+    ROUTE_NUMBER,
+    DIRECTION,
+    TRIP_NUMBER,
+    SERVICE_KEY,
+    STOP_TIME,
+    ARRIVE_TIME,
+    SECONDS_LATE,
+    LEAVE_TIME,
+    DWELL,
+    LOCATION_ID,
+    DOOR,
+    LIFT,
+    ONS,
+    OFFS,
+    ESTIMATED_LOAD,
+    FROM_LOCATION,
+    LEFT_THERE,
+    TRAVEL_SECONDS
+  ) %>%
+  ungroup()
+}
+
 ## define the month table
 month_table <- tibble::tribble(
   ~table_prefix, ~input_file,

@@ -30,27 +30,8 @@ for (i in 1) {
     compute_lagged_columns()
   gc(full = TRUE, verbose = TRUE)
 
-  trimet_stop_events <- trimet_stop_events %>% select(
-    SERVICE_DATE,
-    ROUTE_NUMBER,
-    DIRECTION,
-    SERVICE_KEY,
-    STOP_TIME,
-    ARRIVE_TIME,
-    SECONDS_LATE,
-    LEAVE_TIME,
-    DWELL,
-    LOCATION_ID,
-    DOOR,
-    LIFT,
-    ONS,
-    OFFS,
-    ESTIMATED_LOAD,
-    FROM_LOCATION,
-    LEFT_THERE,
-    TRAVEL_SECONDS
-  ) %>%
-  ungroup()
+  trimet_stop_events <- trimet_stop_events %>%
+    select_output_columns()
   gc(full = TRUE, verbose = TRUE)
 
   colnames(trimet_stop_events) <- tolower(colnames(trimet_stop_events))
