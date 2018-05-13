@@ -12,14 +12,16 @@ load_csv <- function(path) {
     col_types = cols(
       SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
       VEHICLE_NUMBER = col_integer(),
-      MAXIMUM_SPEED = col_skip(),
-      PATTERN_DISTANCE = col_skip(),
-      LOCATION_DISTANCE = col_skip(),
-      X_COORDINATE = col_skip(),
-      Y_COORDINATE = col_skip(),
-      DATA_SOURCE = col_skip(),
-      SCHEDULE_STATUS = col_skip()
+      PATTERN_DISTANCE = col_double()
     )
+  ) %>% select(
+    -MAXIMUM_SPEED,
+    -PATTERN_DISTANCE,
+    -LOCATION_DISTANCE,
+    -X_COORDINATE,
+    -Y_COORDINATE,
+    -DATA_SOURCE,
+    -SCHEDULE_STATUS
   )
   temp$SERVICE_DATE <- as.character(temp$SERVICE_DATE)
   return(temp)
