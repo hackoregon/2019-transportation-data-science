@@ -35,10 +35,13 @@ for (i in 1) {
   gc(full = TRUE, verbose = TRUE)
 
   colnames(trimet_stop_events) <- tolower(colnames(trimet_stop_events))
-  write_csv(paste(
-    "../data/interim",
-    month_table$table_prefix[i],
-    "trimet_stop_events.csv",
+  trimet_stop_events %>% write_csv(path = paste(
+    "../../data/interim",
+    paste(
+      month_table$table_prefix[i],
+      "trimet_stop_events.csv",
+      sep = "_"
+    ),
     sep = "/"
   ))
   gc(full = TRUE, verbose = TRUE)
