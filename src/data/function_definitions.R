@@ -16,6 +16,7 @@ load_csv <- function(path) {
     )
   )
   temp <- temp %>% select(
+    -BADGE,
     -MAXIMUM_SPEED,
     -PATTERN_DISTANCE,
     -LOCATION_DISTANCE,
@@ -55,14 +56,13 @@ group_by_trips <- function(stop_events) {
 
   # sort first to get each trip in chronological order
   temp <- stop_events %>% arrange(
-    VEHICLE_NUMBER,
     SERVICE_DATE,
+    VEHICLE_NUMBER,
     LEAVE_TIME) %>%
   group_by(
     SERVICE_DATE,
     VEHICLE_NUMBER,
     TRAIN,
-    BADGE,
     ROUTE_NUMBER,
     DIRECTION,
     TRIP_NUMBER
@@ -87,11 +87,25 @@ compute_lagged_columns <- function(stop_events) {
     LEFT_THERE = lag(LEAVE_TIME),
     TRAVEL_MILES = TRAIN_MILEAGE - MILEAGE_THERE,
     TRAVEL_SECONDS = ARRIVE_TIME - LEFT_THERE
-   ) %>%
- filter(
-   !is.na(TRAVEL_SECONDS),
-   TRAVEL_SECONDS > 0
- )
+  )
+  temp <- temp %>% ungroup()
+
+  # remove outliers
+  seconds_low_cutoff <- quantile(
+    temp$TRAVEL_SECONDS, names = FALSE, na.rm = TRUE, probs = 0.05)
+  miles_low_cutoff <- quantile(
+    temp$TRAVEL_MILES, names = FALSE, na.rm = TRUE, probs = 0.05)
+  seconds_high_cutoff <- quantile(
+    temp$TRAVEL_SECONDS, names = FALSE, na.rm = TRUE, probs = 0.95)
+  miles_high_cutoff <- quantile(
+    temp$TRAVEL_MILES, names = FALSE, na.rm = TRUE, probs = 0.95)
+  temp <- temp %>% filter(
+    !is.na(TRAVEL_SECONDS),
+    TRAVEL_SECONDS > seconds_low_cutoff,
+    TRAVEL_MILES > miles_low_cutoff,
+    TRAVEL_SECONDS < seconds_high_cutoff,
+    TRAVEL_MILES < miles_high_cutoff
+  )
   return(temp)
 }
 
@@ -105,7 +119,6 @@ select_output_columns <- function(stop_events) {
     SERVICE_DATE,
     VEHICLE_NUMBER,
     TRAIN,
-    BADGE,
     ROUTE_NUMBER,
     DIRECTION,
     TRIP_NUMBER,
@@ -127,8 +140,7 @@ select_output_columns <- function(stop_events) {
     LEFT_THERE,
     TRAVEL_MILES,
     TRAVEL_SECONDS
-  ) %>%
-  ungroup()
+  )
   return(temp)
 }
 
