@@ -15,6 +15,8 @@ load_csv <- function(path) {
       PATTERN_DISTANCE = col_double()
     )
   )
+
+  # drop unwanted columns
   temp <- temp %>% select(
     -BADGE,
     -MAXIMUM_SPEED,
@@ -25,6 +27,8 @@ load_csv <- function(path) {
     -DATA_SOURCE,
     -SCHEDULE_STATUS
   )
+
+  # convert the service data to character - makes filtering easier
   temp$SERVICE_DATE <- as.character(temp$SERVICE_DATE)
   return(temp)
 }
@@ -71,14 +75,15 @@ group_by_trips <- function(stop_events) {
 }
 
 #' compute_lagged_columns
-#' Once we have the data grouped by trips, we add a column for the
-#' previous location ID and the time the vehicle left there.
-#' Then we compute the travel time.
+#' Once we have the data grouped by trips and ordered by time of day,
+#' we add columns for the previous location ID and the time the vehicle
+#' left there.
 #'
+#' Then we compute the travel time and travel distance between the stops.
+#' Finally, we ungroup and filter out the outliers.
 #' @param stop_events a stop_events tibble
 #'
 #' @return the tibble with the new columns
-#'
 compute_lagged_columns <- function(stop_events) {
   temp <- stop_events %>% mutate(
     SECONDS_LATE = ARRIVE_TIME - STOP_TIME,
