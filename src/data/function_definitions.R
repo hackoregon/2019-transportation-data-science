@@ -12,31 +12,16 @@ load_csv <- function(path) {
     col_types = cols(
       SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
       VEHICLE_NUMBER = col_integer(),
-      PATTERN_DISTANCE = col_double()
+      MAXIMUM_SPEED = col_skip(),
+      PATTERN_DISTANCE = col_skip(),
+      LOCATION_DISTANCE = col_skip(),
+      X_COORDINATE = col_skip(),
+      Y_COORDINATE = col_skip(),
+      DATA_SOURCE = col_skip(),
+      SCHEDULE_STATUS = col_skip()
     )
   )
   temp$SERVICE_DATE <- as.character(temp$SERVICE_DATE)
-  return(temp)
-}
-
-#' drop_unused_columns
-#'
-#' @param stop_events a stop_events tibble
-#'
-#' @return the tibble minus unused columns
-drop_unused_columns <- function(stop_events) {
-
-  temp <- stop_events %>% select(
-    -BADGE,
-    -MAXIMUM_SPEED,
-    -TRAIN_MILEAGE,
-    -PATTERN_DISTANCE,
-    -LOCATION_DISTANCE,
-    -X_COORDINATE,
-    -Y_COORDINATE,
-    -DATA_SOURCE,
-    -SCHEDULE_STATUS
-  )
   return(temp)
 }
 
@@ -69,15 +54,16 @@ group_by_trips <- function(stop_events) {
   temp <- stop_events %>% arrange(
     VEHICLE_NUMBER,
     SERVICE_DATE,
-    ARRIVE_TIME
-  ) %>%
-    group_by(
-      SERVICE_DATE,
-      VEHICLE_NUMBER,
-      ROUTE_NUMBER,
-      DIRECTION,
-      TRIP_NUMBER
-    )
+    LEAVE_TIME) %>%
+  group_by(
+    SERVICE_DATE,
+    VEHICLE_NUMBER,
+    TRAIN,
+    BADGE,
+    ROUTE_NUMBER,
+    DIRECTION,
+    TRIP_NUMBER
+  )
   return(temp)
 }
 
@@ -91,17 +77,18 @@ group_by_trips <- function(stop_events) {
 #' @return the tibble with the new columns
 #'
 compute_lagged_columns <- function(stop_events) {
-  temp <- stop_events %>%
-    mutate(
-      SECONDS_LATE = ARRIVE_TIME - STOP_TIME,
-      FROM_LOCATION = lag(LOCATION_ID),
-      LEFT_THERE = lag(LEAVE_TIME),
-      TRAVEL_SECONDS = ARRIVE_TIME - LEFT_THERE
+  temp <- stop_events %>% mutate(
+    SECONDS_LATE = ARRIVE_TIME - STOP_TIME,
+    FROM_LOCATION = lag(LOCATION_ID),
+    MILEAGE_THERE = lag(TRAIN_MILEAGE),
+    LEFT_THERE = lag(LEAVE_TIME),
+    TRAVEL_MILEAGE = TRAIN_MILEAGE - MILEAGE_THERE,
+    TRAVEL_SECONDS = ARRIVE_TIME - LEFT_THERE
    ) %>%
-   filter(
-     !is.na(TRAVEL_SECONDS),
-     TRAVEL_SECONDS > 0
-   )
+ filter(
+   !is.na(TRAVEL_SECONDS),
+   TRAVEL_SECONDS > 0
+ )
   return(temp)
 }
 
@@ -114,6 +101,8 @@ select_output_columns <- function(stop_events) {
   temp <- stop_events %>% select(
     SERVICE_DATE,
     VEHICLE_NUMBER,
+    TRAIN,
+    BADGE,
     ROUTE_NUMBER,
     DIRECTION,
     TRIP_NUMBER,
@@ -130,7 +119,9 @@ select_output_columns <- function(stop_events) {
     OFFS,
     ESTIMATED_LOAD,
     FROM_LOCATION,
+    MILEAGE_THERE,
     LEFT_THERE,
+    TRAVEL_MILES,
     TRAVEL_SECONDS
   ) %>%
   ungroup()
