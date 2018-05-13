@@ -14,7 +14,8 @@ load_csv <- function(path) {
       VEHICLE_NUMBER = col_integer(),
       PATTERN_DISTANCE = col_double()
     )
-  ) %>% select(
+  )
+  temp <- temp %>% select(
     -MAXIMUM_SPEED,
     -PATTERN_DISTANCE,
     -LOCATION_DISTANCE,
