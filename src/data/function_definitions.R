@@ -121,6 +121,7 @@ select_output_columns <- function(stop_events) {
     ONS,
     OFFS,
     ESTIMATED_LOAD,
+    TRAIN_MILEAGE,
     FROM_LOCATION,
     MILEAGE_THERE,
     LEFT_THERE,
