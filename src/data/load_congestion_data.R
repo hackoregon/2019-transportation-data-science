@@ -2,7 +2,7 @@
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
 setwd("/d/Projects/transportation-congestion-analysis")
-source("function_definitions.R")
+source("src/data/function_definitions.R")
 
 ## loop over months
 # for (i in 1:nrow(month_table)) {
