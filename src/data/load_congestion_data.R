@@ -30,26 +30,34 @@ for (i in 1) {
     compute_lagged_columns()
   gc(full = TRUE, verbose = TRUE)
 
-  edge_data <- trimet_stop_events %>% select(
+  trimet_stop_events <- trimet_stop_events %>% select(
     SERVICE_DATE,
     ROUTE_NUMBER,
     DIRECTION,
     SERVICE_KEY,
-    FROM_LOCATION,
-    LOCATION_ID,
-    WEEKDAY,
-    ARRIVE_HOURS,
+    STOP_TIME,
+    ARRIVE_TIME,
     SECONDS_LATE,
+    LEAVE_TIME,
+    DWELL,
+    LOCATION_ID,
+    DOOR,
+    LIFT,
+    ONS,
+    OFFS,
+    ESTIMATED_LOAD,
+    FROM_LOCATION,
+    LEFT_THERE,
     TRAVEL_SECONDS
   ) %>%
   ungroup()
   gc(full = TRUE, verbose = TRUE)
 
-  colnames(edge_data) <- tolower(colnames(edge_data))
+  colnames(trimet_stop_events) <- tolower(colnames(trimet_stop_events))
   write_csv(paste(
     "../data/interim",
     month_table$table_prefix[i],
-    edge_data.csv,
+    trimet_stop_events.csv,
     sep = "/"
   ))
   gc(full = TRUE, verbose = TRUE)
