@@ -8,6 +8,10 @@ source("src/data/function_definitions.R")
 # for (i in 1:nrow(month_table)) {
 for (i in 1) {
 
+  cat(paste(
+    "\nLoading",
+    month_table$input_file[i]
+  ))
   gc(full = TRUE, verbose = TRUE)
   trimet_stop_events <- load_csv(
     paste("data/raw", month_table$input_file[i], sep = "/")
@@ -34,6 +38,10 @@ for (i in 1) {
     select_output_columns()
   gc(full = TRUE, verbose = TRUE)
 
+  cat(paste(
+    "\nSaving",
+    month_table$table_prefix[i]
+  ))
   colnames(trimet_stop_events) <- tolower(colnames(trimet_stop_events))
   trimet_stop_events %>% write_csv(path = paste(
     "data/interim",
@@ -44,5 +52,7 @@ for (i in 1) {
     ),
     sep = "/"
   ))
+  gc(full = TRUE, verbose = TRUE)
+  rm(trimet_stop_events)
   gc(full = TRUE, verbose = TRUE)
 }
