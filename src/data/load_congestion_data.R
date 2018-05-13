@@ -19,10 +19,6 @@ for (i in 1:nrow(month_table)) {
   gc(full = TRUE, verbose = TRUE)
 
   trimet_stop_events <- trimet_stop_events %>%
-    drop_unused_columns()
-  gc(full = TRUE, verbose = TRUE)
-
-  trimet_stop_events <- trimet_stop_events %>%
     filter_unwanted_rows()
   gc(full = TRUE, verbose = TRUE)
 
