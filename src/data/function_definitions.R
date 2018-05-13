@@ -82,7 +82,7 @@ compute_lagged_columns <- function(stop_events) {
     FROM_LOCATION = lag(LOCATION_ID),
     MILEAGE_THERE = lag(TRAIN_MILEAGE),
     LEFT_THERE = lag(LEAVE_TIME),
-    TRAVEL_MILEAGE = TRAIN_MILEAGE - MILEAGE_THERE,
+    TRAVEL_MILES = TRAIN_MILEAGE - MILEAGE_THERE,
     TRAVEL_SECONDS = ARRIVE_TIME - LEFT_THERE
    ) %>%
  filter(
