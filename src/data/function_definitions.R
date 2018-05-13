@@ -25,7 +25,7 @@ load_csv <- function(path) {
 #' @return the tibble minus unused columns
 drop_unused_columns <- function(stop_events) {
 
-  stop_events %>% select(
+  temp <- stop_events %>% select(
     -BADGE,
     -MAXIMUM_SPEED,
     -TRAIN_MILEAGE,
@@ -36,6 +36,7 @@ drop_unused_columns <- function(stop_events) {
     -DATA_SOURCE,
     -SCHEDULE_STATUS
   )
+  return(temp)
 }
 
 #' filter_unwanted_rows
@@ -44,7 +45,7 @@ drop_unused_columns <- function(stop_events) {
 #'
 #' @return the tibble minus unwanted rows
 filter_unwanted_rows <- function(stop_events) {
-  stop_events %>% filter(
+  temp <- stop_events %>% filter(
     LOCATION_ID > 0,
     ROUTE_NUMBER > 0,
     ROUTE_NUMBER <= 291,
@@ -53,6 +54,7 @@ filter_unwanted_rows <- function(stop_events) {
       SERVICE_KEY == "U" |
       SERVICE_KEY == "X"
   )
+  return(temp)
 }
 
 #' group_by_trips
@@ -63,7 +65,7 @@ filter_unwanted_rows <- function(stop_events) {
 group_by_trips <- function(stop_events) {
 
   # sort first to get each trip in chronological order
-  stop_events %>% arrange(
+  temp <- stop_events %>% arrange(
     VEHICLE_NUMBER,
     SERVICE_DATE,
     ARRIVE_TIME
@@ -75,6 +77,7 @@ group_by_trips <- function(stop_events) {
       DIRECTION,
       TRIP_NUMBER
     )
+  return(temp)
 }
 
 #' compute_lagged_columns
@@ -87,7 +90,7 @@ group_by_trips <- function(stop_events) {
 #' @return the tibble with the new columns
 #'
 compute_lagged_columns <- function(stop_events) {
-  stop_events %>%
+  temp <- stop_events %>%
     mutate(
       SECONDS_LATE = ARRIVE_TIME - STOP_TIME,
       FROM_LOCATION = lag(LOCATION_ID),
@@ -98,6 +101,7 @@ compute_lagged_columns <- function(stop_events) {
      !is.na(TRAVEL_SECONDS),
      TRAVEL_SECONDS > 0
    )
+  return(temp)
 }
 
 #' select_output_columns
@@ -106,7 +110,7 @@ compute_lagged_columns <- function(stop_events) {
 #'
 #' @return the selected columns
 select_output_columns <- function(stop_events) {
-  stop_events %>% select(
+  temp <- stop_events %>% select(
     SERVICE_DATE,
     VEHICLE_NUMBER,
     ROUTE_NUMBER,
@@ -129,6 +133,7 @@ select_output_columns <- function(stop_events) {
     TRAVEL_SECONDS
   ) %>%
   ungroup()
+  return(temp)
 }
 
 ## define the month table
