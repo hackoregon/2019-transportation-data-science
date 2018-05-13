@@ -1,16 +1,16 @@
 ## load libraries
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
-setwd("/d/Projects/transportation-congestion-analysis/src/data")
+setwd("/d/Projects/transportation-congestion-analysis")
 source("function_definitions.R")
 
 ## loop over months
-#for (i in 1:nrow(month_table)) {
+# for (i in 1:nrow(month_table)) {
 for (i in 1) {
 
   gc(full = TRUE, verbose = TRUE)
   trimet_stop_events <- load_csv(
-    paste("../../data/raw", month_table$input_file[i], sep = "/")
+    paste("data/raw", month_table$input_file[i], sep = "/")
   )
   gc(full = TRUE, verbose = TRUE)
 
@@ -36,7 +36,7 @@ for (i in 1) {
 
   colnames(trimet_stop_events) <- tolower(colnames(trimet_stop_events))
   trimet_stop_events %>% write_csv(path = paste(
-    "../../data/interim",
+    "data/interim",
     paste(
       month_table$table_prefix[i],
       "trimet_stop_events.csv",

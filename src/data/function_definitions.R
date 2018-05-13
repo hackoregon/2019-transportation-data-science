@@ -1,12 +1,11 @@
 # function definitions
 
-## load one of the trimet_stop_event CSV files
+## load a "trimet_stop_event" CSV file
 #' load_csv
 #'
 #' @param path path to a TriMet "trimet_stop_event" CSV file
 #'
-#' @return a tibble with the data from the file, with some added columns
-
+#' @return a tibble with the data from the file
 load_csv <- function(path) {
   temp <- read_csv(
     path,
@@ -19,23 +18,31 @@ load_csv <- function(path) {
   return(temp)
 }
 
-## drop unusued columns
+#' drop_unused_columns
+#'
+#' @param stop_events a stop_events tibble
+#'
+#' @return the tibble minus unused columns
 drop_unused_columns <- function(stop_events) {
 
   stop_events %>% select(
     -BADGE,
-    -MAXIMUM_SPEED
-    -TRAIN_MILEAGE
-    -PATTERN_DISTANCE
-    -LOCATION_DISTANCE
-    -X_COORDINATE
-    -Y_COORDINATE
-    -DATA_SOURCE
+    -MAXIMUM_SPEED,
+    -TRAIN_MILEAGE,
+    -PATTERN_DISTANCE,
+    -LOCATION_DISTANCE,
+    -X_COORDINATE,
+    -Y_COORDINATE,
+    -DATA_SOURCE,
     -SCHEDULE_STATUS
   )
 }
 
-## filter unwanted rows
+#' filter_unwanted_rows
+#'
+#' @param stop_events a stop_events tibble
+#'
+#' @return the tibble minus unwanted rows
 filter_unwanted_rows <- function(stop_events) {
   stop_events %>% filter(
     LOCATION_ID > 0,
@@ -48,7 +55,7 @@ filter_unwanted_rows <- function(stop_events) {
   )
 }
 
-#' Group by trips
+#' group_by_trips
 #'
 #' @param stop_events a "stop events" tibble
 #'
@@ -70,8 +77,10 @@ group_by_trips <- function(stop_events) {
     )
 }
 
-#' Compute lagged columns
-#' Omce we have the data grouped by trips, we want to add a column for the previous location ID and the time from when the vehicle left there to when it arrived here
+#' compute_lagged_columns
+#' Once we have the data grouped by trips, we add a column for the
+#' previous location ID and the time the vehicle left there.
+#' Then we compute the travel time.
 #'
 #' @param stop_events a stop_events tibble
 #'
@@ -91,6 +100,11 @@ compute_lagged_columns <- function(stop_events) {
    )
 }
 
+#' select_output_columns
+#'
+#' @param stop_events a stop_events tibble
+#'
+#' @return the selected columns
 select_output_columns <- function(stop_events) {
   stop_events %>% select(
     SERVICE_DATE,
