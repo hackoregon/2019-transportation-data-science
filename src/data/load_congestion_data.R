@@ -5,12 +5,12 @@ setwd("/d/Projects/transportation-congestion-analysis")
 source("src/data/function_definitions.R")
 
 ## loop over months
-# for (i in 1:nrow(month_table)) {
-for (i in 1) {
+for (i in 1:nrow(month_table)) {
 
   cat(paste(
     "\nLoading",
-    month_table$input_file[i]
+    month_table$input_file[i],
+    "\n"
   ))
   gc(full = TRUE, verbose = TRUE)
   trimet_stop_events <- load_csv(
@@ -40,7 +40,8 @@ for (i in 1) {
 
   cat(paste(
     "\nSaving",
-    month_table$table_prefix[i]
+    month_table$table_prefix[i],
+    "\n"
   ))
   colnames(trimet_stop_events) <- tolower(colnames(trimet_stop_events))
   trimet_stop_events %>% write_csv(path = paste(
