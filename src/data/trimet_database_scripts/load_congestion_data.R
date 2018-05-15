@@ -41,7 +41,7 @@ for (i in 1:nrow(month_table)) {
   ))
   colnames(trimet_stop_events) <- tolower(colnames(trimet_stop_events))
   trimet_stop_events %>% write_csv(path = paste(
-    "data/interim",
+    "~/Raw",
     paste(
       month_table$table_prefix[i],
       "trimet_stop_events.csv",
