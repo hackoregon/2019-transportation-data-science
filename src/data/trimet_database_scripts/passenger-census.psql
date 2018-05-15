@@ -17,11 +17,9 @@ ALTER TABLE passenger_census OWNER TO "transportation-systems";
 
 \copy passenger_census from '/home/dbsuper/Raw/passenger_census.csv' with csv header
 
--- we don't have PostGIS so we just add a column with the SRID so consumers know what they have!
--- see ../../docs/ridership_data_dictionary.md
-ALTER TABLE passenger_census ADD COLUMN epsg_srid integer;
+ALTER TABLE passenger_census ADD COLUMN geom_2913 geometry;
 UPDATE passenger_census
-  SET epsg_srid = 2913;
+  SET geom_2913 = ST_SetSRID(ST_MakePoint(x_coord, y_coord), 2913);
 
 -- create a primary key - Django needs it
 ALTER TABLE passenger_census
