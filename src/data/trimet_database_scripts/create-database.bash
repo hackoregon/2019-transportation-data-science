@@ -30,19 +30,16 @@ echo "Creating the 'passenger_census' (ridership data) table"
 psql -f passenger-census.psql
 
 echo "Creating the 'trimet_stop_events' table"
-
+psql -d ${PGDATABASE} -f "trimet_stop_events.ddl"
 pushd ~/Raw
-echo "Unpacking the archive"
+echo "Unpacking the raw data archive"
 /usr/bin/time 7z e -y scrapes.rar
 popd
-
-psql -d ${PGDATABASE} -f "trimet_stop_events.ddl"
+echo "Creating the 'stop_events' CSV files"
+R -e "source ~/trimet_database_scripts/load_congestion_data.R"
 echo "Loading the data"
 export copy_command="\copy trimet_stop_events from '${interim}/trimet_stop_events.csv' with csv header"
 /usr/bin/time psql -d ${PGDATABASE} -c "${copy_command}"
-
-
-
 
 echo "VACUUM ANALYZE"
 /usr/bin/time psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
