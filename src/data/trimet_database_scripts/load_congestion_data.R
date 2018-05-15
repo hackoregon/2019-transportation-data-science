@@ -1,8 +1,8 @@
 ## load libraries
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
-setwd("/d/Projects/transportation-congestion-analysis")
-source("src/data/function_definitions.R")
+setwd("~/Raw")
+source("~/trimet_database_scripts/function_definitions.R")
 
 ## loop over months
 for (i in 1:nrow(month_table)) {
