@@ -51,6 +51,8 @@ filter_unwanted_rows <- function(stop_events) {
   return(temp)
 }
 
+#' add geometry columns via simple features
+
 #' group_by_trips
 #'
 #' @param stop_events a "stop events" tibble

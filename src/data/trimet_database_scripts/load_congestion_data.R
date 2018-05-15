@@ -1,8 +1,11 @@
 ## load libraries
+if (!require(df)) install.packages("df")
+library(df)
 if (!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
 setwd("~/Raw")
 source("~/trimet_database_scripts/function_definitions.R")
+# connect to database
 
 ## loop over months
 for (i in 1:nrow(month_table)) {
@@ -50,6 +53,9 @@ for (i in 1:nrow(month_table)) {
     sep = "/"
   ))
   gc(full = TRUE, verbose = TRUE)
+
+  # append to database table
+
   rm(trimet_stop_events)
   gc(full = TRUE, verbose = TRUE)
 }
