@@ -12,7 +12,9 @@ load_csv <- function(path) {
     col_types = cols(
       SERVICE_DATE = col_date(format = "%d%b%Y:%H:%M:%S"),
       VEHICLE_NUMBER = col_integer(),
-      PATTERN_DISTANCE = col_double()
+      PATTERN_DISTANCE = col_double(),
+      X_COORDINATE = col_double(),
+      Y_COORDINATE = col_double()
     )
   )
 
@@ -22,8 +24,6 @@ load_csv <- function(path) {
     -MAXIMUM_SPEED,
     -PATTERN_DISTANCE,
     -LOCATION_DISTANCE,
-    -X_COORDINATE,
-    -Y_COORDINATE,
     -DATA_SOURCE,
     -SCHEDULE_STATUS
   )
