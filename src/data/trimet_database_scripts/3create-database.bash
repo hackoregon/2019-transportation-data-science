@@ -7,7 +7,7 @@ source .env
 export interim="../../data/interim"
 export external="../../data/external"
 export DBOWNER=postgres
-export PGDATABASE=transportation-systems-trimet-congestion
+export PGDATABASE=transportation-systems-trimet
 
 # create a fresh database
 echo "Creating ${PGDATABASE} - ignore error if it doesn't exist"
@@ -40,5 +40,9 @@ psql -d ${PGDATABASE} -f "trimet_stop_events.ddl"
 echo "Loading the data"
 export copy_command="\copy trimet_stop_events from '${interim}/trimet_stop_events.csv' with csv header"
 /usr/bin/time psql -d ${PGDATABASE} -c "${copy_command}"
+
+
+
+
 echo "VACUUM ANALYZE"
 /usr/bin/time psql -d ${PGDATABASE} -c "VACUUM ANALYZE;"
