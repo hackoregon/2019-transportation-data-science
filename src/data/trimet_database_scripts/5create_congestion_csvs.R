@@ -1,8 +1,12 @@
+#! /usr/bin/env Rscript
+
+## croak on warning!
+options(warn = 2)
+
 ## load libraries
-if (!require(tidyverse)) install.packages("tidyverse")
+if (!require(tidyverse)) install.packages("tidyverse", quiet = TRUE)
 library(tidyverse)
-setwd("~/Raw")
-source("~/trimet_database_scripts/function_definitions.R")
+source("function_definitions.R")
 
 ## loop over months
 for (i in 1:nrow(month_table)) {
@@ -14,7 +18,7 @@ for (i in 1:nrow(month_table)) {
   ))
   gc(full = TRUE, verbose = TRUE)
   trimet_stop_events <- load_csv(
-    paste("data/raw", month_table$input_file[i], sep = "/")
+    paste("~/Raw", month_table$input_file[i], sep = "/")
   )
   gc(full = TRUE, verbose = TRUE)
 

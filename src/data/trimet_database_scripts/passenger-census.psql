@@ -1,5 +1,7 @@
 \connect "transportation-systems-trimet"
 
+DROP TABLE IF EXISTS passenger_census;
+
 CREATE TABLE passenger_census (
   summary_begin_date date,
   route_number integer,
@@ -15,7 +17,7 @@ CREATE TABLE passenger_census (
 );
 ALTER TABLE passenger_census OWNER TO "transportation-systems";
 
-\copy passenger_census from '/home/dbsuper/Raw/passenger_census.csv' with csv header
+\copy passenger_census from '~/Raw/passenger_census.csv' with csv header
 
 ALTER TABLE passenger_census ADD COLUMN geom_2913 geometry;
 UPDATE passenger_census
@@ -26,3 +28,6 @@ ALTER TABLE passenger_census
   ADD COLUMN id serial;
 ALTER TABLE passenger_census
   ADD CONSTRAINT passenger_census_pkey PRIMARY KEY (id);
+
+-- VACUUM ANALYZE
+VACUUM ANALYZE;
