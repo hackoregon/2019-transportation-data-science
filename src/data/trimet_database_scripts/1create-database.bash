@@ -10,4 +10,4 @@ createuser ${DBOWNER} || true
 echo "Creating fresh database ${PGDATABASE} - ignore error if it doesn't exist"
 dropdb ${PGDATABASE} || true
 createdb --owner=${DBOWNER} ${PGDATABASE}
-psql -d ${PGDATABASE} -c "CREATE EXTENSION postgis CASCADE;"
+psql -U ${DBOWNER} -d ${PGDATABASE} -c "CREATE EXTENSION postgis CASCADE;"

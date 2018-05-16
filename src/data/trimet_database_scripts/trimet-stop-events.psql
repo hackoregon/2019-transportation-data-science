@@ -1,4 +1,4 @@
-\connect "transportation-systems-trimet"
+\connect "transportation-systems-main"
 
 DROP TABLE IF EXISTS trimet_stop_events;
 
