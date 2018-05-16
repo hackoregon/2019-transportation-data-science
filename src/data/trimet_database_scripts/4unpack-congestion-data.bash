@@ -2,7 +2,7 @@
 
 # define parameters
 export DBOWNER=transportation-systems
-export PGDATABASE=transportation-systems-trimet
+export PGDATABASE=transportation-systems-main
 
 pushd ~/Raw
 echo "Unpacking the raw data archive"

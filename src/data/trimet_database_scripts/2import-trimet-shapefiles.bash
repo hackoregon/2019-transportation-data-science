@@ -2,7 +2,7 @@
 
 # define parameters
 export DBOWNER=transportation-systems
-export PGDATABASE=transportation-systems-trimet
+export PGDATABASE=transportation-systems-main
 
 echo "Importing TriMet shapefiles"
 pushd ~/Raw

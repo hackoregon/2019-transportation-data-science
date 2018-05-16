@@ -2,7 +2,7 @@
 
 # define parameters
 export DBOWNER=transportation-systems
-export PGDATABASE=transportation-systems-trimet
+export PGDATABASE=transportation-systems-main
 
 # create a fresh database
 echo "Creating database user ${DBOWNER} - ignore error if it already exists"
