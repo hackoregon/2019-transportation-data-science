@@ -1,0 +1,105 @@
+---
+title: "Load Transit Operations Analytics Data"
+author: M. Edward (Ed) Borasky
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Connect to PostgreSQL
+```{r}
+connection <- DBI::dbConnect(
+  drv = RPostgres::Postgres(),
+  user = Sys.getenv("PGUSER"),
+  password = Sys.getenv("PGPASS"),
+  host = Sys.getenv("PGHOST"),
+  port = Sys.getenv("PGPORT"),
+  dbname = "postgres"
+)
+
+```
+
+## Create a database
+```{r}
+DBI::dbExecute(
+  connection,
+  "DROP DATABASE IF EXISTS transit_operations_analytics_data"
+)
+DBI::dbExecute(
+  connection, 
+  "CREATE DATABASE transit_operations_analytics_data TABLESPACE spinning"
+)
+DBI::dbDisconnect(connection)
+
+```
+
+## Connect to it
+```{r}
+connection <- DBI::dbConnect(
+  drv = RPostgres::Postgres(),
+  user = Sys.getenv("PGUSER"),
+  password = Sys.getenv("PGPASS"),
+  host = Sys.getenv("PGHOST"),
+  port = Sys.getenv("PGPORT"),
+  dbname = "transit_operations_analytics_data"
+)
+
+```
+
+## Main loop
+```{r}
+tables <- c(
+  "init_cyclic_v1h",
+  "init_veh_stoph",
+  "trimet_stop_event",
+  "init_tripsh"
+)
+months <- c(
+  "1-30SEP2017",
+  "1-31OCT2017",
+  "1-30NOV2017",
+  "1-30APR2018",
+  "1-31MAY2018"
+)
+data_directory <- 
+  "/home/znmeb/Raw/transportation-2018/transit-operations-analytics-data"
+
+for (table in tables) {
+  for (month in months) {
+    file_name <- paste(
+      data_directory,
+      paste(table, " ", month, ".csv", sep = ""),
+      sep = "/"
+    )
+    temp_data <- data.table::fread(file = file_name, nrows = 100)
+    colnames(temp_data) <- snakecase::to_snake_case(colnames(temp_data))
+    
+    # create the table when reading the first month
+    if (month == "1-30SEP2017") {
+      DBI::dbCreateTable(
+        connection,
+        table,
+        temp_data
+      )
+    }
+    
+    # send the data
+    DBI::dbAppendTable(
+      connection,
+      table,
+      temp_data
+    )
+    
+    # reclaim RAM!
+    rm(temp_data); gc()
+  }
+}
+
+DBI::dbListTables(connection)
+DBI::dbDisconnect(connection)
+
+```
+
