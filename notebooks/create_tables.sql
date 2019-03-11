@@ -100,7 +100,7 @@ CREATE TABLE trimet_stop_event
     estimated_load integer,
     maximum_speed integer,
     train_mileage real,
-    pattern_distance integer,
+    pattern_distance real,
     location_distance real,
     x_coordinate real,
     y_coordinate real,
