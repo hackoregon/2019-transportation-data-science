@@ -1,16 +1,4 @@
----
-title: "Extract Transit Operations Analytics Data"
-author: M. Edward (Ed) Borasky
-output: html_notebook
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-```
-
-## Check and unpack the archives
-```{bash}
+#! /bin/bash
 
 # checksum input archives
 pushd "/home/znmeb/Raw/transportation-2018/transit-operations-analytics-data"
@@ -24,5 +12,3 @@ unrar x scrapes.rar "*.csv"
 unrar x April\ 2018.rar "*.csv"
 unrar x May\ 2018.rar
 popd
-
-```
