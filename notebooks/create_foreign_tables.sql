@@ -14,7 +14,7 @@ CREATE FOREIGN TABLE init_cyclic_v1h
     gps_satellites integer,
     gps_hdop real
 ) SERVER transit_operations_analytics_data
-OPTIONS ( filename '/Raw/init_cyclic_v1h.csv', format 'csv' );
+OPTIONS ( filename '/csvs/init_cyclic_v1h.csv', format 'csv' );
 
 CREATE FOREIGN TABLE init_tripsh
 (
@@ -47,7 +47,7 @@ CREATE FOREIGN TABLE init_tripsh
     trip_subrole text,
     trip_purpose text
 ) SERVER transit_operations_analytics_data
-OPTIONS ( filename '/Raw/init_tripsh.csv', format 'csv' );
+OPTIONS ( filename '/csvs/init_tripsh.csv', format 'csv' );
 
 CREATE FOREIGN TABLE init_veh_stoph
 (
@@ -78,7 +78,7 @@ CREATE FOREIGN TABLE init_veh_stoph
     point_action text,
     plan_status text
 ) SERVER transit_operations_analytics_data
-OPTIONS ( filename '/Raw/init_veh_stoph.csv', format 'csv' );
+OPTIONS ( filename '/csvs/init_veh_stoph.csv', format 'csv' );
 
 CREATE FOREIGN TABLE trimet_stop_event
 (
@@ -109,4 +109,4 @@ CREATE FOREIGN TABLE trimet_stop_event
     data_source integer,
     schedule_status integer
 ) SERVER transit_operations_analytics_data
-OPTIONS ( filename '/Raw/trimet_stop_event.csv', format 'csv' );
+OPTIONS ( filename '/csvs/trimet_stop_event.csv', format 'csv' );
