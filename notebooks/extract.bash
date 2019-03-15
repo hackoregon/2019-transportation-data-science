@@ -13,6 +13,6 @@ rm *.csv *.xlsx *.txt
 /usr/bin/time unrar x May\ 2018.rar
 for file in *.csv *.txt
 do
-  /usr/bin/time dos2unix ${file}
+  /usr/bin/time dos2unix "${file}"
 done
 popd
