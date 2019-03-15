@@ -1,5 +1,4 @@
 #! /bin/bash
 
-psql -d postgres -f create_database.sql
-psql -d transit_operations_analytics_data -f create_tables.sql
-/usr/bin/time psql -d transit_operations_analytics_data -f copy_tables.sql
+psql -p 5440 -d postgres -f create_database.sql
+psql -p 5440 -d transit_operations_analytics_data -f create_foreign_tables.sql
