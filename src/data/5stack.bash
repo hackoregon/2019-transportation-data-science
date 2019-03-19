@@ -1,7 +1,7 @@
 #! /bin/bash
 
+DEST=/csvs
 pushd "/home/znmeb/Raw/transportation-2018/transit-operations-analytics-data"
-DEST=/home/csvs
 
 # concatenate
 echo "stacking init_veh_stoph"
