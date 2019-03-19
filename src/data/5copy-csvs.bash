@@ -8,3 +8,5 @@ echo "Creating the tables"
 /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f create_tables.sql
 echo "Copying the CSVs to PostGIS"
 /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f copy_tables.sql
+echo "Creating date stamps"
+/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f fix_dates.sql
