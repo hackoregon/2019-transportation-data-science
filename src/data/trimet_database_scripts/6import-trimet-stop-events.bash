@@ -1,8 +1,8 @@
 #! /bin/bash
 
 # define parameters
-export DBOWNER=transportation-systems
-export PGDATABASE=transportation-systems-main
+export DBOWNER=postgres
+export PGDATABASE=transit_operations_analytics_data
 
-echo "Creating the 'trimet_stop_events' (congestion data) table"
-/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f trimet-stop-events.psql
+echo "Importing the CSVs to PostGIS"
+/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f copy_tables.sql
