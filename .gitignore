@@ -82,3 +82,4 @@ target/
 .R*
 .Rproj.user
 *.html
+.DS_Store
