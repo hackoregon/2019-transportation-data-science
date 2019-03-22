@@ -30,3 +30,6 @@ psql -U ${DBOWNER} -d ${PGDATABASE} -c "CREATE EXTENSION postgis CASCADE;"
 /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f create_tables.sql \
  -v init_veh_stoph=y2018_m05_init_veh_stoph -v init_veh_stoph_csv="'/csvs/init_veh_stoph 1-31MAY2018.csv'" \
  -v trimet_stop_event=y2018_m05_trimet_stop_event -v trimet_stop_event_csv="'/csvs/trimet_stop_event 1-31MAY2018.csv'"
+
+echo "VACUUM ANALYZE"
+psql -U ${DBOWNER} -d ${PGDATABASE} -c "VACUUM ANALYZE;"
