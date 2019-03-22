@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS init_veh_stoph;
-CREATE TABLE init_veh_stoph
+DROP TABLE IF EXISTS :init_veh_stoph;
+CREATE TABLE :init_veh_stoph
 (
     event_no integer,
     event_no_trip integer,
@@ -29,8 +29,8 @@ CREATE TABLE init_veh_stoph
     plan_status text
 );
 
-DROP TABLE IF EXISTS trimet_stop_event;
-CREATE TABLE trimet_stop_event
+DROP TABLE IF EXISTS :trimet_stop_event;
+CREATE TABLE :trimet_stop_event
 (
     service_date text,
     vehicle_number integer,
@@ -59,3 +59,5 @@ CREATE TABLE trimet_stop_event
     data_source integer,
     schedule_status integer
 );
+COPY :init_veh_stoph FROM :init_veh_stoph_csv WITH csv header;
+COPY :trimet_stop_event FROM :trimet_stop_event_csv WITH csv header;
