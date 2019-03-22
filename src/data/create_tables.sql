@@ -1,3 +1,38 @@
+-- trips history
+DROP TABLE IF EXISTS :init_tripsh;
+CREATE TABLE :init_tripsh (
+    opd_date text,
+    vehicle_id integer,
+    master_id text,
+    event_no integer,
+    event_no_course integer,
+    meters integer,
+    act_dep_time integer,
+    nom_dep_time integer,
+    nom_end_time integer,
+    act_end_time integer,
+    line_id integer,
+    course_id integer,
+    trip_id integer,
+    pattern_id integer,
+    pattern_direction text,
+    trip_type integer,
+    highway_type text,
+    pattern_quality integer,
+    block_id integer,
+    passenger_data integer,
+    time_grp_id integer,
+    trip_code integer,
+    driver_id integer,
+    data_source integer,
+    is_additional_trip integer,
+    trip_role text,
+    trip_subrole text,
+    trip_purpose text
+);
+COPY :init_tripsh FROM :init_tripsh_csv WITH csv header;
+
+-- vehicle stop history
 DROP TABLE IF EXISTS :init_veh_stoph;
 CREATE TABLE :init_veh_stoph
 (
@@ -28,7 +63,9 @@ CREATE TABLE :init_veh_stoph
     point_action text,
     plan_status text
 );
+COPY :init_veh_stoph FROM :init_veh_stoph_csv WITH csv header;
 
+-- trimet stop event
 DROP TABLE IF EXISTS :trimet_stop_event;
 CREATE TABLE :trimet_stop_event
 (
@@ -59,5 +96,41 @@ CREATE TABLE :trimet_stop_event
     data_source integer,
     schedule_status integer
 );
-COPY :init_veh_stoph FROM :init_veh_stoph_csv WITH csv header;
 COPY :trimet_stop_event FROM :trimet_stop_event_csv WITH csv header;
+
+-- delete unwanted rows
+DELETE FROM :trimet_stop_event
+  WHERE service_key IS NULL 
+  OR route_number IS NULL
+  OR service_key != 'W'
+  OR route_number > 291
+  OR route_number < 1
+;
+
+-- drop unwanted columns
+ALTER TABLE :trimet_stop_event DROP COLUMN IF EXISTS badge;
+ALTER TABLE :trimet_stop_event DROP COLUMN IF EXISTS maximum_speed;
+ALTER TABLE :trimet_stop_event DROP COLUMN IF EXISTS pattern_distance;
+ALTER TABLE :trimet_stop_event DROP COLUMN IF EXISTS location_distance;
+ALTER TABLE :trimet_stop_event DROP COLUMN IF EXISTS data_source;
+ALTER TABLE :trimet_stop_event DROP COLUMN IF EXISTS schedule_status;
+
+-- make a usable date stamp
+ALTER TABLE :trimet_stop_event ADD COLUMN date_stamp date;
+UPDATE :trimet_stop_event SET date_stamp = to_date(service_date, 'DDMONYY');
+ALTER TABLE :trimet_stop_event DROP COLUMN IF EXISTS service_date;
+
+-- index the variables that define events
+CREATE INDEX ON :trimet_stop_event (date_stamp);
+CREATE INDEX ON :trimet_stop_event (vehicle_number);
+CREATE INDEX ON :trimet_stop_event (leave_time);
+CREATE INDEX ON :trimet_stop_event (route_number);
+CREATE INDEX ON :trimet_stop_event (direction);
+CREATE INDEX ON :trimet_stop_event (arrive_time);
+CREATE INDEX ON :trimet_stop_event (location_id);
+
+-- add geometry column and index
+ALTER TABLE :trimet_stop_event ADD COLUMN geom_point_4326 geometry;
+UPDATE :trimet_stop_event
+  SET geom_point_4326 = ST_Transform(ST_SetSRID(ST_Point(x_coordinate, y_coordinate), 2913), 4326);
+CREATE INDEX ON :trimet_stop_event USING GIST (geom_point_4326);
