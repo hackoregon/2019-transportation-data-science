@@ -1,10 +1,22 @@
 \echo deleting unwanted rows
 DELETE FROM :trimet_stop_event
   WHERE service_key IS NULL 
-  OR route_number IS NULL
   OR service_key != 'W'
+  OR route_number IS NULL
   OR route_number > 291
   OR route_number < 1
+;
+-- MAX, Portland Streetcar and Aerial Tram
+DELETE FROM :trimet_stop_event
+  WHERE route_number = 90
+  OR route_number = 100
+  OR route_number = 190
+  OR route_number = 193
+  OR route_number = 194
+  OR route_number = 195
+  OR route_number = 200
+  OR route_number = 208
+  OR route_number = 290
 ;
 
 \echo dropping unwanted columns
