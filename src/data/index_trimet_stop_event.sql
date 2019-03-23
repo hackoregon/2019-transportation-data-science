@@ -1,22 +1,10 @@
 \echo deleting unwanted rows
 DELETE FROM :trimet_stop_event
   WHERE service_key IS NULL 
-  OR service_key != 'W'
+  OR NOT (service_key = 'W' OR service_key = 'A')
   OR route_number IS NULL
   OR route_number > 291
   OR route_number < 1
-;
--- MAX, Portland Streetcar and Aerial Tram
-DELETE FROM :trimet_stop_event
-  WHERE route_number = 90
-  OR route_number = 100
-  OR route_number = 190
-  OR route_number = 193
-  OR route_number = 194
-  OR route_number = 195
-  OR route_number = 200
-  OR route_number = 208
-  OR route_number = 290
 ;
 
 \echo dropping unwanted columns
@@ -42,4 +30,5 @@ CREATE INDEX ON :trimet_stop_event (arrive_time);
 CREATE INDEX ON :trimet_stop_event (location_id);
 
 \echo adding primary key
-ALTER TABLE :trimet_stop_event ADD PRIMARY KEY (date_stamp, vehicle_number, arrive_time);
+ALTER TABLE :trimet_stop_event ADD PRIMARY KEY 
+  (date_stamp, vehicle_number, route_number, direction, arrive_time, leave_time);
