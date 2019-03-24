@@ -3,6 +3,7 @@
 \echo defined as a specific vehicle on a specific service date traversing a
 \echo specific route in a specific direction from its arrival at its first
 \echo stop to its departure from its last stop.
+SET search_path TO trimet_stop_event, public;
 DROP TABLE IF EXISTS :runs_table;
 CREATE TABLE :runs_table AS
 SELECT DISTINCT 
@@ -12,3 +13,8 @@ SELECT DISTINCT
 FROM :trimet_stop_event
 GROUP BY date_stamp, route_number, direction, trip_number, vehicle_number
 ORDER BY date_stamp, route_number, direction, first;
+CREATE INDEX ON :runs_table (date_stamp);
+CREATE INDEX ON :runs_table (first);
+CREATE INDEX ON :runs_table (last);
+CREATE INDEX ON :runs_table (trip_number);
+CREATE INDEX ON :runs_table (vehicle_number);

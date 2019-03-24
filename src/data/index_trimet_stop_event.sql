@@ -1,4 +1,5 @@
 \echo deleting unwanted rows
+SET search_path TO trimet_stop_event, public;
 DELETE FROM :trimet_stop_event
   WHERE service_key IS NULL 
   OR NOT (service_key = 'W' OR service_key = 'A')
@@ -32,3 +33,8 @@ CREATE INDEX ON :trimet_stop_event (location_id);
 \echo adding primary key
 ALTER TABLE :trimet_stop_event ADD PRIMARY KEY 
   (date_stamp, vehicle_number, route_number, direction, arrive_time, leave_time);
+-- \echo adding indexed geometry column
+-- ALTER TABLE :trimet_stop_event ADD COLUMN geom_point_4326 geometry;
+-- UPDATE :trimet_stop_event
+  -- SET geom_point_4326 = ST_Transform(ST_SetSRID(ST_Point(x_coordinate, y_coordinate), 2913), 4326);
+-- CREATE INDEX ON :trimet_stop_event USING GIST (geom_point_4326);
