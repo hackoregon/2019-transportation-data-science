@@ -11,14 +11,12 @@ dropdb ${PGDATABASE} || true
 createdb --owner=${DBOWNER} ${PGDATABASE}
 echo "Creating 'postgis' extension"
 psql -U ${DBOWNER} -d ${PGDATABASE} -c "CREATE EXTENSION postgis CASCADE;"
-psql -U ${DBOWNER} -d ${PGDATABASE} -c "DROP SCHEMA IF EXISTS trimet_stop_event CASCADE;"
-psql -U ${DBOWNER} -d ${PGDATABASE} -c "CREATE SCHEMA trimet_stop_event;"
 
 /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f trimet_stop_event.sql \
- -v trimet_stop_event=y2017_m09_trimet_stop_event -v trimet_stop_event_csv="'/csvs/trimet_stop_event 1-30SEP2017.csv'"
+ -v schema=y2017_m09 -v trimet_stop_event_csv="'/csvs/trimet_stop_event 1-30SEP2017.csv'"
 
 /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f trimet_stop_event.sql \
- -v trimet_stop_event=y2017_m10_trimet_stop_event -v trimet_stop_event_csv="'/csvs/trimet_stop_event 1-31OCT2017.csv'"
+ -v schema=y2017_m10 -v trimet_stop_event_csv="'/csvs/trimet_stop_event 1-31OCT2017.csv'"
 
 /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f trimet_stop_event.sql \
- -v trimet_stop_event=y2017_m11_trimet_stop_event -v trimet_stop_event_csv="'/csvs/trimet_stop_event 1-30NOV2017.csv'"
+ -v schema=y2017_m11 -v trimet_stop_event_csv="'/csvs/trimet_stop_event 1-30NOV2017.csv'"

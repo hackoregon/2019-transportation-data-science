@@ -1,9 +1,11 @@
 \echo creating trimet stop event
-SET search_path TO trimet_stop_event, public;
-DROP TABLE IF EXISTS :trimet_stop_event;
-CREATE TABLE :trimet_stop_event
+DROP SCHEMA IF EXISTS :schema CASCADE;
+CREATE SCHEMA :schema;
+SET search_path TO :schema, public;
+DROP TABLE IF EXISTS trimet_stop_event;
+CREATE TABLE trimet_stop_event
 (
-  service_date text,
+  service_date date,
   vehicle_number integer,
   leave_time integer,
   train integer,
@@ -30,4 +32,4 @@ CREATE TABLE :trimet_stop_event
   data_source integer,
   schedule_status integer
 );
-COPY :trimet_stop_event FROM :trimet_stop_event_csv WITH csv header;
+COPY trimet_stop_event FROM :trimet_stop_event_csv WITH csv header;
