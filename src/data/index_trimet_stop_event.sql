@@ -9,11 +9,12 @@ DELETE FROM trimet_stop_event
   OR route_number < 1
 ;
 
-\echo indexing the variables that define events
+\echo indexing
 CREATE INDEX ON trimet_stop_event (service_date);
 CREATE INDEX ON trimet_stop_event (vehicle_number);
 CREATE INDEX ON trimet_stop_event (leave_time);
 CREATE INDEX ON trimet_stop_event (route_number);
 CREATE INDEX ON trimet_stop_event (direction);
+CREATE INDEX ON trimet_stop_event (stop_time);
 CREATE INDEX ON trimet_stop_event (arrive_time);
 CREATE INDEX ON trimet_stop_event (location_id);
