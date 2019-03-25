@@ -18,3 +18,8 @@ CREATE INDEX ON runs_table (first);
 CREATE INDEX ON runs_table (last);
 CREATE INDEX ON runs_table (trip_number);
 CREATE INDEX ON runs_table (vehicle_number);
+\echo computing weekday list for filtering disturbance stops
+CREATE TABLE weekdays AS
+SELECT DISTINCT service_date FROM runs_table
+ORDER BY service_date;
+CREATE INDEX ON weekdays (service_date);

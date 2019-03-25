@@ -18,3 +18,7 @@ CREATE INDEX ON trimet_stop_event (direction);
 CREATE INDEX ON trimet_stop_event (stop_time);
 CREATE INDEX ON trimet_stop_event (arrive_time);
 CREATE INDEX ON trimet_stop_event (location_id);
+
+\echo primary key
+ALTER TABLE trimet_stop_event ADD COLUMN pkey serial;
+ALTER TABLE trimet_stop_event ADD PRIMARY KEY (pkey);

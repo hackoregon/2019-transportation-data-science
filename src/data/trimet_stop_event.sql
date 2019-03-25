@@ -24,11 +24,11 @@ CREATE TABLE trimet_stop_event
   offs integer,
   estimated_load integer,
   maximum_speed integer,
-  train_mileage real,
-  pattern_distance real,
-  location_distance real,
-  x_coordinate real,
-  y_coordinate real,
+  train_mileage double precision,
+  pattern_distance double precision,
+  location_distance double precision,
+  x_coordinate double precision,
+  y_coordinate double precision,
   data_source integer,
   schedule_status integer
 );
