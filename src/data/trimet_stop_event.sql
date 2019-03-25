@@ -1,4 +1,4 @@
-\echo
+\echo schema :schema
 \echo creating trimet stop event
 DROP SCHEMA IF EXISTS :schema CASCADE;
 CREATE SCHEMA :schema;

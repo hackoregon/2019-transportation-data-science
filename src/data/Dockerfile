@@ -5,6 +5,7 @@ LABEL maintainer="M. Edward (Ed) Borasky <znmeb@znmeb.net>"
 RUN apt-get update \
   && apt-get install -qqy --no-install-recommends \
     inetutils-ping \
+    nano \
     postgresql-10-cstore-fdw \
     postgresql-10-ogr-fdw \
     postgresql-10-pgrouting \
@@ -14,4 +15,5 @@ RUN apt-get update \
     postgresql-10-postgis-2.5-scripts \
     postgresql-client-10 \
     time \
+    vim-tiny \
   && apt-get clean

@@ -1,3 +1,4 @@
+\echo schema :schema
 \echo creating trips history
 SET search_path TO :schema, public;
 DROP TABLE IF EXISTS init_tripsh;
