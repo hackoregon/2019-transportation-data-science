@@ -1,9 +1,9 @@
 \echo creating trips history
-SET search_path TO init_veh_stoph, public;
-DROP TABLE IF EXISTS :init_tripsh;
-CREATE TABLE :init_tripsh
+SET search_path TO schema, public;
+DROP TABLE IF EXISTS init_tripsh;
+CREATE TABLE init_tripsh
 (
-  opd_date text,
+  opd_date date,
   vehicle_id integer,
   master_id integer,
   event_no integer,
@@ -32,4 +32,4 @@ CREATE TABLE :init_tripsh
   trip_subrole text,
   trip_purpose integer
 );
-COPY :init_tripsh FROM :init_tripsh_csv WITH csv header;
+COPY init_tripsh FROM :init_tripsh_csv WITH csv header;

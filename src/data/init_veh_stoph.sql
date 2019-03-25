@@ -1,12 +1,12 @@
 \echo creating vehicle stop history
-SET search_path TO init_veh_stoph, public;
-DROP TABLE IF EXISTS :init_veh_stoph;
-CREATE TABLE :init_veh_stoph
+SET search_path TO :schema, public;
+DROP TABLE IF EXISTS init_veh_stoph;
+CREATE TABLE init_veh_stoph
 (
   event_no integer,
   event_no_trip integer,
   event_no_prev integer,
-  opd_date text,
+  opd_date date,
   vehicle_id integer,
   master_id text,
   meters integer,
@@ -30,4 +30,4 @@ CREATE TABLE :init_veh_stoph
   point_action text,
   plan_status text
 );
-COPY :init_veh_stoph FROM :init_veh_stoph_csv WITH csv header;
+COPY init_veh_stoph FROM :init_veh_stoph_csv WITH csv header;
