@@ -13,11 +13,6 @@ CREATE INDEX ON init_veh_stoph (nom_arr_time);
 CREATE INDEX ON init_veh_stoph (nom_dep_time);
 CREATE INDEX ON init_veh_stoph (point_id);
 
-\echo geotagging
-ALTER TABLE init_veh_stoph ADD COLUMN geom_point_4326 geometry;
-UPDATE init_veh_stoph
-SET geom_point_4326 = ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude));
-
 \echo primary key
 ALTER TABLE init_veh_stoph ADD COLUMN pkey serial;
 ALTER TABLE init_veh_stoph ADD PRIMARY KEY (pkey);
