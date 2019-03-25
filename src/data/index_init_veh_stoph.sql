@@ -1,6 +1,5 @@
-SET search_path TO :schema, public;
-
 \echo indexing
+SET search_path TO :schema, public;
 CREATE INDEX ON init_veh_stoph (opd_date);
 CREATE INDEX ON init_veh_stoph (vehicle_id);
 CREATE INDEX ON init_veh_stoph (event_no_trip);
