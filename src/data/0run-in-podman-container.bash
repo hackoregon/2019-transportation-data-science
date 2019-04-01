@@ -14,6 +14,7 @@ podman exec --user=root postgisc chown -R postgres:postgres /src
 echo "Chowning the input CSVs"
 podman exec --user=root postgisc chown -R postgres:postgres /csvs
 echo "Loading the database"
+sleep 30
 podman exec --user=postgres --workdir=/src postgisc /src/2load.bash
 echo "Backing up the database"
 podman exec --user=postgres --workdir=/src postgisc /src/9create-database-backup.bash
