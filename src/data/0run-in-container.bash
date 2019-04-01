@@ -3,6 +3,8 @@
 echo "Building the image"
 docker build --tag postgis:latest .
 docker images
+echo "Force-removing existing containers"
+docker rm -f `docker ps -aq`
 echo "Running the container"
 docker run --detach --rm --name=postgisc postgis
 docker ps
