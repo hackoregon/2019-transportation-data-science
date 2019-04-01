@@ -10,9 +10,9 @@ docker run --detach --rm --name=postgisc --volume /csvs:/csvs postgis
 docker ps
 echo "Copying the scripts"
 docker cp . postgisc:/src
-docker exec postgisc chown -R postgres:postgres /src
+docker exec --user=root postgisc chown -R postgres:postgres /src
 echo "Chowning the input CSVs"
-docker exec postgisc chown -R postgres:postgres /csvs
+docker exec --user=root postgisc chown -R postgres:postgres /csvs
 echo "Loading the database"
 docker exec --user=postgres --workdir=/src postgisc /src/2load.bash
 echo "Backing up the database"

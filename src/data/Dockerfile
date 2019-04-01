@@ -14,6 +14,7 @@ RUN apt-get update \
     postgresql-10-postgis-2.5 \
     postgresql-10-postgis-2.5-scripts \
     postgresql-client-10 \
+    postgresql-autodoc \
     time \
     vim-tiny \
   && apt-get clean
