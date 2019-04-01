@@ -10,17 +10,23 @@ dropdb ${PGDATABASE} || true
 createdb --owner=${DBOWNER} ${PGDATABASE}
 echo "Creating 'postgis' extension"
 psql -U ${DBOWNER} -d ${PGDATABASE} -c "CREATE EXTENSION postgis CASCADE;"
-
-for code in 1-30SEP2017:m201709 1-31OCT2017:m201710 1-30NOV2017:m201711 1-30APR2018:m201804 1-31MAY2018:m201805
+for sqlfile in create_*.sql
 do
-  schema=`echo $code|sed 's/^.*://'`
-  csvdate=`echo $code|sed 's/:.*$//'`
-  echo ${schema} ${csvdate}
-
-  /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f trimet_stop_event.sql \
-  -v schema=${schema} -v csvfile="'/csvs/trimet_stop_event ${csvdate}.csv'"
-  /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f init_tripsh.sql \
-  -v schema=${schema} -v csvfile="'/csvs/init_tripsh ${csvdate}.csv'"
-  /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f init_veh_stoph.sql \
-  -v schema=${schema} -v csvfile="'/csvs/init_veh_stoph ${csvdate}.csv'"
+  psql -U ${DBOWNER} -d ${PGDATABASE} -f ${sqlfile}
 done
+
+for csvdate in 1-30SEP2017 1-31OCT2017 1-30NOV2017 1-30APR2018 1-31MAY2018
+do
+  echo ${csvdate}
+
+  /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f load_trimet_stop_event.sql \
+  -v csvfile="'/csvs/trimet_stop_event ${csvdate}.csv'"
+  /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f load_init_tripsh.sql \
+  -v csvfile="'/csvs/init_tripsh ${csvdate}.csv'"
+  /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f load_init_veh_stoph.sql \
+  -v csvfile="'/csvs/init_veh_stoph ${csvdate}.csv'"
+done
+
+/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f index_trimet_stop_event.sql
+/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f index_init_tripsh.sql
+/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f index_init_veh_stoph.sql
