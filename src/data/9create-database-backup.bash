@@ -8,9 +8,8 @@ export DEST=/csvs
 echo "Vacuuming the database"
 /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -c "VACUUM ANALYZE;"
 echo "Creating the database backup"
-/usr/bin/time pg_dump --format=p --clean --if-exists --create --dbname=${PGDATABASE} | gzip -c \
-  > ${DEST}/${PGDATABASE}.sql.gz
+/usr/bin/time pg_dump --format=c --dbname=${PGDATABASE} \
+  > ${DEST}/${PGDATABASE}.backup
 pushd ${DEST}
-sha512sum ${PGDATABASE}.sql.gz > ${PGDATABASE}.sql.gz.sha512sum
-gzip -dc ${PGDATABASE}.sql.gz | wc -c
+sha512sum ${PGDATABASE}.backup > ${PGDATABASE}.backup.sha512sum
 popd
