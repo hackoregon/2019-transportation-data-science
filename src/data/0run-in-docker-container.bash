@@ -16,7 +16,6 @@ docker exec --user=root postgisc chown -R postgres:postgres /csvs
 echo "Loading the database"
 sleep 30
 docker exec --user=postgres --workdir=/src postgisc /src/2load.bash
-echo "Backing up the database"
 docker exec --user=postgres --workdir=/src postgisc /src/9create-database-backup.bash
 echo "Retrieving the backup"
 docker cp postgisc:/csvs/transit_operations_analytics_data.backup .
