@@ -18,6 +18,9 @@ sleep 30
 docker exec --user=postgres --workdir=/src postgisc /src/2load.bash
 docker exec --user=postgres --workdir=/src postgisc /src/9create-database-backup.bash
 echo "Retrieving the backup"
-docker cp postgisc:/csvs/transit_operations_analytics_data.backup .
-docker cp postgisc:/csvs/transit_operations_analytics_data.backup.sha512sum .
-sha512sum -c transit_operations_analytics_data.backup.sha512sum
+docker cp postgisc:/csvs/transit_operations_analytics_data.sql.gz .
+docker cp postgisc:/csvs/transit_operations_analytics_data.sql.gz.sha512sum .
+sha512sum -c transit_operations_analytics_data.sql.gz.sha512sum
+echo "Retrieving database schema"
+docker exec --user=postgres --workdir=/src/ postgisc postgresql_autodoc -d transit_operations_analytics_data -t html
+docker cp postgisc:/src/transit_operations_analytics_data.html .

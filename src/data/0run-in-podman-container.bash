@@ -18,6 +18,9 @@ sleep 30
 podman exec --user=postgres --workdir=/src postgisc /src/2load.bash
 podman exec --user=postgres --workdir=/src postgisc /src/9create-database-backup.bash
 echo "Retrieving the backup"
-podman cp postgisc:/csvs/transit_operations_analytics_data.backup .
-podman cp postgisc:/csvs/transit_operations_analytics_data.backup.sha512sum .
-sha512sum -c transit_operations_analytics_data.backup.sha512sum
+podman cp postgisc:/csvs/transit_operations_analytics_data.sql.gz .
+podman cp postgisc:/csvs/transit_operations_analytics_data.sql.gz.sha512sum .
+sha512sum -c transit_operations_analytics_data.sql.gz.sha512sum
+echo "Retrieving database schema"
+podman exec --user=postgres --workdir=/src/ postgisc postgresql_autodoc -d transit_operations_analytics_data -t html
+podman cp postgisc:/src/transit_operations_analytics_data.html .
