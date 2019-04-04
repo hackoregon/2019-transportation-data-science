@@ -1,3 +1,7 @@
+\echo parsing dates
+SET timezone = 'PST8PDT';
+ALTER TABLE trimet_stop_event ADD COLUMN date_stamp timestamp with time zone;
+UPDATE trimet_stop_event SET date_stamp = to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS');
 \echo
 \echo deleting unwanted rows
 \echo weekday service key is W for buses and A for MAX!
@@ -10,7 +14,7 @@ DELETE FROM trimet_stop_event
 ;
 \echo
 \echo indexing
-CREATE INDEX ON trimet_stop_event (service_date);
+CREATE INDEX ON trimet_stop_event (date_stamp);
 CREATE INDEX ON trimet_stop_event (vehicle_number);
 CREATE INDEX ON trimet_stop_event (leave_time);
 CREATE INDEX ON trimet_stop_event (route_number);
@@ -25,7 +29,7 @@ ALTER TABLE trimet_stop_event ADD PRIMARY KEY (pkey);
 \echo
 \echo computing weekday list for filtering disturbance stops
 CREATE TABLE weekdays AS
-SELECT DISTINCT service_date FROM trimet_stop_event
-ORDER BY service_date;
-CREATE INDEX ON weekdays (service_date);
-ALTER TABLE weekdays ADD PRIMARY KEY (service_date);
+SELECT DISTINCT date_stamp FROM trimet_stop_event
+ORDER BY date_stamp;
+CREATE INDEX ON weekdays (date_stamp);
+ALTER TABLE weekdays ADD PRIMARY KEY (date_stamp);

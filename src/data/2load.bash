@@ -15,7 +15,8 @@ do
   psql -U ${DBOWNER} -d ${PGDATABASE} -f ${sqlfile}
 done
 
-for csvdate in 1-30SEP2017 1-31OCT2017 1-30NOV2017 1-30APR2018 1-31MAY2018
+#for csvdate in 1-30SEP2017 1-31OCT2017 1-30NOV2017 1-30APR2018 1-31MAY2018
+for csvdate in 1-30SEP2017 1-31OCT2017 1-30NOV2017
 do
   echo ${csvdate}
 

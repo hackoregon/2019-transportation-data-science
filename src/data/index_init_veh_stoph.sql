@@ -1,11 +1,15 @@
+\echo parsing dates
+SET timezone = 'PST8PDT';
+ALTER TABLE init_veh_stoph ADD COLUMN date_stamp timestamp with time zone;
+UPDATE init_veh_stoph SET date_stamp = to_timestamp(opd_date, 'DDMONYYYY:HH24:MI:SS');
 \echo
 \echo deleting unwanted rows
 DELETE FROM init_veh_stoph
-  WHERE opd_date NOT IN (SELECT service_date FROM weekdays)
+  WHERE date_stamp NOT IN (SELECT date_stamp FROM weekdays)
 ;
 \echo
 \echo indexing
-CREATE INDEX ON init_veh_stoph (opd_date);
+CREATE INDEX ON init_veh_stoph (date_stamp);
 CREATE INDEX ON init_veh_stoph (vehicle_id);
 CREATE INDEX ON init_veh_stoph (event_no_trip);
 CREATE INDEX ON init_veh_stoph (act_arr_time);

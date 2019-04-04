@@ -5,7 +5,7 @@ CREATE TABLE init_veh_stoph
   event_no integer,
   event_no_trip integer,
   event_no_prev integer,
-  opd_date date,
+  opd_date text,
   vehicle_id integer,
   master_id text,
   meters integer,

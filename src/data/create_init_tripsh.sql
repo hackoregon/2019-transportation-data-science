@@ -2,7 +2,7 @@
 DROP TABLE IF EXISTS init_tripsh;
 CREATE TABLE init_tripsh
 (
-  opd_date date,
+  opd_date text,
   vehicle_id integer,
   master_id integer,
   event_no integer,
