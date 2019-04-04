@@ -17,4 +17,5 @@ rm *.csv *.xlsx *.txt *.csv_bak
 /usr/bin/time unrar x ${RAW}/scrapes.rar "*.csv"
 /usr/bin/time unrar x ${RAW}/April\ 2018.rar "*.csv"
 /usr/bin/time unrar x ${RAW}/May\ 2018.rar
+rm init_cyclic_v1h*.csv
 popd
