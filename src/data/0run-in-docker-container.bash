@@ -3,7 +3,7 @@
 echo "Building the image"
 docker build --tag postgis:latest .
 docker images
-echo "Force-removing existing containers"
+echo "Force-removing all existing containers"
 docker rm -f `docker ps -aq`
 echo "Running the container"
 docker run --detach --rm --name=postgisc --volume /csvs:/csvs postgis

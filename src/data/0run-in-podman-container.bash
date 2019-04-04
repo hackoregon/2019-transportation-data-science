@@ -3,8 +3,8 @@
 echo "Building the image"
 podman build --tag postgis:latest .
 podman images
-echo "Force-removing existing containers"
-podman rm -f `docker ps -aq`
+echo "Force-removing all existing containers"
+podman rm -f `podman ps -aq`
 echo "Running the container"
 podman run --detach --rm --name=postgisc --volume /csvs:/csvs postgis
 podman ps
