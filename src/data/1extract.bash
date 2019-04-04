@@ -6,16 +6,11 @@ export CSVS=/csvs
 echo "Checksumming raw archives"
 pushd ${RAW}
 /usr/bin/time sha512sum -c scrapes.rar.sha512sum
-/usr/bin/time sha512sum -c April\ 2018.rar.sha512sum
-/usr/bin/time sha512sum -c May\ 2018.rar.sha512sum
 popd
 
 # extract raw CSVs
 echo "Extracting the CSVs"
 pushd ${CSVS}
-rm *.csv *.xlsx *.txt *.csv_bak
-/usr/bin/time unrar x ${RAW}/scrapes.rar "*.csv"
-/usr/bin/time unrar x ${RAW}/April\ 2018.rar "*.csv"
-/usr/bin/time unrar x ${RAW}/May\ 2018.rar
-rm init_cyclic_v1h*.csv
+rm *.csv
+/usr/bin/time unrar x ${RAW}/scrapes.rar "init_tripsh*.csv" "init_veh_stoph*.csv" "trimet_stop_event*.csv"
 popd
