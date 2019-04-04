@@ -21,3 +21,6 @@ CREATE INDEX ON init_veh_stoph (point_id);
 \echo primary key
 ALTER TABLE init_veh_stoph ADD COLUMN pkey serial;
 ALTER TABLE init_veh_stoph ADD PRIMARY KEY (pkey);
+\echo
+\echo vacuuming
+VACUUM ANALYZE init_veh_stoph;

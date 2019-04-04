@@ -27,6 +27,9 @@ CREATE INDEX ON trimet_stop_event (location_id);
 ALTER TABLE trimet_stop_event ADD COLUMN pkey serial;
 ALTER TABLE trimet_stop_event ADD PRIMARY KEY (pkey);
 \echo
+\echo vacuuming
+VACUUM ANALYZE trimet_stop_event;
+\echo
 \echo computing weekday list for filtering disturbance stops
 CREATE TABLE weekdays AS
 SELECT DISTINCT date_stamp FROM trimet_stop_event

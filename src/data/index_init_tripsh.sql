@@ -20,3 +20,6 @@ CREATE INDEX ON init_tripsh (line_id);
 \echo primary key
 ALTER TABLE init_tripsh ADD COLUMN pkey serial;
 ALTER TABLE init_tripsh ADD PRIMARY KEY (pkey);
+\echo
+\echo vacuuming
+VACUUM ANALYZE init_tripsh;
