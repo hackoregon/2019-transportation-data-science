@@ -16,5 +16,6 @@ RUN apt-get update \
     postgresql-client-10 \
     postgresql-autodoc \
     time \
-    vim-tiny \
+    tree \
+    vim-nox \
   && apt-get clean
