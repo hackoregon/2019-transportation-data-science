@@ -6,13 +6,12 @@ docker images
 echo "Force-removing all existing containers"
 docker rm -f `docker ps -aq`
 echo "Running the container"
-docker run --detach --rm --name=postgis-container --volume /csvs:/csvs \
+docker run --detach --rm --name=postgis-container --volume /csvs:/csvs postgis-image \
   -c 'shared_buffers=1024MB' \
   -c 'work_mem=256MB' \
   -c 'maintenance_work_mem=256MB' \
   -c 'checkpoint_timeout=30min' \
-  -c 'max_wal_size=30GB' \
-  postgis-image
+  -c 'max_wal_size=30GB'
 docker ps
 echo "Copying the scripts"
 docker cp . postgis-container:/src
