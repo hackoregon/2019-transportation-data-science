@@ -10,7 +10,9 @@ popd
 
 # extract raw CSVs
 echo "Extracting the CSVs"
+sudo chown -R ${USER}:${USER} ${CSVS}
 pushd ${CSVS}
 rm *.csv
-/usr/bin/time unrar x ${RAW}/scrapes.rar "init_tripsh*.csv" "init_veh_stoph*.csv" "trimet_stop_event*.csv"
+/usr/bin/time unrar x ${RAW}/scrapes.rar \
+  "init_tripsh*.csv" "init_veh_stoph*.csv" "trimet_stop_event*.csv" "init_cyclic_v1h*.csv"
 popd
