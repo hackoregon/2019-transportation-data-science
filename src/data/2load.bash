@@ -25,7 +25,3 @@ do
   /usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f load_init_veh_stoph.sql \
   -v csvfile="'/csvs/init_veh_stoph ${csvdate}.csv'"
 done
-
-/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f index_trimet_stop_event.sql
-/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f index_init_tripsh.sql
-/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f index_init_veh_stoph.sql
