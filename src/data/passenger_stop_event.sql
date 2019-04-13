@@ -32,6 +32,7 @@ ALTER TABLE passenger_stop_event ADD PRIMARY KEY (vehicle_number, date_stamp, ac
 VACUUM ANALYZE passenger_stop_event;
 \echo
 \echo computing weekday list for filtering other tables
+DROP TABLE IF EXISTS weekdays;
 CREATE TABLE weekdays AS
 SELECT DISTINCT date_stamp FROM passenger_stop_event
 ORDER BY date_stamp;
