@@ -12,7 +12,8 @@ SELECT
   to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + arrive_time * interval '1 sec' AS act_arr_time, 
   to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + leave_time * interval '1 sec' AS act_dep_time, 
   vehicle_number, route_number, direction, location_id, 
-  dwell, door, lift, ons, offs, estimated_load, train_mileage
+  dwell, door, lift, ons, offs, estimated_load, train_mileage,
+  nextval('passenger_stops_pkey') AS pkey
 FROM trimet_stop_event
 WHERE service_key = 'W'
 AND route_number IS NOT NULL
@@ -20,7 +21,7 @@ AND route_number <= 291
 AND route_number >= 1;
 \echo
 \echo primary key
-ALTER TABLE passenger_stops ADD PRIMARY KEY (passenger_stops_pkey);
+ALTER TABLE passenger_stops ADD PRIMARY KEY (pkey);
 \echo
 \echo vacuuming
 VACUUM ANALYZE passenger_stops;

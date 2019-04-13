@@ -12,12 +12,13 @@ SELECT
   to_timestamp(opd_date, 'DDMONYYYY:HH24:MI:SS') + act_dep_time * interval '1 sec' AS act_dep_time, 
   event_no_trip, vehicle_id, meters, stop_id, stop_pos, distance_to_next,
   distance_to_trip, doors_opening, stop_type, door_open_time,
-  ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326) AS geom_point_4326
+  ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326) AS geom_point_4326,
+  nextval('stops_pkey') AS pkey
 FROM init_veh_stoph
-WHERE event_no_trip IN (SELECT event_no_trip FROM trips_history);
+WHERE event_no_trip IN (SELECT event_no_trip FROM trips);
 \echo
 \echo primary key
-ALTER TABLE stops ADD PRIMARY KEY (stops_pkey);
+ALTER TABLE stops ADD PRIMARY KEY (pkey);
 \echo
 \echo vacuuming
 VACUUM ANALYZE stops;
