@@ -6,11 +6,6 @@ RUN apt-get update \
   && apt-get install -qqy --no-install-recommends \
     inetutils-ping \
     nano \
-    postgresql-10-cstore-fdw \
-    postgresql-10-ogr-fdw \
-    postgresql-10-pgrouting \
-    postgresql-10-pgrouting-doc \
-    postgresql-10-pgrouting-scripts \
     postgresql-10-postgis-2.5 \
     postgresql-10-postgis-2.5-scripts \
     postgresql-client-10 \
