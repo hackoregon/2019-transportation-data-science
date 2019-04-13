@@ -1,6 +1,7 @@
 \echo creating passenger_stop_event table
 -- there are no entries for MAX in the other tables, just buses
 -- so we can save space by not keeping MAX stop events
+SET timezone = 'PST8PDT';
 DROP TABLE IF EXISTS passenger_stop_event;
 CREATE TABLE passenger_stop_event AS
 SELECT to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') AS date_stamp, 
