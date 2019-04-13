@@ -2,31 +2,25 @@
 -- there are no entries for MAX in the other tables, just buses
 -- so we can save space by not keeping MAX stop events
 SET timezone = 'PST8PDT';
-DROP TABLE IF EXISTS passenger_stops;
+DROP SEQUENCE IF EXISTS passenger_stops_pkey;
+CREATE SEQUENCE passenger_stops_pkey;
+DROP TABLE IF EXISTS passenger_stops CASCADE;
 CREATE TABLE passenger_stops AS
-SELECT to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') AS date_stamp, 
+SELECT 
+  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') AS date_stamp, 
+  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + stop_time * interval '1 sec' AS nom_arr_time, 
+  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + arrive_time * interval '1 sec' AS act_arr_time, 
+  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + leave_time * interval '1 sec' AS act_dep_time, 
   vehicle_number, route_number, direction, location_id, 
-  stop_time AS scheduled_arrive_time, arrive_time AS actual_arrive_time,
-  leave_time, dwell, door, lift, ons, offs, estimated_load, train_mileage, 
-  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326
+  dwell, door, lift, ons, offs, estimated_load, train_mileage
 FROM trimet_stop_event
 WHERE service_key = 'W'
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1;
 \echo
-\echo indexing
-CREATE INDEX ON passenger_stops (date_stamp);
-CREATE INDEX ON passenger_stops (vehicle_number);
-CREATE INDEX ON passenger_stops (route_number, direction);
-CREATE INDEX ON passenger_stops (location_id);
-CREATE INDEX ON passenger_stops (scheduled_arrive_time);
-CREATE INDEX ON passenger_stops (actual_arrive_time);
-CREATE INDEX ON passenger_stops (leave_time);
-CREATE INDEX ON passenger_stops USING GIST (geom_point_4326);
-\echo
 \echo primary key
-ALTER TABLE passenger_stops ADD PRIMARY KEY (vehicle_number, date_stamp, actual_arrive_time);
+ALTER TABLE passenger_stops ADD PRIMARY KEY (passenger_stops_pkey);
 \echo
 \echo vacuuming
 VACUUM ANALYZE passenger_stops;
