@@ -8,6 +8,8 @@ export PGDATABASE=transit_operations_analytics_data
 echo "Creating fresh database ${PGDATABASE} - ignore error if it doesn't exist"
 dropdb ${PGDATABASE} || true
 createdb --owner=${DBOWNER} ${PGDATABASE}
+psql -U ${DBOWNER} -d ${PGDATABASE} -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+
 for sqlfile in create_*.sql
 do
   psql -U ${DBOWNER} -d ${PGDATABASE} -f ${sqlfile}
