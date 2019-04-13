@@ -1,0 +1,87 @@
+---
+title: "JOIN Tests"
+output: html_notebook
+---
+
+## Load data
+```{r}
+library(tidyverse)
+stop_history <- data.table::fread("/csvs/init_veh_stoph 1-30SEP2017.csv") %>% 
+  tibble::as_tibble()
+stop_history$OPD_DATE <- 
+  lubridate::dmy_hms(stop_history$OPD_DATE, tz = "PST8PDT")
+trips_history <- data.table::fread("/csvs/init_tripsh 1-30SEP2017.csv") %>% 
+  tibble::as_tibble()
+trips_history$OPD_DATE <- 
+  lubridate::dmy_hms(trips_history$OPD_DATE, tz = "PST8PDT")
+stop_event <- data.table::fread("/csvs/trimet_stop_event 1-30SEP2017.csv") %>% 
+  tibble::as_tibble()
+stop_event$SERVICE_DATE <- 
+  lubridate::dmy_hms(stop_event$SERVICE_DATE, tz = "PST8PDT")
+
+
+```
+
+## Can we use the trip number EVENT_NO in trips_history as a primary key?
+```{r}
+library(testthat)
+trips_list <- trips_history$EVENT_NO
+test_that("the trip number EVENT_NO can be used as a primary key for trips history", {
+
+  # are there nulls (NAs)?
+  expect_equal(sum(as.numeric(is.na(trips_list))), 0)
+
+  # are the entries unique
+  expect_equal(
+    length(trips_list), length(unique(trips_list))
+  )
+})
+
+# YES!
+```
+
+## Can we use EVENT_NO_TRIP in stop_history as a foreign key?
+```{r}
+# there's a bogus trip number zero in the data :-(
+stop_history <- stop_history %>% dplyr::filter(EVENT_NO_TRIP > 0)
+stop_history_trip_numbers <- stop_history$EVENT_NO_TRIP %>% sort() %>% unique()
+test_that("No nulls and every key exists in parent", {
+  expect_equal(sum(as.numeric(is.na(stop_history_trip_numbers))), 0)
+  expect_equal(length(setdiff(stop_history_trip_numbers, trips_list)), 0)
+})
+
+# YES but we have to drop some bogus rows
+```
+
+## Drop some columns from stop_history and trips_history
+```{r}
+stop_history <- stop_history %>% select(
+  -EVENT_NO,
+  -EVENT_NO_PREV,
+  -MASTER_ID,
+  -PATTERN_IDX,
+  -POINT_ROLE,
+  -POINT_ACTION,
+  -PLAN_STATUS)
+trips_history <- trips_history %>% select(
+  -MASTER_ID,
+  -EVENT_NO_COURSE,
+  -METERS:-ACT_END_TIME,
+  -COURSE_ID:-PATTERN_ID,
+  -TRIP_TYPE:-TRIP_PURPOSE
+)
+```
+
+## Join stop_history and trip history on trip number
+```{r}
+stop_history <- stop_history %>% left_join(trips_history, by = c("EVENT_NO_TRIP" = "EVENT_NO"))
+test_that("the dates and vehicle IDs match", {
+  expect_equal(
+    nrow(
+      stop_history %>% 
+        filter(OPD_DATE.x != OPD_DATE.y | VEHICLE_ID.x != VEHICLE_ID.y)),
+    0
+  )
+})
+```
+
