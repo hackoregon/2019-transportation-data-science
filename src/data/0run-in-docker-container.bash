@@ -1,7 +1,7 @@
 #! /bin/bash
 
 echo "Building the image"
-docker build --tag postgis-image:latest .
+docker build --file=Dockerfile.postgis --tag postgis-image:latest .
 docker images
 echo "Force-removing all existing containers"
 docker rm -f `docker ps -aq`
