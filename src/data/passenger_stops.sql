@@ -22,6 +22,14 @@ AND route_number >= 1;
 \echo primary key
 ALTER TABLE bus_passenger_stops ADD PRIMARY KEY (pkey);
 \echo
+\echo computing weekday list for filtering other tables
+DROP TABLE IF EXISTS weekdays;
+CREATE TABLE weekdays AS
+SELECT DISTINCT to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') AS date_stamp FROM trimet_stop_event
+ORDER BY date_stamp;
+CREATE INDEX ON weekdays (date_stamp);
+ALTER TABLE weekdays ADD PRIMARY KEY (date_stamp);
+\echo
 \echo creating rail_passenger_stops table
 DROP SEQUENCE IF EXISTS rail_passenger_stops_pkey;
 CREATE SEQUENCE rail_passenger_stops_pkey;
@@ -42,11 +50,3 @@ AND route_number <= 291
 AND route_number >= 1;
 \echo primary key
 ALTER TABLE rail_passenger_stops ADD PRIMARY KEY (pkey);
-\echo
-\echo computing weekday list for filtering other tables
-DROP TABLE IF EXISTS weekdays;
-CREATE TABLE weekdays AS
-SELECT DISTINCT date_stamp FROM bus_passenger_stops
-ORDER BY date_stamp;
-CREATE INDEX ON weekdays (date_stamp);
-ALTER TABLE weekdays ADD PRIMARY KEY (date_stamp);

@@ -13,7 +13,7 @@ SELECT vehicle_id, event_no_trip,
   ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326) AS geom_point_4326,
   nextval('bus_all_stops_pkey') AS pkey
 FROM init_veh_stoph
-WHERE event_no_trip IN (SELECT event_no_trip FROM trips);
+WHERE event_no_trip IN (SELECT event_no_trip FROM bus_trips);
 \echo
 \echo primary key
 ALTER TABLE bus_all_stops ADD PRIMARY KEY (pkey);
