@@ -7,7 +7,7 @@ SELECT vehicle_id, event_no AS event_no_trip,
   to_timestamp(opd_date, 'DDMONYYYY:HH24:MI:SS') + act_end_time * interval '1 sec' AS act_end_time, 
   to_timestamp(opd_date, 'DDMONYYYY:HH24:MI:SS') + nom_dep_time * interval '1 sec' AS nom_dep_time, 
   to_timestamp(opd_date, 'DDMONYYYY:HH24:MI:SS') + nom_end_time * interval '1 sec' AS nom_end_time, 
-  meters, line_id, pattern_direction
+  meters, line_id AS route_number, pattern_direction
 FROM init_tripsh
 WHERE to_timestamp(opd_date, 'DDMONYYYY:HH24:MI:SS') IN (SELECT date_stamp FROM weekdays)
 AND pattern_direction IS NOT NULL
