@@ -36,6 +36,11 @@ The current implementation's application and database docker images were generat
 
 2019 update: this is an interim hack, not the finished project! I started with last year's Disaster Resilience repo and modified stuff for the new database. There will be kittens and unicorns later. znmeb
 
+Changes so far:
+1. New database - code to make it is in ../data.
+2. New environment variable file - toad.env
+3. Development DB container updated to PostgreSQL 10 / PostGIS 2.5, and pgRouting has been removed.
+
 ## Major Contributors
 
 * Nathan Miller ([nam20485](https://github.com/nam20485))
