@@ -1,0 +1,21 @@
+version: '3.4'
+services:
+  disaster-resilience-service:
+    build:
+      context: .
+      dockerfile: DOCKERFILE.api.production
+    image: $DOCKER_IMAGE
+    command: ./bin/production-docker-entrypoint.sh
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - PROJECT_NAME
+      - DEBUG=False
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_NAME=${POSTGRES_NAME}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
