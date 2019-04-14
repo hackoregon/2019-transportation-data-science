@@ -25,7 +25,9 @@ ALTER TABLE bus_passenger_stops ADD PRIMARY KEY (pkey);
 \echo computing weekday list for filtering other tables
 DROP TABLE IF EXISTS weekdays;
 CREATE TABLE weekdays AS
-SELECT DISTINCT to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') AS date_stamp FROM trimet_stop_event
+SELECT DISTINCT to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') AS date_stamp
+FROM trimet_stop_event
+WHERE service_key = 'W'
 ORDER BY date_stamp;
 CREATE INDEX ON weekdays (date_stamp);
 ALTER TABLE weekdays ADD PRIMARY KEY (date_stamp);
