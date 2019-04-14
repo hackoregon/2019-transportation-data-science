@@ -34,7 +34,7 @@ This repo represents the work of many members of the Hack Oregon project team. T
 
 The current implementation's application and database docker images were generated from the [backend-exemplar-2018](https://github.com/hackoregon/backend-exemplar-2018) repo, which is based on the [transportation-system-backend](https://github.com/hackoregon/transportation-system-backend) and [passenger_census_api](https://github.com/hackoregon/passenger_census_api) repos. The database structure is an implementation of the PostGIS container from the [data-science-pet-containers](https://github.com/hackoregon/data-science-pet-containers) repo.
 
-2019 update: this is an interim hack, not the finished project! There will be kittens and unicorns later.
+2019 update: this is an interim hack, not the finished project! I started with last year's Disaster Resilience repo and modified stuff for the new database. There will be kittens and unicorns later. znmeb
 
 ## Major Contributors
 
