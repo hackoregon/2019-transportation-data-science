@@ -11,6 +11,7 @@ services:
       - POSTGRES_PASSWORD=${DEVELOPMENT_POSTGRES_PASSWORD}
       - DATABASE_OWNER=${DEVELOPMENT_DATABASE_OWNER}
       - TEAM_PASSWORD=${DEVELOPMENT_TEAM_PASSWORD}
+    command: [ "postgres", "-c", "shared_buffers=1024MB", "-c", "work_mem=256MB", "-c", "maintenance_work_mem=256MB", "-c", "checkpoint_timeout=20min", "-c", "max_wal_size=4GB" ]
   api_development:
     build:
       context: .
