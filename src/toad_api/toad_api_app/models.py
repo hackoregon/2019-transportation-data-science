@@ -90,7 +90,7 @@ class BusAllStops(models.Model):
     doors_opening = models.IntegerField(blank=True, null=True)
     stop_type = models.IntegerField(blank=True, null=True)
     door_open_time = models.IntegerField(blank=True, null=True)
-    geom_point_4326 = models.GeometryField(srid=0, blank=True, null=True)
+    geom_point_4326 = models.GeometryField(srid=4326, blank=True, null=True)
     pkey = models.BigIntegerField(primary_key=True)
 
     class Meta:
@@ -114,7 +114,7 @@ class BusPassengerStops(models.Model):
     offs = models.IntegerField(blank=True, null=True)
     estimated_load = models.IntegerField(blank=True, null=True)
     train_mileage = models.FloatField(blank=True, null=True)
-    geom_point_4326 = models.GeometryField(srid=0, blank=True, null=True)
+    geom_point_4326 = models.GeometryField(srid=4326, blank=True, null=True)
     pkey = models.BigIntegerField(primary_key=True)
 
     class Meta:
@@ -199,7 +199,7 @@ class RailPassengerStops(models.Model):
     offs = models.IntegerField(blank=True, null=True)
     estimated_load = models.IntegerField(blank=True, null=True)
     train_mileage = models.FloatField(blank=True, null=True)
-    geom_point_4326 = models.GeometryField(srid=0, blank=True, null=True)
+    geom_point_4326 = models.GeometryField(srid=4326, blank=True, null=True)
     pkey = models.BigIntegerField(primary_key=True)
 
     class Meta:
