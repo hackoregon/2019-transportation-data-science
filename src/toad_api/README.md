@@ -41,3 +41,6 @@ constructed from TriMet CSV files rather than via Django operations:
 ```
 python manage.py inspectdb > models.py
 ```
+
+This produces a preliminary set of models. At the moment it seems to be mostly OK with one exception - it thinks the
+SRID of the `geom_point_4326` columns is zero, when it is actually 4326.
