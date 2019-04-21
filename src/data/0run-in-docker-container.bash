@@ -1,6 +1,6 @@
 #! /bin/bash
 
-export HOST_RAW=c:/Users/znmeb/Projects/transportation-congestion-analysis/data/raw
+export HOST_RAW=/csvs
 echo "Building the PostGIS image"
 docker build --file=Dockerfile.postgis --tag=postgis-image:latest .
 docker images
