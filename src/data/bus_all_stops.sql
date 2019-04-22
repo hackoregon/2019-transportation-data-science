@@ -16,6 +16,8 @@ SELECT vehicle_id, to_date(opd_date, 'DDMONYYYY:HH24:MI:SS') AS opd_date,
   nextval('bus_all_stops_pkey') AS pkey
 FROM init_veh_stoph
 WHERE event_no_trip IN (SELECT event_no_trip FROM bus_trips);
+\echo fixing SRID
+SELECT UpdateGeometrySRID('bus_all_stops', 'geom_point_4326', 4326);
 \echo
 \echo primary key
 ALTER TABLE bus_all_stops ADD PRIMARY KEY (pkey);

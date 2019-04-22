@@ -19,6 +19,8 @@ WHERE service_key = 'W'
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1;
+\echo fixing SRID
+SELECT UpdateGeometrySRID('bus_passenger_stops', 'geom_point_4326', 4326);
 \echo primary key
 ALTER TABLE bus_passenger_stops ADD PRIMARY KEY (pkey);
 \echo
@@ -49,5 +51,7 @@ WHERE service_key = 'A'
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1;
+\echo fixing SRID
+SELECT UpdateGeometrySRID('rail_passenger_stops', 'geom_point_4326', 4326);
 \echo primary key
 ALTER TABLE rail_passenger_stops ADD PRIMARY KEY (pkey);
