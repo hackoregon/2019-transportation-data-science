@@ -1,0 +1,74 @@
+---
+title: "JOIN Tests"
+output: html_notebook
+---
+
+## Load data
+```{r}
+library(tidyverse)
+stop_history <- data.table::fread("/csvs/1 init_veh_stoph July 2018 to Dec 2018.csv") %>% 
+  tibble::as_tibble()
+gc(verbose = TRUE)
+stop_history$OPD_DATE <- 
+  lubridate::dmy_hms(stop_history$OPD_DATE, tz = "PST8PDT")
+gc(verbose = TRUE)
+trips_history <- data.table::fread("/csvs/1 init_tripsh July 2018 to Dec 2018.csv") %>% 
+  tibble::as_tibble()
+gc(verbose = TRUE)
+trips_history$OPD_DATE <- 
+  lubridate::dmy_hms(trips_history$OPD_DATE, tz = "PST8PDT")
+gc(verbose = TRUE)
+stop_event <- data.table::fread("/csvs/1 stopevent July 2018 to Dec 2018.csv") %>% 
+  tibble::as_tibble()
+gc(verbose = TRUE)
+stop_event$SERVICE_DATE <- 
+  lubridate::dmy_hms(stop_event$SERVICE_DATE, tz = "PST8PDT")
+gc(verbose = TRUE)
+
+```
+
+## Drop some columns from stop_history and trips_history
+```{r}
+stop_history <- stop_history %>% select(
+  -EVENT_NO,
+  -EVENT_NO_PREV,
+  -PATTERN_IDX,
+  -POINT_ROLE,
+  -POINT_ACTION,
+  -PLAN_STATUS)
+gc(verbose = TRUE)
+trips_history <- trips_history %>% select(
+  -EVENT_NO_COURSE,
+  -METERS:-ACT_END_TIME,
+  -COURSE_ID:-PATTERN_ID,
+  -TRIP_TYPE:-TRIP_PURPOSE
+)
+gc(verbose = TRUE)
+
+```
+
+## Get clean trip numbers in stop_history
+```{r}
+stop_history <- stop_history %>% dplyr::filter(
+  EVENT_NO_TRIP > 0,
+  !is.na(EVENT_NO_TRIP)
+)
+gc(verbose = TRUE)
+
+```
+
+## Join stop_history and trip history on trip number
+```{r}
+stop_history <- stop_history %>% left_join(trips_history, by = c("EVENT_NO_TRIP" = "EVENT_NO"))
+gc(verbose = TRUE)
+
+library(testthat)
+test_that("the dates and vehicle IDs match", {
+  expect_equal(
+    nrow(
+      stop_history %>% 
+        filter(OPD_DATE.x != OPD_DATE.y | VEHICLE_ID.x != VEHICLE_ID.y)),
+    0
+  )
+})
+```
