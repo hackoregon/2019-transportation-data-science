@@ -16,5 +16,11 @@ rm *.csv
 unrar x "${RAW}/scrapes.rar" "*.csv"
 unrar x "${RAW}/April 2018.rar" "*.csv"
 unrar x "${RAW}/May 2018.rar" "*.csv"
-unzip   "${RAW}/July+2018+to+Dec+2018.zip" "*.csv"
+unzip   "${RAW}/July+2018+to+Dec+2018.zip"
 popd
+
+# document headers
+head -n 1 ${CSVS}/*tripsh*  > tripsh_headers.txt
+head -n 1 ${CSVS}/*stopevent* ${CSVS}/*stop_event* > stop_event_headers.txt
+head -n 1 ${CSVS}/*veh_stoph*  > veh_stoph_headers.txt
+head -n 1 ${CSVS}/*cyclic* ${CSVS}/*veh_bread* > cyclic_headers.txt
