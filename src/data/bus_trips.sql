@@ -25,4 +25,4 @@ AND line_id >= 1
 ;
 \echo
 \echo primary key
-ALTER TABLE bus_trips ADD PRIMARY KEY (event_no_trip);
+ALTER TABLE bus_trips ADD PRIMARY KEY (event_no);
