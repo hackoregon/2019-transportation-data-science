@@ -12,7 +12,7 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('bus_passenger_stops_pkey') AS pkey
 FROM old_raw.trimet_stop_event
-WHERE service_key = 'W'
+WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_key = 'X')
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
@@ -22,22 +22,13 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS')
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('bus_passenger_stops_pkey') AS pkey
 FROM new_raw.trimet_stop_event
-WHERE service_key = 'W'
+WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_key = 'X')
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
 ;
 \echo primary key
 ALTER TABLE bus_passenger_stops ADD PRIMARY KEY (pkey);
-\echo
-\echo computing weekday list for filtering other tables
-DROP TABLE IF EXISTS weekdays;
-CREATE TABLE weekdays AS
-SELECT DISTINCT service_date AS date_stamp
-FROM bus_passenger_stops
-ORDER BY date_stamp;
-CREATE INDEX ON weekdays (date_stamp);
-ALTER TABLE weekdays ADD PRIMARY KEY (date_stamp);
 \echo
 \echo creating rail_passenger_stops table
 DROP SEQUENCE IF EXISTS rail_passenger_stops_pkey;
@@ -50,7 +41,7 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('rail_passenger_stops_pkey') AS pkey
 FROM old_raw.trimet_stop_event
-WHERE service_key = 'A'
+WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C')
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
@@ -60,7 +51,7 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS')
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('rail_passenger_stops_pkey') AS pkey
 FROM new_raw.trimet_stop_event
-WHERE service_key = 'A'
+WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C')
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
