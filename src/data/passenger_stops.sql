@@ -12,7 +12,7 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS
   to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
   to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  nextval('bus_passenger_stops_pkey') AS pkey
+  x_coordinate, y_coordinate, nextval('bus_passenger_stops_pkey') AS pkey
 FROM old_raw.trimet_stop_event
 WHERE service_key = 'W'
 AND route_number IS NOT NULL
@@ -24,7 +24,7 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS')
   to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
   to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  nextval('bus_passenger_stops_pkey') AS pkey
+  x_coordinate, y_coordinate, nextval('bus_passenger_stops_pkey') AS pkey
 FROM new_raw.trimet_stop_event
 WHERE service_key = 'W'
 AND route_number IS NOT NULL
@@ -54,7 +54,7 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS
   to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
   to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  nextval('rail_passenger_stops_pkey') AS pkey
+  x_coordinate, y_coordinate, nextval('rail_passenger_stops_pkey') AS pkey
 FROM old_raw.trimet_stop_event
 WHERE service_key = 'A'
 AND route_number IS NOT NULL
@@ -66,7 +66,7 @@ SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS')
   to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
   to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  nextval('rail_passenger_stops_pkey') AS pkey
+  x_coordinate, y_coordinate, nextval('rail_passenger_stops_pkey') AS pkey
 FROM new_raw.trimet_stop_event
 WHERE service_key = 'A'
 AND route_number IS NOT NULL

@@ -12,7 +12,7 @@ SELECT vehicle_id, to_date(opd_date, 'DDMONYYYY:HH24:MI:SS') AS opd_date,
   to_timestamp(opd_date, 'DDMONYYYY:HH24:MI:SS') + nom_dep_time * interval '1 sec' AS nom_dep_time, 
   event_no_trip, meters, stop_id, stop_pos, distance_to_next, distance_to_trip,
   doors_opening, stop_type, door_open_time,
-  nextval('bus_all_stops_pkey') AS pkey
+  gps_longitude, gps_latitude, nextval('bus_all_stops_pkey') AS pkey
 FROM old_raw.init_veh_stoph
 WHERE event_no_trip IN (SELECT event_no_trip FROM bus_trips)
 UNION ALL
@@ -23,7 +23,7 @@ SELECT vehicle_id, to_date(opd_date, 'DDMONYY:HH24:MI:SS') AS opd_date,
   to_timestamp(opd_date, 'DDMONYY:HH24:MI:SS') + nom_dep_time * interval '1 sec' AS nom_dep_time, 
   event_no_trip, meters, stop_id, stop_pos, distance_to_next, distance_to_trip,
   doors_opening, stop_type, door_open_time,
-  nextval('bus_all_stops_pkey') AS pkey
+  gps_longitude, gps_latitude, nextval('bus_all_stops_pkey') AS pkey
 FROM new_raw.init_veh_stoph
 WHERE event_no_trip IN (SELECT event_no_trip FROM bus_trips)
 ;
