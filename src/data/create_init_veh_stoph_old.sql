@@ -1,4 +1,7 @@
-\echo creating vehicle stop history
+\echo setting search path
+CREATE SCHEMA IF NOT EXISTS old_raw;
+SET search_path TO old_raw, public;
+\echo creating vehicle stop history raw data
 DROP TABLE IF EXISTS init_veh_stoph;
 CREATE TABLE init_veh_stoph
 (
@@ -29,3 +32,9 @@ CREATE TABLE init_veh_stoph
   point_action text,
   plan_status text
 );
+\echo loading CSV files
+COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-30SEP2017.csv' WITH csv header;
+COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-31OCT2017.csv' WITH csv header;
+COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-30NOV2017.csv' WITH csv header;
+COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-30APR2018.csv' WITH csv header;
+COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-31MAY2018.csv' WITH csv header;
