@@ -1,7 +1,7 @@
 \echo setting search path
 CREATE SCHEMA IF NOT EXISTS new_raw;
 SET search_path TO new_raw, public;
-\echo creating trips history raw data
+\echo creating trips history new raw data
 DROP TABLE IF EXISTS init_tripsh;
 CREATE TABLE init_tripsh
 (

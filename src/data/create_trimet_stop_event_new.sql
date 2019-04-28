@@ -1,7 +1,7 @@
 \echo setting search path
 CREATE SCHEMA IF NOT EXISTS new_raw;
 SET search_path TO new_raw, public;
-\echo creating trimet stop event raw data
+\echo creating trimet stop event new raw data
 DROP TABLE IF EXISTS trimet_stop_event;
 CREATE TABLE trimet_stop_event
 (
@@ -32,4 +32,4 @@ CREATE TABLE trimet_stop_event
   schedule_status integer
 );
 \echo loading CSV files
-COPY trimet_stop_event FROM '1 stopevent July 2018 to Dec 2018.csv' WITH csv header;
+COPY trimet_stop_event FROM '/csvs/1 stopevent July 2018 to Dec 2018.csv' WITH csv header;

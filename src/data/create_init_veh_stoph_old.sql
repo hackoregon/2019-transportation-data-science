@@ -1,7 +1,7 @@
 \echo setting search path
 CREATE SCHEMA IF NOT EXISTS old_raw;
 SET search_path TO old_raw, public;
-\echo creating vehicle stop history raw data
+\echo creating vehicle stop history old raw data
 DROP TABLE IF EXISTS init_veh_stoph;
 CREATE TABLE init_veh_stoph
 (

@@ -1,7 +1,7 @@
 \echo setting search path
 CREATE SCHEMA IF NOT EXISTS new_raw;
 SET search_path TO new_raw, public;
-\echo creating vehicle stop history raw data
+\echo creating vehicle stop history new raw data
 DROP TABLE IF EXISTS init_veh_stoph;
 CREATE TABLE init_veh_stoph
 (
@@ -32,4 +32,4 @@ CREATE TABLE init_veh_stoph
   plan_status text
 );
 \echo loading CSV files
-COPY init_veh_stoph FROM '1 init_veh_stoph July 2018 to Dec 2018.csv' WITH csv header;
+COPY init_veh_stoph FROM '/csvs/1 init_veh_stoph July 2018 to Dec 2018.csv' WITH csv header;

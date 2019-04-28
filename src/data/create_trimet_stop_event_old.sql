@@ -1,7 +1,7 @@
 \echo setting search path
 CREATE SCHEMA IF NOT EXISTS old_raw;
 SET search_path TO old_raw, public;
-\echo creating trimet stop event raw data
+\echo creating trimet stop event old raw data
 DROP TABLE IF EXISTS trimet_stop_event;
 CREATE TABLE trimet_stop_event
 (
