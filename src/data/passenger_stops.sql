@@ -8,9 +8,7 @@ DROP TABLE IF EXISTS bus_passenger_stops CASCADE;
 \echo loading
 CREATE TABLE bus_passenger_stops AS
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS') AS service_date,
-  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + arrive_time * interval '1 sec' AS arrive_time, 
-  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
-  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
+  arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('bus_passenger_stops_pkey') AS pkey
 FROM old_raw.trimet_stop_event
@@ -20,9 +18,7 @@ AND route_number <= 291
 AND route_number >= 1
 UNION ALL
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS') AS service_date,
-  to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + arrive_time * interval '1 sec' AS arrive_time, 
-  to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
-  to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
+  arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('bus_passenger_stops_pkey') AS pkey
 FROM new_raw.trimet_stop_event
@@ -50,9 +46,7 @@ DROP TABLE IF EXISTS rail_passenger_stops CASCADE;
 \echo loading
 CREATE TABLE rail_passenger_stops AS
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS') AS service_date,
-  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + arrive_time * interval '1 sec' AS arrive_time, 
-  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
-  to_timestamp(service_date, 'DDMONYYYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
+  arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('rail_passenger_stops_pkey') AS pkey
 FROM old_raw.trimet_stop_event
@@ -62,9 +56,7 @@ AND route_number <= 291
 AND route_number >= 1
 UNION ALL
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS') AS service_date,
-  to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + arrive_time * interval '1 sec' AS arrive_time, 
-  to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + leave_time * interval '1 sec' AS leave_time, 
-  to_timestamp(service_date, 'DDMONYY:HH24:MI:SS') + stop_time * interval '1 sec' AS stop_time, 
+  arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   x_coordinate, y_coordinate, nextval('rail_passenger_stops_pkey') AS pkey
 FROM new_raw.trimet_stop_event
