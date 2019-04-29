@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # define parameters
-export DBOWNER=postgres
+export DBOWNER=transportation2019
 export PGDATABASE=transit_operations_analytics_data
 export DEST=/csvs
 
