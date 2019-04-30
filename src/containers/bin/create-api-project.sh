@@ -16,6 +16,7 @@ docker-compose -f development-docker-compose.yml down --rmi all --volumes --remo
 # Create django project and api app
 echo "Creating new Django Rest Framework Project Scaffold..."
 echo "This will take some time"
+docker-compose -f development-docker-compose.yml run --detach --no-deps db_development # we need the database for the API to succeed
 docker-compose -f development-docker-compose.yml run --no-deps --rm \
   api_development \
   /bin/bash -c "django-admin.py startproject $PROJECT_NAME . ; python manage.py startapp api"
