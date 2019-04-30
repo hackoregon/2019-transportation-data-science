@@ -1,0 +1,34 @@
+version: '3.4'
+services:
+  db_development:
+    build:
+      context: .
+      dockerfile: DOCKERFILE.db.development
+    image: db_development
+    ports:
+      - 5439:5432
+    environment:
+      - POSTGRES_PASSWORD
+      - DATABASE_OWNER
+      - TEAM_PASSWORD
+  api_development:
+    build:
+      context: .
+      dockerfile: DOCKERFILE.api.development
+    image: api_development
+    command: ./bin/development-docker-entrypoint.sh
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db_development
+    environment:
+      - PROJECT_NAME
+      - DEBUG=True
+      - POSTGRES_USER
+      - POSTGRES_NAME
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_PASSWORD
+      - DJANGO_SECRET_KEY
