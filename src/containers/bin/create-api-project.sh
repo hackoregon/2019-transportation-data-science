@@ -6,20 +6,13 @@ set -euo pipefail
 # Grab environment variables
 . ./.env
 
-# Remove sample files and database
-echo "Removing the sample project..."
-bin/remove-sample.sh
-
-# Docker cleanup
-docker-compose -f development-docker-compose.yml down --rmi all --volumes --remove-orphans
-
 # Create django project and api app
 echo "Creating new Django Rest Framework Project Scaffold..."
 echo "This will take some time"
-docker-compose -f development-docker-compose.yml run --detach --no-deps db_development # we need the database for the API to succeed
-docker-compose -f development-docker-compose.yml run --no-deps --rm \
-  api_development \
-  /bin/bash -c "django-admin.py startproject $PROJECT_NAME . ; python manage.py startapp api"
+docker-compose -f django-create-docker-compose.yml build
+docker-compose -f django-create-docker-compose.yml run --no-deps --rm \
+  django_create \
+  /bin/bash -c "django-admin.py startproject $PROJECT_NAME .; python manage.py startapp api"
 
 # fix ownership
 echo "Fixing ownership on Linux"
