@@ -26,7 +26,8 @@ RUN pip install -r development.txt
 RUN pip install -r geodjango.txt
 
 RUN python
-COPY gunicorn_config.py /code/
+COPY gunicorn_config.py manage.py /code/
+COPY api transit_operations_analytics_data /code/
 COPY bin /code/bin/
 
 ENTRYPOINT [ "/code/bin/development-docker-entrypoint.sh" ]
