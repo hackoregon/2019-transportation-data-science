@@ -21,8 +21,7 @@ the PostgreSQL client on the API image to PostgreSQL 11, since a 9.6 client won'
 
 ## Quickstart
 1. ***You do not need to create the API scaffolding! That's been done and checked into this repo!***
-2. `cp env.sample .env` in the root of the repo (this file is already in the `.gitignore`, so you should not have to worry about it 
-getting accidentally checked into a GitHub repo)
+2. `cp env.sample .env` in the root of the repo. `.env` is in the `.gitignore`, so it won't get accidentally checked into GitHub.
 3. Edit your `.env` file and change the passwords: `POSTGRES_PASSWORD`, `TEAM_PASSWORD` and `DJANGO_SECRET_KEY`. The other environment
 variables are already set to their correct values.
 
