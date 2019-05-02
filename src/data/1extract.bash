@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # checksum input archives
-export RAW="/home/znmeb/Raw/transportation-2018/transit-operations-analytics-data"
+export RAW="${HOME}/Raw/transportation-2018/transit-operations-analytics-data"
 export CSVS=/csvs
 echo "Checksumming raw archives"
 pushd ${RAW}
