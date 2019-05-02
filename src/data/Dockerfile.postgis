@@ -1,17 +1,30 @@
-FROM docker.io/library/postgres:10
-LABEL maintainer="M. Edward (Ed) Borasky <znmeb@znmeb.net>"
+FROM docker.io/library/postgres:11
+LABEL maintainer="M. Edward (Ed) Borasky <ed.borasky@hackoregon.org>"
 
 # Install apt packages
+COPY backports.list.stretch /etc/apt/sources.list.d/backports.list
 RUN apt-get update \
   && apt-get install -qqy --no-install-recommends \
     bash-completion \
+    bzip2 \
+    curl \
     inetutils-ping \
+    git \
+    git-lfs \
     nano \
-    postgresql-10-postgis-2.5 \
-    postgresql-10-postgis-2.5-scripts \
-    postgresql-client-10 \
-    postgresql-autodoc \
+    p7zip \
+    postgresql-11-postgis-2.5 \
+    postgresql-11-postgis-2.5-scripts \
+    sudo \
     time \
     tree \
-    vim-nox \
+    unar \
+    unrar-free \
+    unzip \
+    vim-tiny \
+    wget \
   && apt-get clean
+
+# database superuser
+RUN useradd --comment "Database Superuser" --shell /bin/bash --user-group --groups sudo --create-home dbsuper
+RUN chown -R dbsuper:dbsuper /home/dbsuper
