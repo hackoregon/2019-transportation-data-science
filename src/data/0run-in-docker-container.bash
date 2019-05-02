@@ -19,6 +19,7 @@ docker build --file=Dockerfile.postgis --tag=postgis-image:latest .
 docker images
 echo "Running the container"
 docker run --detach --name=postgis-container \
+  --publish 5439:5432 \
   --volume ${CONTAINER_PGDATA}:/var/lib/postgresql/data \
   --volume ${CONTAINER_CSVS}:/csvs \
   postgis-image \
