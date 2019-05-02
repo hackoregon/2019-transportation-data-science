@@ -1,35 +1,45 @@
 #! /bin/bash
 
+# Environment variables
+export RAW=~/Raw/transportation-2018/transit-operations-analytics-data/
+export CONTAINER_PGDATA=/data/container-postgres
+export CONTAINER_CSVS=/data/container-csvs
+
+# get a fresh host directory for container PGDATA
+echo "Force-removing all existing containers"
+docker rm -f `docker ps -aq`
+echo "Force-removing ${CONTAINER_PGDATA}"
+sudo rm -fr ${CONTAINER_PGDATA}
+echo "Creating TMPDIR ${CONTAINER_CSVS}"
+sudo mkdir -p ${CONTAINER_CSVS}
+sudo chmod 1777 ${CONTAINER_CSVS}
+
 echo "Building the PostGIS image"
 docker build --file=Dockerfile.postgis --tag=postgis-image:latest .
 docker images
-echo "Force-removing all existing containers"
-docker rm -f `docker ps -aq`
 echo "Running the container"
-docker run --detach --name=postgis-container --volume /csvs:/csvs postgis-image \
-  -c 'shared_buffers=1024MB' \
-  -c 'work_mem=256MB' \
-  -c 'maintenance_work_mem=256MB' \
+docker run --detach --name=postgis-container \
+  --volume ${CONTAINER_PGDATA}:/var/lib/postgresql/data \
+  --volume ${CONTAINER_CSVS}:/csvs \
+  postgis-image \
+  -c 'shared_buffers=8GB' \
+  -c 'effective_cache_size=24GB' \
+  -c 'work_mem=1GB' \
+  -c 'maintenance_work_mem=1GB' \
   -c 'checkpoint_timeout=20min' \
   -c 'max_wal_size=4GB'
-docker ps
-echo "Copying the scripts"
-docker cp . postgis-container:/src
-docker exec --user=root postgis-container chown -R postgres:postgres /src
-echo "Chowning the input CSVs"
-docker exec --user=root postgis-container chown -R postgres:postgres /csvs
-echo "Loading the database"
 sleep 30
-docker exec --user=postgres --workdir=/src postgis-container /src/2load.bash
-docker exec --user=postgres --workdir=/src postgis-container /src/3build_model.bash
-docker exec --user=postgres --workdir=/src postgis-container /src/4cleanup.bash
-docker exec --user=postgres --workdir=/src postgis-container /src/9create-database-backup.bash
-docker exec --user=root --workdir=/src postgis-container du -sh /var/lib/postgresql/data
+docker ps
+docker logs postgis-container
+echo "Copying the scripts"
+docker cp . postgis-container:/home/dbsuper/
+echo "Copying raw data"
+docker cp ${RAW} postgis-container:/home/dbsuper/Raw/
+echo "Loading the database"
+docker exec --user=dbsuper --workdir=/home/dbsuper postgis-container /home/dbsuper/0runall.bash
 echo "Retrieving the backup"
 docker cp postgis-container:/csvs/transit_operations_analytics_data.sql.gz .
 docker cp postgis-container:/csvs/transit_operations_analytics_data.sql.gz.sha512sum .
 sha512sum -c transit_operations_analytics_data.sql.gz.sha512sum
 echo "Retrieving database schema"
-docker exec --user=postgres --workdir=/src/ postgis-container \
-  postgresql_autodoc -d transit_operations_analytics_data -t html
-docker cp postgis-container:/src/transit_operations_analytics_data.html .
+docker cp postgis-container:/csvs/transit_operations_analytics_data.html .
