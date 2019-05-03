@@ -10,7 +10,8 @@ CREATE TABLE bus_passenger_stops AS
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS') AS service_date,
   arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  x_coordinate, y_coordinate, nextval(bus_passenger_stops_id) AS id
+  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326,
+  nextval('bus_passenger_stops_id') AS id
 FROM old_raw.trimet_stop_event
 WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_key = 'X')
 AND route_number IS NOT NULL
@@ -20,7 +21,8 @@ UNION ALL
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS') AS service_date,
   arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  x_coordinate, y_coordinate, nextval(bus_passenger_stops_id) AS id
+  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326,
+  nextval('bus_passenger_stops_id') AS id
 FROM new_raw.trimet_stop_event
 WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_key = 'X')
 AND route_number IS NOT NULL
@@ -39,7 +41,8 @@ CREATE TABLE rail_passenger_stops AS
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYYYY:HH24:MI:SS') AS service_date,
   arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  x_coordinate, y_coordinate, nextval(rail_passenger_stops_id) AS id
+  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326,
+  nextval('rail_passenger_stops_id') AS id
 FROM old_raw.trimet_stop_event
 WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C')
 AND route_number IS NOT NULL
@@ -49,7 +52,8 @@ UNION ALL
 SELECT vehicle_number AS vehicle_id, to_date(service_date, 'DDMONYY:HH24:MI:SS') AS service_date,
   arrive_time, leave_time, stop_time,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  x_coordinate, y_coordinate, nextval(rail_passenger_stops_id) AS id
+  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326,
+  nextval('rail_passenger_stops_id') AS id
 FROM new_raw.trimet_stop_event
 WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C')
 AND route_number IS NOT NULL
