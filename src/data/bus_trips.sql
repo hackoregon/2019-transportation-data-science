@@ -1,11 +1,13 @@
 \echo creating bus_trips table
 SET timezone = 'PST8PDT';
+DROP SEQUENCE IF EXISTS bus_trips_id;
+CREATE SEQUENCE bus_trips_id;
 DROP TABLE IF EXISTS bus_trips CASCADE;
 \echo loading
 CREATE TABLE bus_trips AS
 SELECT vehicle_id, to_date(opd_date, 'DDMONYYYY:HH24:MI:SS') AS opd_date,
   act_dep_time, act_end_time, nom_dep_time, nom_end_time, 
-  event_no AS event_no_trip, meters, line_id, pattern_direction
+  event_no AS event_no_trip, meters, line_id, pattern_direction, nextval(bus_trips_id) AS id
 FROM old_raw.init_tripsh
 WHERE pattern_direction IS NOT NULL
 AND line_id IS NOT NULL
@@ -14,7 +16,7 @@ AND line_id >= 1
 UNION ALL
 SELECT vehicle_id, to_date(opd_date, 'DDMONYY:HH24:MI:SS') AS opd_date,
   act_dep_time, act_end_time, nom_dep_time, nom_end_time, 
-  event_no AS event_no_trip, meters, line_id, pattern_direction
+  event_no AS event_no_trip, meters, line_id, pattern_direction, nextval(bus_trips_id) AS id
 FROM new_raw.init_tripsh
 WHERE pattern_direction IS NOT NULL
 AND line_id IS NOT NULL
@@ -23,5 +25,4 @@ AND line_id >= 1
 ;
 \echo
 \echo primary key
-ALTER TABLE bus_trips ADD COLUMN id serial;
 ALTER TABLE bus_trips ADD PRIMARY KEY (id);
