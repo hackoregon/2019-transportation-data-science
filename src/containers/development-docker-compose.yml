@@ -11,6 +11,13 @@ services:
       - POSTGRES_PASSWORD
       - DATABASE_OWNER
       - TEAM_PASSWORD
+    command: [ "postgres",
+        "-c", "shared_buffers=8GB",
+        "-c", "effective_cache_size=24GB",
+        "-c", "work_mem=1GB",
+        "-c", "maintenance_work_mem=1GB",
+        "-c", "checkpoint_timeout=20min",
+        "-c", "max_wal_size=4GB" ]
   api_development:
     build:
       context: .
