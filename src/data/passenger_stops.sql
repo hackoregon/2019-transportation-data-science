@@ -29,6 +29,7 @@ AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
 ;
+SELECT Populate_Geometry_Columns('bus_passenger_stops'::regclass);
 \echo primary key
 ALTER TABLE bus_passenger_stops ADD PRIMARY KEY (id);
 \echo
@@ -60,5 +61,6 @@ AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
 ;
+SELECT Populate_Geometry_Columns('rail_passenger_stops'::regclass);
 \echo primary key
 ALTER TABLE rail_passenger_stops ADD PRIMARY KEY (id);

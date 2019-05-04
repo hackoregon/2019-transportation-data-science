@@ -23,6 +23,7 @@ SELECT vehicle_id, to_date(opd_date, 'DDMONYY:HH24:MI:SS') AS opd_date,
 FROM new_raw.init_veh_stoph
 WHERE event_no_trip IN (SELECT event_no_trip FROM bus_trips)
 ;
+SELECT Populate_Geometry_Columns('bus_all_stops'::regclass);
 \echo
 \echo primary key
 ALTER TABLE bus_all_stops ADD PRIMARY KEY (id);
