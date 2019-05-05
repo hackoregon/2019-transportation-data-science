@@ -17,4 +17,5 @@ RUN apt-get update \
 RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home dbsuper
 RUN chown -R dbsuper:dbsuper /home/dbsuper
 COPY make-dbsuper.sh /docker-entrypoint-initdb.d/
-RUN mkdir -p /csvs && chown dbsuper:dbsuper /csvs
+VOLUME /var/lib/postgresql/data
+VOLUME /csvs
