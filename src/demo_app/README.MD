@@ -17,4 +17,6 @@ You'll need to clone this repo, but you only need to use the demo_app directory.
 
 Which should launch the app @ `localhost:8052`.
 
+![Example Hawthorne Comparison](./assets/hawthorne_8-9_vs_9-10.gif)
+
 Let me know if you have problems! - Jeff
