@@ -1,6 +1,8 @@
 # DEMO_APP
 I created this Dash app to help prototype around what our card could look like. The data required for it is self-contained within the `data` folder, so anyone should be able to get this up and running! (assuming I explain how correctly.)
 
+![Example Hawthorne Comparison](./assets/hawthorne_8-9_vs_9-10.gif)
+
 ## Setup
 You'll need to clone this repo, but you only need to use the demo_app directory.
 1. `cd` into the demo_app directly.
@@ -16,7 +18,5 @@ You'll need to clone this repo, but you only need to use the demo_app directory.
     `python3 index.py`
 
 Which should launch the app @ `localhost:8052`.
-
-![Example Hawthorne Comparison](./assets/hawthorne_8-9_vs_9-10.gif)
 
 Let me know if you have problems! - Jeff
