@@ -15,6 +15,6 @@ You'll need to clone this repo, but you only need to use the demo_app directory.
 
     `python3 index.py`
 
-Which should lauch the app @ `localhost:8052`.
+Which should launch the app @ `localhost:8052`.
 
 Let me know if you have problems! - Jeff
