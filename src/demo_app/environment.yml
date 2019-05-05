@@ -1,0 +1,9 @@
+dependencies:
+  - python=3
+  - pip
+  - pip:
+    - dash
+    - dash-core-components
+    - dash-html-components
+    - pandas
+    - folium

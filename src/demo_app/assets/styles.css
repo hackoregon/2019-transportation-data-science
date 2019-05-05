@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css?family=Rubik');
+@import url('https://fonts.googleapis.com/css?family=Merriweather');
+
+#before-title, #after-title{
+    font-family: 'Rubik', sans-serif;
+    font-size: 24pt;
+}
+
+#header-bar{
+    background-color: rgb(34, 15, 37);
+    width: 100%;
+    margin: none
+}
+
+#time-slider{
+    font-family: 'Merriweather', sans-serif;
+    margin-top: 20px
+}
+
+#month-slider{
+    font-family: 'Merriweather', sans-serif;
+    padding-top: 100px
+}
+
+.rc-slider-mark{
+    font-size: 16pt;
+}
+
+#before-map, #after-map{
+    border: none;
+}
+
+#title{
+    font-family: 'Rubik';
+    font-weight: 300;
+    font-size: 50px;
+}
+#header-title{
+    font-family: 'Rubik', sans-serif;
+    color: white;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 3px;
+    margin-right: 20px;
+}
+
+._dash-undo-redo {
+    display: none;
+}
