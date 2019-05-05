@@ -90,8 +90,8 @@ class BusAllStops(models.Model):
     doors_opening = models.IntegerField(blank=True, null=True)
     stop_type = models.IntegerField(blank=True, null=True)
     door_open_time = models.IntegerField(blank=True, null=True)
-    geom_point_4326 = models.GeometryField(srid=4326, blank=True, null=True)
-    pkey = models.BigIntegerField(primary_key=True)
+    geom_point_4326 = models.PointField(blank=True, null=True)
+    id = models.BigIntegerField(primary_key=True)
 
     class Meta:
         managed = False
@@ -114,8 +114,8 @@ class BusPassengerStops(models.Model):
     offs = models.IntegerField(blank=True, null=True)
     estimated_load = models.IntegerField(blank=True, null=True)
     train_mileage = models.FloatField(blank=True, null=True)
-    geom_point_4326 = models.GeometryField(srid=4326, blank=True, null=True)
-    pkey = models.BigIntegerField(primary_key=True)
+    geom_point_4326 = models.PointField(blank=True, null=True)
+    id = models.BigIntegerField(primary_key=True)
 
     class Meta:
         managed = False
@@ -129,10 +129,11 @@ class BusTrips(models.Model):
     act_end_time = models.DateTimeField(blank=True, null=True)
     nom_dep_time = models.DateTimeField(blank=True, null=True)
     nom_end_time = models.DateTimeField(blank=True, null=True)
-    event_no = models.IntegerField(blank=True, null=True)
+    event_no_trip = models.IntegerField(blank=True, null=True)
     meters = models.IntegerField(blank=True, null=True)
     line_id = models.IntegerField(blank=True, null=True)
     pattern_direction = models.TextField(blank=True, null=True)
+    id = models.BigIntegerField(primary_key=True)
 
     class Meta:
         managed = False
@@ -199,17 +200,9 @@ class RailPassengerStops(models.Model):
     offs = models.IntegerField(blank=True, null=True)
     estimated_load = models.IntegerField(blank=True, null=True)
     train_mileage = models.FloatField(blank=True, null=True)
-    geom_point_4326 = models.GeometryField(srid=4326, blank=True, null=True)
-    pkey = models.BigIntegerField(primary_key=True)
+    geom_point_4326 = models.PointField(blank=True, null=True)
+    id = models.BigIntegerField(primary_key=True)
 
     class Meta:
         managed = False
         db_table = 'rail_passenger_stops'
-
-
-class Weekdays(models.Model):
-    date_stamp = models.DateField(primary_key=True)
-
-    class Meta:
-        managed = False
-        db_table = 'weekdays'
