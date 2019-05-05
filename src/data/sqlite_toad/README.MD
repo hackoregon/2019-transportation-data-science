@@ -1,5 +1,7 @@
 # SQLITE Toad
-Here's a collection of the python scripts I used to 1) create the toad database in sqlite and 2) query that database for the hawthorne dataset.
+Here's a collection of the python scripts I used to:
+1) create the toad database in sqlite
+2) query that database for the hawthorne dataset.
 
 Usage of these scripts requires access to the raw data dump. File locations should be modified in the `db_config.json`
 
