@@ -4,9 +4,10 @@ I created this Dash app to help prototype around what our card could look like. 
 ## Setup
 You'll need to clone this repo, but you only need to use the demo_app directory.
 1. `cd` into the demo_app directly.
-2. Create the virtual environment. I prefer `conda` so the conda command would be. Again, make sure you are in the directory where you can access the `environment.yml` file.:
+2. Create the virtual environment. I prefer `conda` so the conda command would be:
 
     `conda env create -n ho_env -f environment.yml`
+    
 3. Once the environment is created, activate it with:
 
     `conda activate ho_env`
