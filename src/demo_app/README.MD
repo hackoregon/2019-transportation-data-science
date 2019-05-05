@@ -11,7 +11,7 @@ You'll need to clone this repo, but you only need to use the demo_app directory.
 3. Once the environment is created, activate it with:
 
     `conda activate ho_env`
-4. To run the app, make sure you environment has activated, and you are in the root directory of the app (demo_app). From there, run:
+4. To run the app, make sure your environment has activated, and you are in the root directory of the app (demo_app). From there, run:
 
     `python3 index.py`
 
