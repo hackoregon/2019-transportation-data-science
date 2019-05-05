@@ -1,5 +1,5 @@
 # DEMO_APP
-I created this Dash app to help prototype around what our card could look like. The data required for it is self-contained within the `data` folder, so anyone should be able to get this up and running! (assuming I explain how correctly.)
+I created this Dash app to help prototype around what our card could look like. The data required for it is self-contained within the `data` folder, so anyone should be able to get this up and running! (assuming I correctly explain how).
 
 ![Example Hawthorne Comparison](./assets/hawthorne_8-9_vs_9-10.gif)
 
