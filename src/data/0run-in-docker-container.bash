@@ -21,6 +21,7 @@ docker images
 echo "Running the container"
 docker run --detach --name=postgis-container \
   --publish 5439:5432 \
+  --volume ${RAW}:/home/dbsuper/Raw \
   --volume ${CONTAINER_PGDATA}:/var/lib/postgresql/data \
   --volume ${CONTAINER_CSVS}:/csvs \
   postgis-image \
@@ -35,8 +36,6 @@ docker ps
 docker logs postgis-container
 echo "Copying the scripts"
 docker cp . postgis-container:/home/dbsuper/
-echo "Copying raw data"
-docker cp ${RAW} postgis-container:/home/dbsuper/Raw/
 echo "Loading the database"
 docker exec --user=dbsuper --workdir=/home/dbsuper postgis-container /home/dbsuper/0runall.bash
 echo "Retrieving the backup"
