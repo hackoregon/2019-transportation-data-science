@@ -72,3 +72,6 @@ AND route_number >= 1
 SELECT Populate_Geometry_Columns('rail_passenger_stops'::regclass);
 \echo primary key
 ALTER TABLE rail_passenger_stops ADD PRIMARY KEY (id);
+\echo drop raw data
+DROP TABLE old_raw.trimet_stop_event;
+DROP TABLE new_raw.trimet_stop_event;

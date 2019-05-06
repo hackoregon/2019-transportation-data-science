@@ -34,3 +34,6 @@ AND line_id >= 1
 \echo
 \echo primary key
 ALTER TABLE bus_trips ADD PRIMARY KEY (id);
+\echo drop raw data
+DROP TABLE old_raw.init_tripsh;
+DROP TABLE new_raw.init_tripsh;

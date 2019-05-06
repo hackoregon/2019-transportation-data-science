@@ -33,3 +33,6 @@ SELECT Populate_Geometry_Columns('bus_all_stops'::regclass);
 \echo
 \echo primary key
 ALTER TABLE bus_all_stops ADD PRIMARY KEY (id);
+\echo drop raw data
+DROP TABLE old_raw.init_veh_stoph;
+DROP TABLE new_raw.init_veh_stoph;
