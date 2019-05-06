@@ -1,0 +1,23 @@
+sudo: required
+
+language: python
+python:
+  - "3.6"
+
+services:
+  - docker
+
+install:
+  - pip install --upgrade awscli
+
+script:
+  - bin/build.sh -p
+  - bin/test.sh -p
+
+after_success:
+  - bin/deploy.sh
+
+# example of how to send notifications for slack integration
+slack:
+  rooms:
+    - hackoregon2018:0hiZjZlexw6dfsIDpN4SsXls#backend-exemplar

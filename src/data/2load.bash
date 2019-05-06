@@ -4,8 +4,6 @@
 export DBOWNER=transportation2019
 export PGDATABASE=transit_operations_analytics_data
 
-sudo du -sh /var/lib/postgres/data
-
 # create a fresh database with PostGIS extension
 echo "Creating database superuser ${DBOWNER} - ignore error if user already exists"
 createuser --superuser ${DBOWNER}
@@ -15,5 +13,4 @@ createdb --owner=${DBOWNER} ${PGDATABASE}
 psql -U ${DBOWNER} -d ${PGDATABASE} -c "CREATE EXTENSION IF NOT EXISTS postgis;"
 
 # load the raw data with SQL
-/usr/bin/time psql -U ${DBOWNER} -d ${PGDATABASE} -f load_raw_data.sql
-sudo du -sh /var/lib/postgres/data
+psql -U ${DBOWNER} -d ${PGDATABASE} -f load_raw_data.sql

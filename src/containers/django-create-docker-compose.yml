@@ -1,0 +1,19 @@
+version: '3.4'
+services:
+  django_create:
+    build:
+      context: .
+      dockerfile: DOCKERFILE.django.create
+    image: django_create
+    command: /bin/bash
+    volumes:
+      - .:/code
+    environment:
+      - PROJECT_NAME
+      - DEBUG=True
+      - POSTGRES_USER
+      - POSTGRES_NAME
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_PASSWORD
+      - DJANGO_SECRET_KEY
