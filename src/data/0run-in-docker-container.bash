@@ -9,6 +9,7 @@ export CONTAINER_CSVS=/data/container-csvs
 echo "Force-removing all existing containers"
 docker rm -f `docker ps -aq`
 echo "Force-removing ${CONTAINER_PGDATA}"
+echo "Docker will create a fresh one"
 sudo rm -fr ${CONTAINER_PGDATA}
 echo "Creating TMPDIR ${CONTAINER_CSVS}"
 sudo mkdir -p ${CONTAINER_CSVS}
@@ -39,8 +40,8 @@ docker cp ${RAW} postgis-container:/home/dbsuper/Raw/
 echo "Loading the database"
 docker exec --user=dbsuper --workdir=/home/dbsuper postgis-container /home/dbsuper/0runall.bash
 echo "Retrieving the backup"
-docker cp postgis-container:/csvs/transit_operations_analytics_data.sql.gz .
-docker cp postgis-container:/csvs/transit_operations_analytics_data.sql.gz.sha512sum .
-sha512sum -c transit_operations_analytics_data.sql.gz.sha512sum
+docker cp postgis-container:/csvs/transit_operations_analytics_data.backup .
+docker cp postgis-container:/csvs/transit_operations_analytics_data.backup.sha512sum .
+sha512sum -c transit_operations_analytics_data.backup.sha512sum
 echo "Retrieving database schema"
 docker cp postgis-container:/csvs/transit_operations_analytics_data.html .
