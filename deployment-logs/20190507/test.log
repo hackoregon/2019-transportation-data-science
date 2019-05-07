@@ -1,0 +1,25 @@
+                                      List of relations
+ Schema |          Name           |   Type   |       Owner        |    Size    | Description 
+--------+-------------------------+----------+--------------------+------------+-------------
+ public | bus_all_stops           | table    | transportation2019 | 15 GB      | 
+ public | bus_all_stops_id        | sequence | transportation2019 | 8192 bytes | 
+ public | bus_passenger_stops     | table    | transportation2019 | 13 GB      | 
+ public | bus_passenger_stops_id  | sequence | transportation2019 | 8192 bytes | 
+ public | bus_trips               | table    | transportation2019 | 126 MB     | 
+ public | bus_trips_id            | sequence | transportation2019 | 8192 bytes | 
+ public | geography_columns       | view     | rdsadmin           | 0 bytes    | 
+ public | geometry_columns        | view     | rdsadmin           | 0 bytes    | 
+ public | rail_passenger_stops    | table    | transportation2019 | 479 MB     | 
+ public | rail_passenger_stops_id | sequence | transportation2019 | 8192 bytes | 
+ public | raster_columns          | view     | rdsadmin           | 0 bytes    | 
+ public | raster_overviews        | view     | rdsadmin           | 0 bytes    | 
+ public | spatial_ref_sys         | table    | rdsadmin           | 4616 kB    | 
+(13 rows)
+
+          f_table_catalog          | f_table_schema |     f_table_name     | f_geometry_column | coord_dimension | srid | type  
+-----------------------------------+----------------+----------------------+-------------------+-----------------+------+-------
+ transit_operations_analytics_data | public         | bus_all_stops        | geom_point_4326   |               2 | 4326 | POINT
+ transit_operations_analytics_data | public         | bus_passenger_stops  | geom_point_4326   |               2 | 4326 | POINT
+ transit_operations_analytics_data | public         | rail_passenger_stops | geom_point_4326   |               2 | 4326 | POINT
+(3 rows)
+

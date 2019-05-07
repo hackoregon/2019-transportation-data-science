@@ -1,0 +1,38 @@
+pg_restore: connecting to database for restore
+pg_restore: creating EXTENSION "postgis"
+pg_restore: creating COMMENT "EXTENSION postgis"
+pg_restore: [archiver (db)] Error while PROCESSING TOC:
+pg_restore: [archiver (db)] Error from TOC entry 4368; 0 0 COMMENT EXTENSION postgis 
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be owner of extension postgis
+    Command was: COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
+
+pg_restore: creating TABLE "public.bus_all_stops"
+pg_restore: creating SEQUENCE "public.bus_all_stops_id"
+pg_restore: creating TABLE "public.bus_passenger_stops"
+pg_restore: creating SEQUENCE "public.bus_passenger_stops_id"
+pg_restore: creating TABLE "public.bus_trips"
+pg_restore: creating SEQUENCE "public.bus_trips_id"
+pg_restore: creating TABLE "public.rail_passenger_stops"
+pg_restore: creating SEQUENCE "public.rail_passenger_stops_id"
+pg_restore: processing data for table "public.bus_all_stops"
+pg_restore: processing data for table "public.bus_passenger_stops"
+pg_restore: processing data for table "public.bus_trips"
+pg_restore: processing data for table "public.rail_passenger_stops"
+pg_restore: processing data for table "public.spatial_ref_sys"
+pg_restore: [archiver (db)] Error from TOC entry 4214; 0 16697 TABLE DATA spatial_ref_sys transportation2019
+pg_restore: [archiver (db)] could not execute query: ERROR:  permission denied for table spatial_ref_sys
+    Command was: COPY public.spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
+
+pg_restore: executing SEQUENCE SET bus_all_stops_id
+pg_restore: executing SEQUENCE SET bus_passenger_stops_id
+pg_restore: executing SEQUENCE SET bus_trips_id
+pg_restore: executing SEQUENCE SET rail_passenger_stops_id
+pg_restore: creating CONSTRAINT "public.bus_all_stops bus_all_stops_pkey"
+pg_restore: creating CONSTRAINT "public.bus_passenger_stops bus_passenger_stops_pkey"
+pg_restore: creating CONSTRAINT "public.bus_trips bus_trips_pkey"
+pg_restore: creating CONSTRAINT "public.rail_passenger_stops rail_passenger_stops_pkey"
+WARNING: errors ignored on restore: 2
+235.60user 23.41system 2:47:59elapsed 2%CPU (0avgtext+0avgdata 8028maxresident)k
+17134136inputs+0outputs (2major+474minor)pagefaults 0swaps
