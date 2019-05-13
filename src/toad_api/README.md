@@ -8,7 +8,7 @@ The tutorials I'm using work with pipenv. That doesn't seem to be in most Linux 
 ```
 mkdir -p toad_api
 cd toad_api
-pipenv install django psycopg2-binary==2.7.7
+pipenv install django django-restframework psycopg2-binary==2.7.7
 pipenv shell
 django-admin startproject toad_api_project .
 django-admin startapp toad_api_app
