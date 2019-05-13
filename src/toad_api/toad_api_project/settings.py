@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+
+    # local
+    'toad_api_app.apps.ToadApiAppConfig',
 ]
 
 MIDDLEWARE = [
