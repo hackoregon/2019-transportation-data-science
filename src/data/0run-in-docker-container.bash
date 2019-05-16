@@ -2,12 +2,12 @@
 
 # Environment variables
 export RAW=~/Raw/transportation-2018/transit-operations-analytics-data/
-export CONTAINER_PGDATA=/data/container-postgres
-export CONTAINER_CSVS=/data/container-csvs
+export CONTAINER_PGDATA=/home/container-postgres
+export CONTAINER_CSVS=/home/container-csvs
 
 # get a fresh host directory for container PGDATA
 echo "Force-removing all existing containers"
-sudo docker rm -f `docker ps -aq`
+sudo docker rm -f ` sudo docker ps -aq`
 echo "Force-removing ${CONTAINER_PGDATA}"
 echo "Docker will create a fresh one"
 sudo rm -fr ${CONTAINER_PGDATA}
