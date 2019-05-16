@@ -7,7 +7,7 @@ export CONTAINER_CSVS=/data/container-csvs
 
 # get a fresh host directory for container PGDATA
 echo "Force-removing all existing containers"
-docker rm -f `docker ps -aq`
+sudo docker rm -f `docker ps -aq`
 echo "Force-removing ${CONTAINER_PGDATA}"
 echo "Docker will create a fresh one"
 sudo rm -fr ${CONTAINER_PGDATA}
@@ -16,10 +16,10 @@ sudo mkdir -p ${CONTAINER_CSVS}
 sudo chmod 1777 ${CONTAINER_CSVS}
 
 echo "Building the PostGIS image"
-docker build --file=Dockerfile.postgis --tag=postgis-image:latest .
-docker images
+sudo docker build --file=Dockerfile.postgis --tag=postgis-image:latest .
+sudo docker images
 echo "Running the container"
-docker run --detach --name=postgis-container \
+sudo docker run --detach --name=postgis-container \
   --publish 5439:5432 \
   --volume ${RAW}:/home/dbsuper/Raw \
   --volume ${CONTAINER_PGDATA}:/var/lib/postgresql/data \
@@ -32,15 +32,15 @@ docker run --detach --name=postgis-container \
   -c 'checkpoint_timeout=20min' \
   -c 'max_wal_size=4GB'
 sleep 30
-docker ps
-docker logs postgis-container
+sudo docker ps
+sudo docker logs postgis-container
 echo "Copying the scripts"
-docker cp . postgis-container:/home/dbsuper/
+sudo docker cp . postgis-container:/home/dbsuper/
 echo "Loading the database"
-docker exec --user=dbsuper --workdir=/home/dbsuper postgis-container /home/dbsuper/0runall.bash
+sudo docker exec --user=dbsuper --workdir=/home/dbsuper postgis-container /home/dbsuper/0runall.bash
 echo "Retrieving the backup"
-docker cp postgis-container:/csvs/transit_operations_analytics_data.backup .
-docker cp postgis-container:/csvs/transit_operations_analytics_data.backup.sha512sum .
+sudo docker cp postgis-container:/csvs/transit_operations_analytics_data.backup .
+sudo docker cp postgis-container:/csvs/transit_operations_analytics_data.backup.sha512sum .
 sha512sum -c transit_operations_analytics_data.backup.sha512sum
 echo "Retrieving database schema"
-docker cp postgis-container:/csvs/transit_operations_analytics_data.html .
+sudo docker cp postgis-container:/csvs/transit_operations_analytics_data.html .
