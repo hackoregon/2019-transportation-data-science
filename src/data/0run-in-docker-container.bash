@@ -1,13 +1,14 @@
 #! /bin/bash
 
 # Environment variables
-export RAW=~/Raw/transportation-2018/transit-operations-analytics-data/
-export CONTAINER_PGDATA=/home/container-postgres
-export CONTAINER_CSVS=/home/container-csvs
+export SPINNING_DISK=/var/home
+export RAW=$SPINNING_DISK/$USER/Raw/transportation-2018/transit-operations-analytics-data
+export CONTAINER_PGDATA=$SPINNING_DISK/container-postgres
+export CONTAINER_CSVS=$SPINNING_DISK/container-csvs
 
 # get a fresh host directory for container PGDATA
 echo "Force-removing all existing containers"
-sudo docker rm -f ` sudo docker ps -aq`
+sudo docker rm -f `sudo docker ps -aq`
 echo "Force-removing ${CONTAINER_PGDATA}"
 echo "Docker will create a fresh one"
 sudo rm -fr ${CONTAINER_PGDATA}
@@ -19,10 +20,10 @@ echo "Building the PostGIS image"
 sudo docker build --file=Dockerfile.postgis --tag=postgis-image:latest .
 sudo docker images
 echo "Running the container"
-sudo docker run --detach --name=postgis-container \
+sudo docker run --privileged --detach --name=postgis-container \
   --publish 5439:5432 \
-  --volume ${RAW}:/home/dbsuper/Raw \
   --volume ${CONTAINER_PGDATA}:/var/lib/postgresql/data \
+  --volume ${RAW}:/home/dbsuper/Raw \
   --volume ${CONTAINER_CSVS}:/csvs \
   postgis-image \
   -c 'shared_buffers=8GB' \
