@@ -1,14 +1,15 @@
 #! /bin/bash
 
 # Environment variables
-export SPINNING_DISK=/var/home
+export SPINNING_DISK=/home
 export RAW=$SPINNING_DISK/$USER/Raw/transportation-2018/transit-operations-analytics-data
 export CONTAINER_PGDATA=$SPINNING_DISK/container-postgres
 export CONTAINER_CSVS=$SPINNING_DISK/container-csvs
 
 # get a fresh host directory for container PGDATA
-echo "Force-removing all existing containers"
-sudo docker rm -f `sudo docker ps -aq`
+echo "Force-removing postgis-container and postgis-image"
+sudo docker rm --force postgis-container
+sudo docker rmi --force postgis-image
 echo "Force-removing ${CONTAINER_PGDATA}"
 echo "Docker will create a fresh one"
 sudo rm -fr ${CONTAINER_PGDATA}
@@ -26,10 +27,10 @@ sudo docker run --privileged --detach --name=postgis-container \
   --volume ${RAW}:/home/dbsuper/Raw \
   --volume ${CONTAINER_CSVS}:/csvs \
   postgis-image \
-  -c 'shared_buffers=8GB' \
-  -c 'effective_cache_size=24GB' \
-  -c 'work_mem=1GB' \
-  -c 'maintenance_work_mem=1GB' \
+  -c 'shared_buffers=2GB' \
+  -c 'effective_cache_size=5GB' \
+  -c 'work_mem=512MB' \
+  -c 'maintenance_work_mem=512MB' \
   -c 'checkpoint_timeout=20min' \
   -c 'max_wal_size=4GB'
 sleep 30
