@@ -9,3 +9,5 @@ sudo docker run --privileged --rm --tty --volume "${PWD}:/data" \
   osrm/osrm-backend osrm-partition /data/oregon-latest.osrm
 sudo docker run --privileged --rm --tty --volume "${PWD}:/data" \
   osrm/osrm-backend osrm-customize /data/oregon-latest.osrm
+echo "Pulling the front end image"
+sudo docker pull osrm/osrm-frontend
