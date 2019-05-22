@@ -3,6 +3,7 @@
 # Environment variables
 export SPINNING_DISK=/home
 export RAW=$SPINNING_DISK/$USER/Raw/transportation-2018/transit-operations-analytics-data
+ls -altr ${RAW}
 export CONTAINER_PGDATA=$SPINNING_DISK/container-postgres
 export CONTAINER_CSVS=$SPINNING_DISK/container-csvs
 
