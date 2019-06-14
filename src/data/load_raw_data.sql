@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS raw;
 SET search_path TO raw, public;
 SET timezone = 'PST8PDT';
 \echo creating tables
-DROP TABLE IF EXISTS raw_veh_stoph;
+DROP TABLE IF EXISTS raw_veh_stoph CASCADE;
 CREATE TABLE raw_veh_stoph (
   event_no_trip integer,
   opd_date text,
@@ -22,7 +22,7 @@ CREATE TABLE raw_veh_stoph (
   gps_latitude double precision,
   door_open_time integer
 );
-DROP TABLE IF EXISTS raw_stop_event;
+DROP TABLE IF EXISTS raw_stop_event CASCADE;
 CREATE TABLE raw_stop_event (
   service_date text,
   vehicle_number integer,
@@ -43,7 +43,7 @@ CREATE TABLE raw_stop_event (
   x_coordinate double precision,
   y_coordinate double precision
 );
-DROP TABLE IF EXISTS raw_tripsh;
+DROP TABLE IF EXISTS raw_tripsh CASCADE;
 CREATE TABLE raw_tripsh (
   opd_date text,
   vehicle_id integer,
