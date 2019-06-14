@@ -5,6 +5,7 @@ LABEL maintainer="M. Edward (Ed) Borasky <ed.borasky@hackoregon.org>"
 COPY backports.list.stretch /etc/apt/sources.list.d/backports.list
 RUN apt-get update \
   && apt-get install -qqy --no-install-recommends \
+    curl \
     postgresql-11-postgis-2.5 \
     postgresql-11-postgis-2.5-scripts \
     postgresql-autodoc \
@@ -12,6 +13,13 @@ RUN apt-get update \
     unar \
     unzip \
   && apt-get clean
+
+# fast CSV wrangler written in Rust
+# https://github.com/BurntSushi/xsv
+RUN curl -Ls \
+  https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz \
+  | tar xzf - --directory=/usr/local/bin/ \
+  && xsv --help
 
 # database superuser
 RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home dbsuper
