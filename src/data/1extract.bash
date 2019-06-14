@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # set directories
-export RAW="${HOME}/Raw/"
+export RAW=/Raw
 export CSVS=/csvs
 echo "Checksumming raw archives"
 pushd ${RAW}
