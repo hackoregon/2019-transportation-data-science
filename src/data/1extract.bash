@@ -13,9 +13,16 @@ echo "Extracting the CSVs"
 pushd ${CSVS}
 rm *.csv
 unar -D "${RAW}/scrapes.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
-unar -D "${RAW}/April 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
-unar -D "${RAW}/May 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
 unzip   "${RAW}/July+2018+to+Dec+2018.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*stopevent*.csv"
+
+echo "Standardizing date formats and dropping months outside Sep-Nov"
+for file in *July*csv
+do
+  echo "JUL ${file}"; sed -i '/JUL18/d' "${file}"
+  echo "AUG ${file}"; sed -i '/AUG18/d' "${file}"
+  echo "DEC ${file}"; sed -i '/DEC18/d' "${file}"
+  echo "2018 ${file}"; sed -i 's/18:00:00:00/2018:00:00:00/' "${file}"
+done
 
 # document headers
 head -n 1 *tripsh*  > tripsh_headers.txt

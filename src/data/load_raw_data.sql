@@ -39,8 +39,6 @@ CREATE TABLE init_tripsh
 COPY init_tripsh FROM '/csvs/init_tripsh 1-30SEP2017.csv' WITH csv header;
 COPY init_tripsh FROM '/csvs/init_tripsh 1-31OCT2017.csv' WITH csv header;
 COPY init_tripsh FROM '/csvs/init_tripsh 1-30NOV2017.csv' WITH csv header;
-COPY init_tripsh FROM '/csvs/init_tripsh 1-30APR2018.csv' WITH csv header;
-COPY init_tripsh FROM '/csvs/init_tripsh 1-31MAY2018.csv' WITH csv header;
 
 \echo
 \echo creating vehicle stop history old raw data
@@ -78,8 +76,6 @@ CREATE TABLE init_veh_stoph
 COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-30SEP2017.csv' WITH csv header;
 COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-31OCT2017.csv' WITH csv header;
 COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-30NOV2017.csv' WITH csv header;
-COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-30APR2018.csv' WITH csv header;
-COPY init_veh_stoph FROM '/csvs/init_veh_stoph 1-31MAY2018.csv' WITH csv header;
 
 \echo
 \echo creating trimet stop event old raw data
@@ -117,8 +113,6 @@ CREATE TABLE trimet_stop_event
 COPY trimet_stop_event FROM '/csvs/trimet_stop_event 1-30SEP2017.csv' WITH csv header;
 COPY trimet_stop_event FROM '/csvs/trimet_stop_event 1-31OCT2017.csv' WITH csv header;
 COPY trimet_stop_event FROM '/csvs/trimet_stop_event 1-30NOV2017.csv' WITH csv header;
-COPY trimet_stop_event FROM '/csvs/trimet_stop_event 1-30APR2018.csv' WITH csv header;
-COPY trimet_stop_event FROM '/csvs/trimet_stop_event 1-31MAY2018.csv' WITH csv header;
 
 \echo
 \echo loading new format raw data
