@@ -63,7 +63,8 @@ FROM raw.raw_stop_event
 WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C')
 AND route_number IS NOT NULL
 AND route_number <= 291
-AND route_number >= 1;
+AND route_number >= 1
+AND route_number IN (SELECT DISTINCT rte FROM trimet_gis.tm_routes WHERE type = 'MAX');
 
 \echo primary key
 ALTER TABLE rail_passenger_stops 

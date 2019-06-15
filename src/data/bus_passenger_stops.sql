@@ -63,7 +63,8 @@ FROM raw.raw_stop_event
 WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_key = 'X')
 AND route_number IS NOT NULL
 AND route_number <= 291
-AND route_number >= 1;
+AND route_number >= 1
+AND route_number IN (SELECT DISTINCT line_id FROM bus_trips);
 
 \echo primary key
 ALTER TABLE bus_passenger_stops 
