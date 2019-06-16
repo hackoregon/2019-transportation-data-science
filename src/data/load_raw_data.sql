@@ -63,6 +63,8 @@ COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2017_11.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2018_09.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2018_10.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2018_11.csv' WITH csv header;
+\echo indexing raw_veh_stoph
+CREATE INDEX ON raw_veh_stoph (event_no_trip);
 
 \echo loading raw_stop_event
 COPY raw_stop_event FROM '/csvs/raw_stop_event_2017_09.csv' WITH csv header;
