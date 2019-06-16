@@ -36,10 +36,10 @@ do
   if [ "$i" == "tm_routes.zip" ]
   then
     ogr2ogr -lco precision=NO -nlt PROMOTE_TO_MULTI -overwrite -t_srs EPSG:4326 \
-      PG:"active_schema=trimet_gis" /vsizip/$i
+      PG:"user=${DBOWNER} active_schema=trimet_gis" /vsizip/$i
   else
     ogr2ogr -lco precision=NO -overwrite -t_srs EPSG:4326 \
-      PG:"active_schema=trimet_gis" /vsizip/$i
+      PG:"user=${DBOWNER} active_schema=trimet_gis" /vsizip/$i
   fi
 done
 
@@ -58,6 +58,6 @@ for i in tl*zip
 do
   echo $i
   ogr2ogr -lco precision=NO -nlt PROMOTE_TO_MULTI -overwrite -t_srs EPSG:4326 \
-    PG:"active_schema=census_gis" /vsizip/$i
+    PG:"user=${DBOWNER} active_schema=census_gis" /vsizip/$i
 done
 popd

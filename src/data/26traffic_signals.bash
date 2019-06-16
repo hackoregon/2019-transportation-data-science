@@ -10,5 +10,5 @@ echo "Download traffic signals shapefile from https://gis-pdx.opendata.arcgis.co
 echo "Save in ${RAW}"
 read -ep "Press 'Enter' here after file is downloaded"
 ogr2ogr -lco precision=NO -overwrite -t_srs EPSG:4326 \
-  PG:"active_schema=public" /vsizip/Traffic_Signals.zip
+  PG:"user=${DBOWNER} active_schema=public" /vsizip/Traffic_Signals.zip
 popd
