@@ -2,6 +2,13 @@
 -- so we have separate bus and rail passenger stop tables
 SET timezone = 'PST8PDT';
 
+\echo creating rail route table
+DROP TABLE IF EXISTS rail_routes;
+CREATE TABLE rail_routes AS
+SELECT DISTINCT rte FROM trimet_gis.tm_routes 
+WHERE type = 'MAX'
+ORDER BY rte;
+
 \echo creating rail_passenger_stops table
 DROP TABLE IF EXISTS rail_passenger_stops CASCADE;
 CREATE TABLE rail_passenger_stops (
@@ -60,11 +67,11 @@ SELECT vehicle_number AS vehicle_id, date_stamp::date AS service_date, service_k
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load,
   train_mileage, x_coordinate, y_coordinate
 FROM raw.raw_stop_event
-WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C')
+WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C' OR service_key = 'X')
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
-AND route_number IN (SELECT DISTINCT rte FROM trimet_gis.tm_routes WHERE type = 'MAX');
+AND route_number IN (SELECT rte FROM rail_routes);
 
 \echo primary key
 ALTER TABLE rail_passenger_stops 
@@ -76,4 +83,3 @@ SELECT DISTINCT service_date, service_key
 FROM rail_passenger_stops
 ORDER BY service_date;
 ALTER TABLE rail_service_keys ADD PRIMARY KEY (service_date);
-
