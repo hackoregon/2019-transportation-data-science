@@ -47,6 +47,7 @@ FOR VALUES FROM ('2018-11-01') TO ('2018-12-01');
 
 CREATE INDEX ON disturbance_stops (opd_date);
 CREATE INDEX ON disturbance_stops (line_id, pattern_direction);
+CREATE INDEX ON disturbance_stops (year);
 CREATE INDEX ON disturbance_stops (month);
 CREATE INDEX ON disturbance_stops (day_of_week);
 CREATE INDEX ON disturbance_stops (start_quarter_hour, end_quarter_hour);
@@ -67,4 +68,4 @@ WHERE stop_type = 3;
 \echo primary key
 ALTER TABLE disturbance_stops ADD PRIMARY KEY (opd_date, id);
 \echo register geometry column
-SELECT Populate_Geometry_Columns('disturbance_stops'::regclass);
+SELECT UpdateGeometrySRID('public', 'disturbance_stops', 'geom_point_4326', 4326);
