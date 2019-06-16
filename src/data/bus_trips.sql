@@ -16,3 +16,7 @@ AND line_id <= 291
 AND line_id >= 1;
 \echo primary key
 ALTER TABLE bus_trips ADD PRIMARY KEY (event_no_trip);
+DROP TABLE IF EXISTS bus_routes;
+CREATE TABLE bus_routes AS
+SELECT DISTINCT line_id FROM bus_trips ORDER BY line_id;
+ALTER TABLE bus_routes ADD PRIMARY KEY (line_id);

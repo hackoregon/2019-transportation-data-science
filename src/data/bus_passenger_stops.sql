@@ -64,13 +64,14 @@ WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_ke
 AND route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
-AND route_number IN (SELECT DISTINCT line_id FROM bus_trips);
+AND route_number IN (SELECT line_id FROM bus_routes);
 
 \echo primary key
 ALTER TABLE bus_passenger_stops 
 ADD PRIMARY KEY (vehicle_id, service_date, arrive_time, leave_time);
 
 \echo bus service keys
+DROP TABLE IF EXISTS bus_service_keys;
 CREATE TABLE bus_service_keys AS
 SELECT DISTINCT service_date, service_key
 FROM bus_passenger_stops
