@@ -66,8 +66,7 @@ SELECT vehicle_number AS vehicle_id, date_stamp::date AS service_date, service_k
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326
 FROM raw.raw_stop_event
-WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C' OR service_key = 'X')
-AND route_number IS NOT NULL
+WHERE route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
 AND route_number IN (SELECT rte FROM rail_routes);
