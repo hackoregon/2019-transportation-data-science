@@ -24,10 +24,10 @@ CREATE TABLE bus_all_stops (
   stop_type integer,
   door_open_time integer,
   gps_longitude double precision,
-  gps_latitude double precision,
-  geom_point_4326 point,
-  id serial
+  gps_latitude double precision
 ) PARTITION BY RANGE(opd_date) ;
+SELECT AddGeometryColumn('public', 'bus_all_stops', 'geom_point_4326', 4326, 'POINT', 2);
+ALTER TABLE bus_all_stops ADD COLUMN id serial;
 
 CREATE TABLE bus_all_stops_y2017m09
 PARTITION OF bus_all_stops
@@ -70,7 +70,7 @@ SELECT raw.raw_veh_stoph.vehicle_id, raw.raw_veh_stoph.date_stamp::date AS opd_d
   raw.raw_veh_stoph.meters, stop_id, stop_pos, distance_to_next, distance_to_trip,
   doors_opening, stop_type, door_open_time,
   gps_longitude, gps_latitude,
-  ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326)::point AS geom_point_4326
+  ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326) AS geom_point_4326
 FROM raw.raw_veh_stoph
 INNER JOIN bus_trips ON bus_trips.event_no_trip = raw.raw_veh_stoph.event_no_trip;
 \echo primary key

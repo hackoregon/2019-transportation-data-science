@@ -16,10 +16,10 @@ CREATE TABLE disturbance_stops (
   line_id integer,
   pattern_direction text,
   longitude double precision,
-  latitude double precision,
-  geom_point_4326 point,
-  id serial
+  latitude double precision
 ) PARTITION BY RANGE(opd_date) ;
+SELECT AddGeometryColumn('public', 'disturbance_stops', 'geom_point_4326', 4326, 'POINT', 2);
+ALTER TABLE disturbance_stops ADD COLUMN id serial;
 
 CREATE TABLE disturbance_stops_y2017m09
 PARTITION OF disturbance_stops
@@ -62,11 +62,9 @@ SELECT opd_date, service_key, year, month, day, day_of_week, act_arr_time, act_d
   act_dep_time - act_arr_time AS duration,
   line_id, pattern_direction,
   gps_longitude AS longitude, gps_latitude AS latitude,
-  ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326) AS geom_point_4326
+  geom_point_4326
 FROM bus_all_stops
 INNER JOIN bus_service_keys ON bus_all_stops.opd_date = bus_service_keys.service_date
 WHERE stop_type = 3;
 \echo primary key
 ALTER TABLE disturbance_stops ADD PRIMARY KEY (opd_date, id);
-\echo register geometry column
-SELECT UpdateGeometrySRID('public', 'disturbance_stops', 'geom_point_4326', 4326);

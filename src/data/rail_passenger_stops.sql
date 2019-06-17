@@ -27,9 +27,9 @@ CREATE TABLE rail_passenger_stops (
   ons integer,
   offs integer,
   estimated_load integer,
-  train_mileage double precision,
-  geom_point_4326 point
+  train_mileage double precision
 ) PARTITION BY RANGE(service_date);
+SELECT AddGeometryColumn('public', 'rail_passenger_stops', 'geom_point_4326', 4326, 'POINT', 2);
 
 CREATE TABLE rail_passenger_stops_y2017m09
 PARTITION OF rail_passenger_stops
@@ -64,7 +64,7 @@ SELECT vehicle_number AS vehicle_id, date_stamp::date AS service_date, service_k
   date_stamp + leave_time * interval '1 sec' AS leave_time, 
   date_stamp + stop_time * interval '1 sec' AS stop_time, 
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326)::point AS geom_point_4326
+  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326
 FROM raw.raw_stop_event
 WHERE (service_key = 'A' OR service_key = 'B' OR service_key = 'C' OR service_key = 'X')
 AND route_number IS NOT NULL
@@ -77,6 +77,7 @@ ALTER TABLE rail_passenger_stops
 ADD PRIMARY KEY (vehicle_id, service_date, arrive_time, leave_time);
 
 \echo rail service keys
+DROP TABLE IF EXISTS rail_service_keys;
 CREATE TABLE rail_service_keys AS
 SELECT DISTINCT service_date, service_key
 FROM rail_passenger_stops
