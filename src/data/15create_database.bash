@@ -11,3 +11,4 @@ echo "Creating fresh database ${PGDATABASE} with PostGIS extension - ignore erro
 psql --username=postgres --dbname=postgres --command="DROP DATABASE IF EXISTS ${PGDATABASE};"
 psql --username=postgres --dbname=postgres --command="CREATE DATABASE ${PGDATABASE} WITH OWNER ${PGUSER};"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --command="CREATE EXTENSION IF NOT EXISTS postgis;"
+psql --username=${PGUSER} --dbname=${PGDATABASE} --command="CREATE SCHEMA IF NOT EXISTS raw;"

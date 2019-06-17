@@ -1,5 +1,4 @@
 \echo setting search path and timezone
-CREATE SCHEMA IF NOT EXISTS raw;
 SET search_path TO raw, public;
 SET timezone = 'PST8PDT';
 
