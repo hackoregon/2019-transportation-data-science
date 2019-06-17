@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # define parameters
-export DBOWNER=transportation2019
+export PGUSER=transportation2019
 export PGDATABASE=transit_operations_analytics_data
 export RAW=/Raw
 
@@ -9,8 +9,8 @@ echo "Creating schemas"
 for schema in trimet_gis census_gis
 do
   echo "Creating schema ${schema}"
-  psql --username=${DBOWNER} --dbname=${PGDATABASE} --command="DROP SCHEMA IF EXISTS ${schema} CASCADE;"
-  psql --username=${DBOWNER} --dbname=${PGDATABASE} --command="CREATE SCHEMA ${schema};"
+  psql --username=${PGUSER} --dbname=${PGDATABASE} --command="DROP SCHEMA IF EXISTS ${schema} CASCADE;"
+  psql --username=${PGUSER} --dbname=${PGDATABASE} --command="CREATE SCHEMA ${schema};"
 done
 
 pushd ${RAW}
@@ -36,10 +36,10 @@ do
   if [ "$i" == "tm_routes.zip" ]
   then
     ogr2ogr -lco precision=NO -nlt PROMOTE_TO_MULTI -overwrite -t_srs EPSG:4326 \
-      PG:"user=${DBOWNER} active_schema=trimet_gis" /vsizip/$i
+      PG:"dbname=${PGDATABASE} active_schema=trimet_gis" /vsizip/$i
   else
     ogr2ogr -lco precision=NO -overwrite -t_srs EPSG:4326 \
-      PG:"user=${DBOWNER} active_schema=trimet_gis" /vsizip/$i
+      PG:"dbname=${PGDATABASE} active_schema=trimet_gis" /vsizip/$i
   fi
 done
 
@@ -58,6 +58,6 @@ for i in tl*zip
 do
   echo $i
   ogr2ogr -lco precision=NO -nlt PROMOTE_TO_MULTI -overwrite -t_srs EPSG:4326 \
-    PG:"user=${DBOWNER} active_schema=census_gis" /vsizip/$i
+    PG:"dbname=${PGDATABASE} active_schema=census_gis" /vsizip/$i
 done
 popd

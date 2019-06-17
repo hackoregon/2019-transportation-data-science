@@ -21,8 +21,7 @@ CREATE TABLE bus_passenger_stops (
   offs integer,
   estimated_load integer,
   train_mileage double precision,
-  x_coordinate double precision,
-  y_coordinate double precision
+  geom_point_4326 point
 ) PARTITION BY RANGE(service_date);
 
 CREATE TABLE bus_passenger_stops_y2017m09
@@ -57,8 +56,8 @@ SELECT vehicle_number AS vehicle_id, date_stamp::date AS service_date, service_k
   date_stamp + arrive_time * interval '1 sec' AS arrive_time, 
   date_stamp + leave_time * interval '1 sec' AS leave_time, 
   date_stamp + stop_time * interval '1 sec' AS stop_time, 
-  route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load,
-  train_mileage, x_coordinate, y_coordinate
+  route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
+  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326)::point AS geom_point_4326
 FROM raw.raw_stop_event
 WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_key = 'X')
 AND route_number IS NOT NULL

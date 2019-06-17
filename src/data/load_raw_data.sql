@@ -14,6 +14,7 @@ CREATE TABLE raw_veh_stoph (
   nom_arr_time integer,
   nom_dep_time integer,
   stop_id integer,
+  stop_pos integer,
   distance_to_next integer,
   distance_to_trip integer,
   doors_opening integer,

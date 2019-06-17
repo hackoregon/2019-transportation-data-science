@@ -17,6 +17,7 @@ CREATE TABLE bus_all_stops (
   pattern_direction character,
   meters integer,
   stop_id integer,
+  stop_pos integer,
   distance_to_next integer,
   distance_to_trip integer,
   doors_opening integer,
@@ -24,6 +25,7 @@ CREATE TABLE bus_all_stops (
   door_open_time integer,
   gps_longitude double precision,
   gps_latitude double precision,
+  geom_point_4326 point,
   id serial
 ) PARTITION BY RANGE(opd_date) ;
 
@@ -65,9 +67,10 @@ SELECT raw.raw_veh_stoph.vehicle_id, raw.raw_veh_stoph.date_stamp::date AS opd_d
   raw.raw_veh_stoph.date_stamp + raw.raw_veh_stoph.nom_arr_time * interval '1 sec' AS nom_arr_time, 
   raw.raw_veh_stoph.date_stamp + raw.raw_veh_stoph.nom_dep_time * interval '1 sec' AS nom_dep_time, 
   raw.raw_veh_stoph.event_no_trip, bus_trips.line_id, bus_trips.pattern_direction,
-  raw.raw_veh_stoph.meters, stop_id, distance_to_next, distance_to_trip,
+  raw.raw_veh_stoph.meters, stop_id, stop_pos, distance_to_next, distance_to_trip,
   doors_opening, stop_type, door_open_time,
-  gps_longitude, gps_latitude
+  gps_longitude, gps_latitude,
+  ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326)::point AS geom_point_4326
 FROM raw.raw_veh_stoph
 INNER JOIN bus_trips ON bus_trips.event_no_trip = raw.raw_veh_stoph.event_no_trip;
 \echo primary key

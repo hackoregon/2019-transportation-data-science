@@ -15,9 +15,9 @@ CREATE TABLE disturbance_stops (
   duration interval,
   line_id integer,
   pattern_direction text,
-  gps_longitude double precision,
-  gps_latitude double precision,
-  geom_point_4326 geometry,
+  longitude double precision,
+  latitude double precision,
+  geom_point_4326 point,
   id serial
 ) PARTITION BY RANGE(opd_date) ;
 
@@ -61,7 +61,8 @@ SELECT opd_date, service_key, year, month, day, day_of_week, act_arr_time, act_d
     date_part('minute', act_dep_time) / 15) AS end_quarter_hour,
   act_dep_time - act_arr_time AS duration,
   line_id, pattern_direction,
-  gps_longitude, gps_latitude, ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326) AS geom_point_4326
+  gps_longitude AS longitude, gps_latitude AS latitude,
+  ST_SetSRID(ST_MakePoint(gps_longitude, gps_latitude), 4326) AS geom_point_4326
 FROM bus_all_stops
 INNER JOIN bus_service_keys ON bus_all_stops.opd_date = bus_service_keys.service_date
 WHERE stop_type = 3;
