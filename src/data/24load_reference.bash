@@ -15,7 +15,7 @@ done
 
 pushd ${RAW}
 echo "Importing TriMet shapefiles"
-export WHERE=https://developer.trimet.org/gis/data
+export WHERE="https://developer.trimet.org/gis/data"
 for i in \
   ${WHERE}/tm_boundary.zip \
   ${WHERE}/tm_parkride.zip \
@@ -44,7 +44,7 @@ do
 done
 
 echo "Importing TIGER/Line® shapefiles"
-export {WHERE}=https://www2.census.gov/geo/tiger/TIGER2018
+export WHERE="https://www2.census.gov/geo/tiger/TIGER2018"
 for i in \
   ${WHERE}/TABBLOCK/tl_2018_41_tabblock10.zip \
   ${WHERE}/BG/tl_2018_41_bg.zip \
