@@ -24,10 +24,10 @@ CREATE TABLE bus_all_stops (
   stop_type integer,
   door_open_time integer,
   gps_longitude double precision,
-  gps_latitude double precision
+  gps_latitude double precision,
+  geom_point_4326 geometry(POINT, 4326),
+  id serial
 ) PARTITION BY RANGE(opd_date) ;
-SELECT AddGeometryColumn('public', 'bus_all_stops', 'geom_point_4326', 4326, 'POINT', 2);
-ALTER TABLE bus_all_stops ADD COLUMN id serial;
 
 CREATE TABLE bus_all_stops_y2017m09
 PARTITION OF bus_all_stops

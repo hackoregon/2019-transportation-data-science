@@ -16,10 +16,10 @@ CREATE TABLE disturbance_stops (
   line_id integer,
   pattern_direction text,
   longitude double precision,
-  latitude double precision
+  latitude double precision,
+  geom_point_4326 geometry(POINT, 4326),
+  id serial
 ) PARTITION BY RANGE(opd_date) ;
-SELECT AddGeometryColumn('public', 'disturbance_stops', 'geom_point_4326', 4326, 'POINT', 2);
-ALTER TABLE disturbance_stops ADD COLUMN id serial;
 
 CREATE TABLE disturbance_stops_y2017m09
 PARTITION OF disturbance_stops

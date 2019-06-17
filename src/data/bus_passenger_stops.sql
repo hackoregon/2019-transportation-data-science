@@ -20,9 +20,9 @@ CREATE TABLE bus_passenger_stops (
   ons integer,
   offs integer,
   estimated_load integer,
-  train_mileage double precision
+  train_mileage double precision,
+  geom_point_4326 geometry(POINT, 4326)
 ) PARTITION BY RANGE(service_date);
-SELECT AddGeometryColumn('public', 'bus_passenger_stops', 'geom_point_4326', 4326, 'POINT', 2);
 
 CREATE TABLE bus_passenger_stops_y2017m09
 PARTITION OF bus_passenger_stops
