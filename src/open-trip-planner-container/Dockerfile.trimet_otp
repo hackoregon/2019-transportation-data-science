@@ -10,9 +10,11 @@ WORKDIR /var/otp/graphs/pdx/
 ARG JAVA_MX=3G
 ENV JAVA_MX=3G
 RUN wget --no-clobber --quiet https://download.geofabrik.de/north-america/us/oregon-latest.osm.pbf \
-  && osmconvert oregon-latest.osm.pbf -b=-123.043,45.246,-122.276,45.652 --complete-ways -o=portland.pbf \
+  && osmconvert oregon-latest.osm.pbf \
+    -b=-123.153521992978,45.2557968581329,-122.277038035344,45.6572070102549 \
+    --complete-ways -o=portland.pbf \
   && rm oregon-latest.osm.pbf \
   && wget --no-clobber --quiet https://developer.trimet.org/schedule/gtfs.zip \
   && echo ${JAVA_MX} \
-  && otp --build /var/otp/graphs/pdx/
-CMD otp --router pdx --graphs /var/otp/graphs/ --server
+  && otp --build /var/otp/graphs/pdx/ 2>&1 | tee /graph-build.log
+ENTRYPOINT otp --router pdx --graphs /var/otp/graphs/ --server
