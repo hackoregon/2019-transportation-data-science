@@ -80,6 +80,6 @@ if __name__ == "__main__":
 
         long_df = pd.melt(df, id_vars=id_vars)
 
-        out_filename = interim_folder / f"lodes_{dataset}_2.csv"
+        out_filename = interim_folder / f"lodes_{dataset}.csv"
 
         long_df.to_csv(out_filename, index=False)
