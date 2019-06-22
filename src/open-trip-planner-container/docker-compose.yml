@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  trimet_otp:
+    build:
+      context: .
+      dockerfile: Dockerfile.trimet_otp
+    image: trimet_otp
+    ports:
+      - 8080:8080
