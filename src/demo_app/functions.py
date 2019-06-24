@@ -25,6 +25,9 @@ def update_map(map_, time, month, year):
 
     r = requests.get(url)
 
+    num_pts = r.json()['count']
+
+    r = requests.get(url + f"&limit={num_pts}")
     pts = []
 
     while True:
@@ -39,3 +42,6 @@ def update_map(map_, time, month, year):
     html_str = get_heatmap_as_html(pts)
 
     return html_str
+
+
+
