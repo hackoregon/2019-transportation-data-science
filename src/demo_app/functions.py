@@ -14,7 +14,6 @@ def get_heatmap_as_html(pts=None):
             gradient={0.2: "blue", 0.3: "lime", 0.5: "red"},
             min_opacity=0.5,
         ).add_to(heat_map)
-    print(heat_map.get_root().render())
     return heat_map.get_root().render()
 
 
@@ -31,7 +30,6 @@ def update_map(map_, time, month, year):
         for p in r.json()["results"]["features"]:
             if p["geometry"] is not None:
                 pts.append(p["geometry"]["coordinates"][::-1])
-        break
         if r.json()["next"] is not None:
             r = requests.get(r.json()["next"])
         else:
