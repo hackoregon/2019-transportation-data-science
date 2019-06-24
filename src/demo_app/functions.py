@@ -1,5 +1,4 @@
 import folium
-import pandas as pd
 import requests
 from folium.plugins import HeatMap
 
@@ -20,8 +19,9 @@ def get_heatmap_as_html(pts=None):
 
 def update_map(map_, time, month, year):
     months = "%2C".join([str(m) for m in range(month["start"], month["end"] + 1)])
-    times = "%2C".join([str(t) for t in range(time["start"], time["end"] + 1)])
-    url = f"http://localhost:8000/v1/transportation-systems/toad/disturbanceStops/?months={months}&time_range={times}&years={year}&directions=I&lines=14"
+    times = "%2C".join([str(t) for t in [time["start"], time["end"]]])
+
+    url = f"http://localhost:8000/v1/transportation-systems/toad/disturbanceStops/?months={months}&time_range={times}&years={year}&directions=I&lines=14&service_key=W"
 
     r = requests.get(url)
 
@@ -35,9 +35,6 @@ def update_map(map_, time, month, year):
             r = requests.get(r.json()["next"])
         else:
             break
-
-    # df = pd.DataFrame(pts, columns=["Latitude", "Longitude"])
-    # pts = df.groupby(["Latitude", "Longitude"]).sum().reset_index().values.tolist()
 
     html_str = get_heatmap_as_html(pts)
 
