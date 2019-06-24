@@ -41,7 +41,7 @@ def page_layout():
                                         id="before-map",
                                         srcDoc=func.get_heatmap_as_html(),
                                         width="100%",
-                                        height="650px",
+                                        height="500px",
                                     )
                                 ],
                             ),
@@ -62,7 +62,7 @@ def page_layout():
                                         id="after-map",
                                         srcDoc=func.get_heatmap_as_html(),
                                         width="100%",
-                                        height="650px",
+                                        height="500px",
                                     )
                                 ],
                             ),
