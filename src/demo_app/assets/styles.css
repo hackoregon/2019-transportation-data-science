@@ -1,6 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Rubik');
 @import url('https://fonts.googleapis.com/css?family=Merriweather');
 
+*[data-dash-is-loading="true"]{
+    visibility: hidden;
+}
+*[data-dash-is-loading="true"]::before{
+    content: "Loading ...";
+    display: inline-block;
+    justify-content: center;
+    color: black;
+    visibility: visible;
+}
+
 #before-title, #after-title{
     font-family: 'Rubik', sans-serif;
     font-size: 24pt;
@@ -19,7 +30,7 @@
 
 #month-slider{
     font-family: 'Merriweather', sans-serif;
-    padding-top: 100px
+    padding-top: 70px
 }
 
 .rc-slider-mark{
