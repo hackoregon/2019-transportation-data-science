@@ -21,11 +21,20 @@ def update_map(map_, time, month, year):
     months = "%2C".join([str(m) for m in range(month["start"], month["end"] + 1)])
     times = "%2C".join([str(t) for t in [time["start"], time["end"]]])
 
-    url = f"http://localhost:8000/v1/transportation-systems/toad/disturbanceStops/?months={months}&time_range={times}&years={year}&directions=I&lines=14&service_key=W"
+    url = (
+        f"http://localhost:8000/v1/transportation-systems/toad/disturbanceStops/"
+        f"?months={months}"
+        f"&time_range={times}"
+        f"&years={year}"
+        f"&directions=I"
+        f"&lines=14"
+        f"&service_key=W"
+        f"&bounds=-122.665849,45.510867,-122.653650,45.514367"
+    )
 
     r = requests.get(url)
 
-    num_pts = r.json()['count']
+    num_pts = r.json()["count"]
 
     r = requests.get(url + f"&limit={num_pts}")
     pts = []
@@ -42,6 +51,4 @@ def update_map(map_, time, month, year):
     html_str = get_heatmap_as_html(pts)
 
     return html_str
-
-
 
