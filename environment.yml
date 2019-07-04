@@ -3,3 +3,5 @@ dependencies:
   - pip
   - pip:
     - pandas
+    - python-dotenv
+    - psycopg2
