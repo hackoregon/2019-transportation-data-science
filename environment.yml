@@ -5,3 +5,4 @@ dependencies:
     - pandas
     - python-dotenv
     - psycopg2
+    
