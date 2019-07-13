@@ -20,6 +20,23 @@ gc()
 
 ```
 
+## Bus passenger stops
+```{r}
+stop_events_cols <- 
+  c("SERVICE_DATE", "VEHICLE_NUMBER", "ARRIVE_TIME", "LEAVE_TIME", "LOCATION_ID")
+setkeyv(stop_events, stop_events_cols, verbose = TRUE)
+vehicle_stop_history_cols <-
+  c("OPD_DATE", "VEHICLE_ID", "ACT_ARR_TIME", "ACT_DEP_TIME", "STOP_ID")
+setkeyv(vehicle_stop_history, vehicle_stop_history_cols, verbose = TRUE)
+bus_passenger_stops <- merge(
+  stop_events[ROUTE_NUMBER >=1 & ROUTE_NUMBER <= 291], vehicle_stop_history,
+  by.x = stop_events_cols, by.y = vehicle_stop_history_cols,
+  all = FALSE
+)
+gc()
+
+```
+
 ## Filter trips_history
 ```{r}
 (nrow(trips_history))
