@@ -11,11 +11,11 @@ library(data.table)
 
 ## Load the September 2017 data
 ```{r}
-vehicle_stop_history <- fread("/csvs/init_veh_stoph 1-30SEP2017.csv")
+vehicle_stop_history <- fread("/csvs/raw_veh_stoph_2017_09.csv")
 gc()
-stop_events <- fread("/csvs/trimet_stop_event 1-30SEP2017.csv")
+stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
 gc()
-trips_history <- fread("/csvs/init_tripsh 1-30SEP2017.csv")
+trips_history <- fread("/csvs/raw_tripsh_2017_09.csv")
 gc()
 
 ```
