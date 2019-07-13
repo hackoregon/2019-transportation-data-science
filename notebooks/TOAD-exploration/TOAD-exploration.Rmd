@@ -41,9 +41,7 @@ vehicle_stop_history <- merge(
   vehicle_stop_history, trips_history, 
   by.x = "EVENT_NO_TRIP", by.y = "EVENT_NO", all = FALSE)
 gc()
-extra_columns <- c("OPD_DATE.y", "VEHICLE_ID.y", "METERS.y", "ACT_DEP_TIME.y",
-                   "NOM_DEP_TIME.y", "NOM_END_TIME", "ACT_END_TIME") 
-vehicle_stop_history <- vehicle_stop_history[, (extra_columns) := NULL]
+vehicle_stop_history <- vehicle_stop_history[, !(OPD_DATE.y:ACT_END_TIME)]
 names(vehicle_stop_history) <- gsub(
   x = names(vehicle_stop_history), pattern = ".x", replacement = "", fixed = TRUE)
 (nrow(vehicle_stop_history))
