@@ -6,76 +6,40 @@ output: html_notebook
 ## Libraries
 ```{r}
 library(data.table)
+library(downloader)
+library(sf)
 
 ```
 
-## Load the September 2017 data
+## Data
 ```{r}
-vehicle_stop_history <- fread("/csvs/raw_veh_stoph_2017_09.csv")
-gc()
 stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
-gc()
-trips_history <- fread("/csvs/raw_tripsh_2017_09.csv")
+stop_events_key_cols <- c(
+  "VEHICLE_NUMBER",
+  "SERVICE_DATE",
+  "ARRIVE_TIME",
+  "LEAVE_TIME",
+  "LOCATION_ID"
+)
+setkeyv(stop_events, stop_events_key_cols)
+
+home <- setwd(tempdir())
+download("https://developer.trimet.org/gis/data/tm_routes.zip",
+         destfile = "tm_routes.zip"
+)
+unzip("tm_routes.zip")
+tm_routes <- unique(as.data.table(read_sf("tm_routes.shp"))[, .(rte, type)])
+setwd(home)
 gc()
 
 ```
 
-## Bus passenger stops
+## Tag the stop event table with vehicle type
 ```{r}
-stop_events_cols <- 
-  c("SERVICE_DATE", "VEHICLE_NUMBER", "ARRIVE_TIME", "LEAVE_TIME", "LOCATION_ID")
-setkeyv(stop_events, stop_events_cols, verbose = TRUE)
-vehicle_stop_history_cols <-
-  c("OPD_DATE", "VEHICLE_ID", "ACT_ARR_TIME", "ACT_DEP_TIME", "STOP_ID")
-setkeyv(vehicle_stop_history, vehicle_stop_history_cols, verbose = TRUE)
-bus_passenger_stops <- merge(
-  stop_events[ROUTE_NUMBER >=1 & ROUTE_NUMBER <= 291], vehicle_stop_history,
-  by.x = stop_events_cols, by.y = vehicle_stop_history_cols,
-  all = FALSE
+stop_events <- merge(
+  stop_events, tm_routes, by.x = "ROUTE_NUMBER", by.y = "rte", all = FALSE
 )
 gc()
 
 ```
 
-## Filter trips_history
-```{r}
-(nrow(trips_history))
-trips_history <- trips_history[
-  (PATTERN_DIRECTION == "I" | PATTERN_DIRECTION == "O") &
-    LINE_ID >= 1 &
-    LINE_ID <= 291 &
-    !is.na(LINE_ID)
-]
-(nrow(trips_history))
-gc()
-
-```
-
-## Inner join vehicle_stop_history with filtered_trips_history
-```{r}
-(nrow(vehicle_stop_history))
-vehicle_stop_history <- merge(
-  vehicle_stop_history, trips_history, 
-  by.x = "EVENT_NO_TRIP", by.y = "EVENT_NO", all = FALSE)
-gc()
-vehicle_stop_history <- vehicle_stop_history[, !(OPD_DATE.y:ACT_END_TIME)]
-names(vehicle_stop_history) <- gsub(
-  x = names(vehicle_stop_history), pattern = ".x", replacement = "", fixed = TRUE)
-(nrow(vehicle_stop_history))
-gc()
-
-```
-
-## Join vehicle stop history with stop events!!
-```{r}
-vehicle_stop_history_columns <- 
-  c("OPD_DATE", "VEHICLE_ID", "ACT_ARR_TIME", "ACT_DEP_TIME")
-stop_events_columns <- 
-  c("SERVICE_DATE", "VEHICLE_NUMBER", "ARRIVE_TIME", "LEAVE_TIME")
-vehicle_stop_history <- merge(
-  vehicle_stop_history, stop_events,
-  by.x = vehicle_stop_history_columns, by.y = stop_events_columns, all.x = TRUE)
-gc()
-(nrow(vehicle_stop_history))
-
-```
