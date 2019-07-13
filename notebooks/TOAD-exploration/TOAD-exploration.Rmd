@@ -20,3 +20,47 @@ gc()
 
 ```
 
+## Filter trips_history
+```{r}
+(nrow(trips_history))
+trips_history <- trips_history[
+  (PATTERN_DIRECTION == "I" | PATTERN_DIRECTION == "O") &
+    LINE_ID >= 1 &
+    LINE_ID <= 291 &
+    !is.na(LINE_ID)
+]
+(nrow(trips_history))
+gc()
+
+```
+
+## Inner join vehicle_stop_history with filtered_trips_history
+```{r}
+(nrow(vehicle_stop_history))
+vehicle_stop_history <- merge(
+  vehicle_stop_history, trips_history, 
+  by.x = "EVENT_NO_TRIP", by.y = "EVENT_NO", all = FALSE)
+gc()
+extra_columns <- c("OPD_DATE.y", "VEHICLE_ID.y", "METERS.y", "ACT_DEP_TIME.y",
+                   "NOM_DEP_TIME.y", "NOM_END_TIME", "ACT_END_TIME") 
+vehicle_stop_history <- vehicle_stop_history[, (extra_columns) := NULL]
+names(vehicle_stop_history) <- gsub(
+  x = names(vehicle_stop_history), pattern = ".x", replacement = "", fixed = TRUE)
+(nrow(vehicle_stop_history))
+gc()
+
+```
+
+## Join vehicle stop history with stop events!!
+```{r}
+vehicle_stop_history_columns <- 
+  c("OPD_DATE", "VEHICLE_ID", "ACT_ARR_TIME", "ACT_DEP_TIME")
+stop_events_columns <- 
+  c("SERVICE_DATE", "VEHICLE_NUMBER", "ARRIVE_TIME", "LEAVE_TIME")
+vehicle_stop_history <- merge(
+  vehicle_stop_history, stop_events,
+  by.x = vehicle_stop_history_columns, by.y = stop_events_columns, all.x = TRUE)
+gc()
+(nrow(vehicle_stop_history))
+
+```
