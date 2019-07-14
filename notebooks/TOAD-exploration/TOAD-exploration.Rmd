@@ -11,18 +11,44 @@ library(sf)
 
 ```
 
-## Data
+## Functions
+```{r}
+## quarter hour of day
+qhod <- function(tstamp) {
+  0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
+}
+
+```
+
+## Stop events table
 ```{r}
 stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
+gc()
+stop_events <- stop_events[, SERVICE_DATE := as.POSIXct(
+  strptime(SERVICE_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT"))
+]
+gc()
+stop_events <- stop_events[, `:=`(
+  STOP_TIME = SERVICE_DATE + STOP_TIME,
+  ARRIVE_TIME = SERVICE_DATE + ARRIVE_TIME,
+  LEAVE_TIME = SERVICE_DATE + LEAVE_TIME,
+  DAY_OF_WEEK = wday(SERVICE_DATE),
+  SECONDS_LATE = ARRIVE_TIME - STOP_TIME
+)]
+gc()
+stop_events <- stop_events[, QHOUR_OF_DAY := qhod(ARRIVE_TIME)]
+gc()
 stop_events_key_cols <- c(
   "VEHICLE_NUMBER",
-  "SERVICE_DATE",
   "ARRIVE_TIME",
   "LEAVE_TIME",
   "LOCATION_ID"
 )
-setkeyv(stop_events, stop_events_key_cols)
 
+```
+
+## TriMet routes table - all we're using is the vehicle type
+```{r}
 home <- setwd(tempdir())
 download("https://developer.trimet.org/gis/data/tm_routes.zip",
          destfile = "tm_routes.zip"
@@ -30,7 +56,6 @@ download("https://developer.trimet.org/gis/data/tm_routes.zip",
 unzip("tm_routes.zip")
 tm_routes <- unique(as.data.table(read_sf("tm_routes.shp"))[, .(rte, type)])
 setwd(home)
-gc()
 
 ```
 
