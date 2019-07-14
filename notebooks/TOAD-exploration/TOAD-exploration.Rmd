@@ -6,8 +6,6 @@ output: html_notebook
 ## Libraries
 ```{r}
 library(data.table)
-library(downloader)
-library(sf)
 
 ```
 
