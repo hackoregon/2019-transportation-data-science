@@ -13,6 +13,8 @@ ORDER BY rte;
 DROP TABLE IF EXISTS rail_passenger_stops CASCADE;
 CREATE TABLE rail_passenger_stops (
   vehicle_id integer,
+  train integer,
+  trip_number integer,
   service_date date not null,
   service_key text,
   arrive_time timestamp with time zone,
@@ -59,7 +61,8 @@ CREATE INDEX ON rail_passenger_stops (service_date);
 
 \echo loading
 INSERT INTO rail_passenger_stops
-SELECT vehicle_number AS vehicle_id, date_stamp::date AS service_date, service_key,
+SELECT vehicle_number AS vehicle_id, train, trip_number,
+  date_stamp::date AS service_date, service_key,
   date_stamp + arrive_time * interval '1 sec' AS arrive_time, 
   date_stamp + leave_time * interval '1 sec' AS leave_time, 
   date_stamp + stop_time * interval '1 sec' AS stop_time, 
