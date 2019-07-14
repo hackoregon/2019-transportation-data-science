@@ -71,7 +71,7 @@ vehicle_stop_history <- merge(
   by.x = vehicle_stop_history_by, by.y = stop_events_by,
   all = FALSE
 )
-rm(stop_events, stop_events_by)
+rm(stop_events, stop_events_by, vehicle_stop_history_by)
 gc()
 
 ```
@@ -87,11 +87,34 @@ vehicle_stop_history <- vehicle_stop_history[, `:=`(
   ACT_ARR_TIME = OPD_DATE + ACT_ARR_TIME,
   NOM_DEP_TIME = OPD_DATE + NOM_DEP_TIME,
   ACT_DEP_TIME = OPD_DATE + ACT_DEP_TIME,
+  YEAR = year(OPD_DATE),
+  MONTH = month(OPD_DATE),
+  DAY = mday(OPD_DATE),
   DAY_OF_WEEK = wday(OPD_DATE),
   SECONDS_LATE = ACT_ARR_TIME - NOM_ARR_TIME
 )]
 gc()
 vehicle_stop_history <- vehicle_stop_history[, QHOUR_OF_DAY := qhod(ACT_ARR_TIME)]
 gc()
+(vehicle_stop_history)
 
 ```
+
+## Lagged columns
+```{r}
+setkey(vehicle_stop_history, VEHICLE_ID, ACT_ARR_TIME, ACT_DEP_TIME, STOP_ID)
+vehicle_stop_history <- vehicle_stop_history[
+  , `:=`(
+    FROM_STOP = shift(STOP_ID),
+    METERS_TRAVELED = METERS - shift(METERS),
+    SECONDS_TRAVELED = as.integer(ACT_ARR_TIME - shift(ACT_DEP_TIME))
+  ),
+  by = EVENT_NO_TRIP
+]
+gc()
+print(vehicle_stop_history)
+
+```
+
+,
+    
