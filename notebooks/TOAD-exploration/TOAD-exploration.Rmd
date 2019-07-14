@@ -20,51 +20,80 @@ qhod <- function(tstamp) {
 
 ```
 
+## Trips history
+```{r}
+trips_history <- fread("/csvs/raw_tripsh_2017_09.csv")[
+  PATTERN_DIRECTION == "I" | PATTERN_DIRECTION == "O"][
+    VEHICLE_ID > 0 & EVENT_NO > 0 & LINE_ID > 0][,
+      .(OPD_DATE, VEHICLE_ID, EVENT_NO)]
+gc()
+
+```
+
+## Vehicle stop history
+```{r}
+vehicle_stop_history <- fread("/csvs/raw_veh_stoph_2017_09.csv")[
+  !is.na(STOP_ID) &
+  !is.na(GPS_LONGITUDE) &
+  !is.na(GPS_LATITUDE)][, !c("DOOR_OPEN_TIME")]
+gc()
+vehicle_stop_history_by <- c("OPD_DATE", "VEHICLE_ID", "EVENT_NO_TRIP")
+trips_history_by = c("OPD_DATE", "VEHICLE_ID", "EVENT_NO")
+vehicle_stop_history <- merge(
+  vehicle_stop_history, trips_history,
+  by.x = vehicle_stop_history_by, by.y = trips_history_by,
+  all = FALSE)
+rm(trips_history, trips_history_by)
+gc()
+
+```
+
 ## Stop events table
 ```{r}
-stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
-gc()
-stop_events <- stop_events[, SERVICE_DATE := as.POSIXct(
-  strptime(SERVICE_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT"))
+stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")[
+  , !c("TRIP_NUMBER", "STOP_TIME", "TRAIN_MILEAGE", "X_COORDINATE", "Y_COORDINATE")
 ]
 gc()
-stop_events <- stop_events[, `:=`(
-  STOP_TIME = SERVICE_DATE + STOP_TIME,
-  ARRIVE_TIME = SERVICE_DATE + ARRIVE_TIME,
-  LEAVE_TIME = SERVICE_DATE + LEAVE_TIME,
-  DAY_OF_WEEK = wday(SERVICE_DATE),
-  SECONDS_LATE = ARRIVE_TIME - STOP_TIME
-)]
-gc()
-stop_events <- stop_events[, QHOUR_OF_DAY := qhod(ARRIVE_TIME)]
-gc()
-stop_events_key_cols <- c(
+vehicle_stop_history_by <- c(
+  "OPD_DATE",
+  "VEHICLE_ID",
+  "ACT_ARR_TIME",
+  "ACT_DEP_TIME",
+  "STOP_ID"
+)
+stop_events_by <- c(
+  "SERVICE_DATE",
   "VEHICLE_NUMBER",
   "ARRIVE_TIME",
   "LEAVE_TIME",
   "LOCATION_ID"
 )
-
-```
-
-## TriMet routes table - all we're using is the vehicle type
-```{r}
-home <- setwd(tempdir())
-download("https://developer.trimet.org/gis/data/tm_routes.zip",
-         destfile = "tm_routes.zip"
+vehicle_stop_history <- merge(
+  vehicle_stop_history, stop_events,
+  by.x = vehicle_stop_history_by, by.y = stop_events_by,
+  all = FALSE
 )
-unzip("tm_routes.zip")
-tm_routes <- unique(as.data.table(read_sf("tm_routes.shp"))[, .(rte, type)])
-setwd(home)
-
-```
-
-## Tag the stop event table with vehicle type
-```{r}
-stop_events <- merge(
-  stop_events, tm_routes, by.x = "ROUTE_NUMBER", by.y = "rte", all = FALSE
-)
+rm(stop_events, stop_events_by)
 gc()
 
 ```
 
+## Date computations
+```{r}
+vehicle_stop_history <- vehicle_stop_history[, OPD_DATE := as.POSIXct(
+  strptime(OPD_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT"))
+]
+gc()
+vehicle_stop_history <- vehicle_stop_history[, `:=`(
+  NOM_ARR_TIME = OPD_DATE + NOM_ARR_TIME,
+  ACT_ARR_TIME = OPD_DATE + ACT_ARR_TIME,
+  NOM_DEP_TIME = OPD_DATE + NOM_DEP_TIME,
+  ACT_DEP_TIME = OPD_DATE + ACT_DEP_TIME.
+  DAY_OF_WEEK = wday(OPD_DATE),
+  SECONDS_LATE = ACT_ARR_TIME - NOM_ARR_TIME
+)]
+gc()
+vehicle_stop_history <- vehicle_stop_history[, QHOUR_OF_DAY := qhod(ACT_ARR_TIME)]
+gc()
+
+```
