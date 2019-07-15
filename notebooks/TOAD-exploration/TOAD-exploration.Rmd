@@ -6,6 +6,7 @@ output: html_notebook
 ## Libraries
 ```{r}
 library(data.table)
+library(lubridate)
 
 ```
 
@@ -89,9 +90,9 @@ gc()
 ## Date computations
 ```{r}
 vehicle_stop_history <- vehicle_stop_history[
-  , OPD_DATE := as.POSIXct(strptime(
-    OPD_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT"
-  ))
+  , OPD_DATE := fast_strptime(
+    OPD_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT", lt = FALSE
+  )
 ]
 gc()
 vehicle_stop_history <- vehicle_stop_history[
