@@ -142,6 +142,8 @@ vehicle_stop_history <- vehicle_stop_history[!is.na(FROM_STOP)]
 stop_to_stop_seconds <- vehicle_stop_history[
   , .(
     .N,
+    mean = mean(SECONDS_TRAVELED),
+    cvar = sd(SECONDS_TRAVELED) / mean(SECONDS_TRAVELED),
     p05 = qx(SECONDS_TRAVELED, 0.05),
     p25 = qx(SECONDS_TRAVELED, 0.25),
     p50 = qx(SECONDS_TRAVELED, 0.50),
@@ -151,11 +153,15 @@ stop_to_stop_seconds <- vehicle_stop_history[
   by = .(FROM_STOP, STOP_ID)
 ]
 gc()
+stop_to_stop_seconds <- stop_to_stop_seconds[N > 30]
+gc()
 stop_to_stop_seconds <- stop_to_stop_seconds[order(-N)]
 gc()
 stop_to_stop_meters <- vehicle_stop_history[
   , .(
     .N,
+    mean = mean(METERS_TRAVELED),
+    cvar = sd(METERS_TRAVELED) / mean(METERS_TRAVELED),
     p05 = qx(METERS_TRAVELED, 0.05),
     p25 = qx(METERS_TRAVELED, 0.25),
     p50 = qx(METERS_TRAVELED, 0.50),
@@ -164,6 +170,8 @@ stop_to_stop_meters <- vehicle_stop_history[
   ),
   by = .(FROM_STOP, STOP_ID)
 ]
+gc()
+stop_to_stop_meters <- stop_to_stop_meters[N > 30]
 gc()
 stop_to_stop_meters <- stop_to_stop_meters[order(-N)]
 gc()
