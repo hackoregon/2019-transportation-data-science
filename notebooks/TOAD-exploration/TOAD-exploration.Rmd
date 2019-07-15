@@ -17,7 +17,7 @@ qhod <- function(tstamp) {
   0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
 }
 
-# five-number summary
+# cleaned quantiles
 qx <- function(x, p) {
     quantile(
       x, probs = p, na.rm = TRUE, names = FALSE
@@ -30,14 +30,16 @@ qx <- function(x, p) {
 Note: because this has to run in an 8GB laptop, we garbage-collect frequently
 and avoid chaining / pipes.
 ```{r}
-vehicle_stop_history <- fread("/csvs/raw_veh_stoph_2017_09.csv")
+bus_passenger_stops <- fread("/csvs/raw_veh_stoph_2017_09.csv")
 gc()
-vehicle_stop_history <- vehicle_stop_history[
+bus_passenger_stops <- bus_passenger_stops[
   !is.na(NOM_ARR_TIME) &
   !is.na(NOM_DEP_TIME) &
   !is.na(STOP_ID) &
   !is.na(GPS_LONGITUDE) &
-  !is.na(GPS_LATITUDE)
+  !is.na(GPS_LATITUDE) &
+  GPS_LONGITUDE > -124 & GPS_LONGITUDE < -121 &
+  GPS_LATITUDE > 44 & GPS_LATITUDE < 46
 ]
 gc()
 
@@ -49,9 +51,9 @@ stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
 gc()
 stop_events <- stop_events[
   ROUTE_NUMBER >= 1 &
-  ROUTE_NUMBER <= 291 &
-  X_COORDINATE > 0 &
-  Y_COORDINATE > 0
+  ROUTE_NUMBER <= 291,
+  .(SERVICE_DATE, VEHICLE_NUMBER, ROUTE_NUMBER, DIRECTION, SERVICE_KEY, DWELL,
+    LOCATION_ID, ARRIVE_TIME, LEAVE_TIME, DOOR, LIFT, ONS, OFFS, ESTIMATED_LOAD)
 ]
 gc()
 
@@ -59,14 +61,14 @@ gc()
 
 ## Join the tables to get bus passenger stops
 ```{r}
-vehicle_stop_history_by <- c(
+bus_passenger_stops_by <- c(
   "OPD_DATE",
   "VEHICLE_ID",
   "ACT_ARR_TIME",
   "ACT_DEP_TIME",
   "STOP_ID"
 )
-setkeyv(vehicle_stop_history, vehicle_stop_history_by)
+setkeyv(bus_passenger_stops, bus_passenger_stops_by)
 gc()
 stop_events_by <- c(
   "SERVICE_DATE",
@@ -77,9 +79,9 @@ stop_events_by <- c(
 )
 setkeyv(stop_events, stop_events_by)
 gc()
-vehicle_stop_history <- merge(
-  vehicle_stop_history, stop_events,
-  by.x = vehicle_stop_history_by, by.y = stop_events_by,
+bus_passenger_stops <- merge(
+  bus_passenger_stops, stop_events,
+  by.x = bus_passenger_stops_by, by.y = stop_events_by,
   all = FALSE
 )
 rm(stop_events, stop_events_by)
@@ -89,13 +91,13 @@ gc()
 
 ## Date computations
 ```{r}
-vehicle_stop_history <- vehicle_stop_history[
+bus_passenger_stops <- bus_passenger_stops[
   , OPD_DATE := fast_strptime(
     OPD_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT", lt = FALSE
   )
 ]
 gc()
-vehicle_stop_history <- vehicle_stop_history[
+bus_passenger_stops <- bus_passenger_stops[
   , `:=`(
     NOM_ARR_TIME = OPD_DATE + NOM_ARR_TIME,
     ACT_ARR_TIME = OPD_DATE + ACT_ARR_TIME,
@@ -108,7 +110,7 @@ vehicle_stop_history <- vehicle_stop_history[
   )
 ]
 gc()
-vehicle_stop_history <- vehicle_stop_history[
+bus_passenger_stops <- bus_passenger_stops[
   , QHOUR_OF_DAY := qhod(ACT_ARR_TIME)
 ]
 gc()
@@ -117,64 +119,46 @@ gc()
 
 ## Lagged columns
 ```{r}
-vehicle_stop_history_by <- c(
+bus_passenger_stops_by <- c(
   "VEHICLE_ID",
   "ACT_ARR_TIME",
   "ACT_DEP_TIME",
   "STOP_ID"
 )
-setkeyv(vehicle_stop_history, vehicle_stop_history_by)
-vehicle_stop_history <- vehicle_stop_history[
+setkeyv(bus_passenger_stops, bus_passenger_stops_by)
+bus_passenger_stops <- bus_passenger_stops[
   , `:=`(
     FROM_STOP = shift(STOP_ID),
-    METERS_TRAVELED = METERS - shift(METERS),
-    SECONDS_TRAVELED = as.integer(ACT_ARR_TIME - shift(ACT_DEP_TIME)),
-    ARRIVING_LOAD = shift(ESTIMATED_LOAD),
+    DISTANCE_METERS = METERS - shift(METERS),
+    SECONDS_BETWEEN_STOPS = as.integer(ACT_ARR_TIME - shift(ACT_ARR_TIME)),
     SECONDS_LATE = as.integer(ACT_ARR_TIME - NOM_ARR_TIME)
   ),
   by = EVENT_NO_TRIP
 ]
 gc()
-vehicle_stop_history <- vehicle_stop_history[!is.na(FROM_STOP)]
+bus_passenger_stops <- bus_passenger_stops[!is.na(FROM_STOP)]
 
 ```
-## Primitive summary
+## summary
 ```{r}
-stop_to_stop_seconds <- vehicle_stop_history[
+bus_passenger_stops_summary <- bus_passenger_stops[
   , .(
     .N,
-    mean = mean(SECONDS_TRAVELED),
-    cvar = sd(SECONDS_TRAVELED) / mean(SECONDS_TRAVELED),
-    p05 = qx(SECONDS_TRAVELED, 0.05),
-    p25 = qx(SECONDS_TRAVELED, 0.25),
-    p50 = qx(SECONDS_TRAVELED, 0.50),
-    p75 = qx(SECONDS_TRAVELED, 0.75),
-    p95 = qx(SECONDS_TRAVELED, 0.95)
+    median_distance_meters = qx(DISTANCE_METERS, 0.50),
+    mean_seconds = mean(SECONDS_BETWEEN_STOPS),
+    cvar = sd(SECONDS_BETWEEN_STOPS) / mean(SECONDS_BETWEEN_STOPS),
+    p05_seconds = qx(SECONDS_BETWEEN_STOPS, 0.05),
+    p25_seconds = qx(SECONDS_BETWEEN_STOPS, 0.25),
+    p50_seconds = qx(SECONDS_BETWEEN_STOPS, 0.50),
+    p75_seconds = qx(SECONDS_BETWEEN_STOPS, 0.75),
+    p95_seconds = qx(SECONDS_BETWEEN_STOPS, 0.95)
   ),
   by = .(FROM_STOP, STOP_ID)
 ]
 gc()
-stop_to_stop_seconds <- stop_to_stop_seconds[N > 30]
+bus_passenger_stops_summary <- bus_passenger_stops_summary[N > 30]
 gc()
-stop_to_stop_seconds <- stop_to_stop_seconds[order(-N)]
-gc()
-stop_to_stop_meters <- vehicle_stop_history[
-  , .(
-    .N,
-    mean = mean(METERS_TRAVELED),
-    cvar = sd(METERS_TRAVELED) / mean(METERS_TRAVELED),
-    p05 = qx(METERS_TRAVELED, 0.05),
-    p25 = qx(METERS_TRAVELED, 0.25),
-    p50 = qx(METERS_TRAVELED, 0.50),
-    p75 = qx(METERS_TRAVELED, 0.75),
-    p95 = qx(METERS_TRAVELED, 0.95)
-  ),
-  by = .(FROM_STOP, STOP_ID)
-]
-gc()
-stop_to_stop_meters <- stop_to_stop_meters[N > 30]
-gc()
-stop_to_stop_meters <- stop_to_stop_meters[order(-N)]
+bus_passenger_stops_summary <- bus_passenger_stops_summary[order(-N)]
 gc()
 
 ```
