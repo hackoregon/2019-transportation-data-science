@@ -1,5 +1,5 @@
 ---
-title: "TOAD data exploration"
+title: "Bus travelshed data extraction"
 output: html_notebook
 ---
 
@@ -7,6 +7,7 @@ output: html_notebook
 ```{r}
 library(data.table)
 library(lubridate)
+library(DT)
 
 ```
 
@@ -146,12 +147,13 @@ bus_passenger_stops_summary <- bus_passenger_stops[
     .N,
     median_distance_meters = qx(DISTANCE_METERS, 0.50),
     mean_seconds = mean(SECONDS_BETWEEN_STOPS),
+    sd = sd(SECONDS_BETWEEN_STOPS),
     cvar = sd(SECONDS_BETWEEN_STOPS) / mean(SECONDS_BETWEEN_STOPS),
-    p05_seconds = qx(SECONDS_BETWEEN_STOPS, 0.05),
-    p25_seconds = qx(SECONDS_BETWEEN_STOPS, 0.25),
-    p50_seconds = qx(SECONDS_BETWEEN_STOPS, 0.50),
-    p75_seconds = qx(SECONDS_BETWEEN_STOPS, 0.75),
-    p95_seconds = qx(SECONDS_BETWEEN_STOPS, 0.95)
+    p05 = qx(SECONDS_BETWEEN_STOPS, 0.05),
+    p25 = qx(SECONDS_BETWEEN_STOPS, 0.25),
+    p50 = qx(SECONDS_BETWEEN_STOPS, 0.50),
+    p75 = qx(SECONDS_BETWEEN_STOPS, 0.75),
+    p95 = qx(SECONDS_BETWEEN_STOPS, 0.95)
   ),
   by = .(FROM_STOP, STOP_ID)
 ]
@@ -160,6 +162,6 @@ bus_passenger_stops_summary <- bus_passenger_stops_summary[N > 30]
 gc()
 bus_passenger_stops_summary <- bus_passenger_stops_summary[order(-N)]
 gc()
-
+datatable(bus_passenger_stops_summary)
 ```
 
