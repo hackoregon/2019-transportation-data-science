@@ -16,42 +16,36 @@ qhod <- function(tstamp) {
   0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
 }
 
-```
-
-## Trips history
-```{r}
-trips_history <- fread("/csvs/raw_tripsh_2017_09.csv")[
-  PATTERN_DIRECTION == "I" | PATTERN_DIRECTION == "O"][
-    VEHICLE_ID > 0 & EVENT_NO > 0 & LINE_ID > 0][,
-      .(OPD_DATE, VEHICLE_ID, EVENT_NO)]
-gc()
+# five-number summary
+quantiles <- function(x) {
+  list(c(
+    length(x),
+    quantile(
+      x, probs = c(0.05, 0.25, 0.50, 0.75, 0.95), na.rm = TRUE, names = FALSE
+    )
+  ))
+}
 
 ```
 
 ## Vehicle stop history
+Note: because this has to run in an 8GB laptop, we garbage-collect frequently
+and avoid chaining / pipes.
 ```{r}
-vehicle_stop_history <- fread("/csvs/raw_veh_stoph_2017_09.csv")[
-  !is.na(STOP_ID) &
-  !is.na(GPS_LONGITUDE) &
-  !is.na(GPS_LATITUDE)][, !c("DOOR_OPEN_TIME")]
-gc()
-vehicle_stop_history_by <- c("OPD_DATE", "VEHICLE_ID", "EVENT_NO_TRIP")
-trips_history_by = c("OPD_DATE", "VEHICLE_ID", "EVENT_NO")
-vehicle_stop_history <- merge(
-  vehicle_stop_history, trips_history,
-  by.x = vehicle_stop_history_by, by.y = trips_history_by,
-  all = FALSE)
-rm(trips_history, trips_history_by)
+vehicle_stop_history <- fread("/csvs/raw_veh_stoph_2017_09.csv")
 gc()
 
 ```
 
-## Stop events table
+## Stop events
 ```{r}
-stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")[
-  , !c("TRIP_NUMBER", "STOP_TIME", "TRAIN_MILEAGE", "X_COORDINATE", "Y_COORDINATE")
-]
+stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
 gc()
+
+```
+
+## Join the tables to get bus passenger stops
+```{r}
 vehicle_stop_history_by <- c(
   "OPD_DATE",
   "VEHICLE_ID",
@@ -59,6 +53,8 @@ vehicle_stop_history_by <- c(
   "ACT_DEP_TIME",
   "STOP_ID"
 )
+setkeyv(vehicle_stop_history, vehicle_stop_history_by)
+gc()
 stop_events_by <- c(
   "SERVICE_DATE",
   "VEHICLE_NUMBER",
@@ -66,55 +62,76 @@ stop_events_by <- c(
   "LEAVE_TIME",
   "LOCATION_ID"
 )
+setkeyv(stop_events, stop_events_by)
+gc()
 vehicle_stop_history <- merge(
   vehicle_stop_history, stop_events,
   by.x = vehicle_stop_history_by, by.y = stop_events_by,
   all = FALSE
 )
-rm(stop_events, stop_events_by, vehicle_stop_history_by)
+rm(stop_events, stop_events_by)
 gc()
 
 ```
 
 ## Date computations
 ```{r}
-vehicle_stop_history <- vehicle_stop_history[, OPD_DATE := as.POSIXct(
-  strptime(OPD_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT"))
+vehicle_stop_history <- vehicle_stop_history[
+  , OPD_DATE := as.POSIXct(strptime(
+    OPD_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT"
+  ))
 ]
 gc()
-vehicle_stop_history <- vehicle_stop_history[, `:=`(
-  NOM_ARR_TIME = OPD_DATE + NOM_ARR_TIME,
-  ACT_ARR_TIME = OPD_DATE + ACT_ARR_TIME,
-  NOM_DEP_TIME = OPD_DATE + NOM_DEP_TIME,
-  ACT_DEP_TIME = OPD_DATE + ACT_DEP_TIME,
-  YEAR = year(OPD_DATE),
-  MONTH = month(OPD_DATE),
-  DAY = mday(OPD_DATE),
-  DAY_OF_WEEK = wday(OPD_DATE),
-  SECONDS_LATE = ACT_ARR_TIME - NOM_ARR_TIME
-)]
+vehicle_stop_history <- vehicle_stop_history[
+  , `:=`(
+    NOM_ARR_TIME = OPD_DATE + NOM_ARR_TIME,
+    ACT_ARR_TIME = OPD_DATE + ACT_ARR_TIME,
+    NOM_DEP_TIME = OPD_DATE + NOM_DEP_TIME,
+    ACT_DEP_TIME = OPD_DATE + ACT_DEP_TIME,
+    YEAR = year(OPD_DATE),
+    MONTH = month(OPD_DATE),
+    DAY = mday(OPD_DATE),
+    DAY_OF_WEEK = wday(OPD_DATE)
+  )
+]
 gc()
-vehicle_stop_history <- vehicle_stop_history[, QHOUR_OF_DAY := qhod(ACT_ARR_TIME)]
+vehicle_stop_history <- vehicle_stop_history[
+  , QHOUR_OF_DAY := qhod(ACT_ARR_TIME)
+]
 gc()
-(vehicle_stop_history)
 
 ```
 
 ## Lagged columns
 ```{r}
-setkey(vehicle_stop_history, VEHICLE_ID, ACT_ARR_TIME, ACT_DEP_TIME, STOP_ID)
+vehicle_stop_history_by <- c(
+  "VEHICLE_ID",
+  "ACT_ARR_TIME",
+  "ACT_DEP_TIME",
+  "STOP_ID"
+)
+setkeyv(vehicle_stop_history, vehicle_stop_history_by)
 vehicle_stop_history <- vehicle_stop_history[
   , `:=`(
     FROM_STOP = shift(STOP_ID),
     METERS_TRAVELED = METERS - shift(METERS),
-    SECONDS_TRAVELED = as.integer(ACT_ARR_TIME - shift(ACT_DEP_TIME))
+    SECONDS_TRAVELED = as.integer(ACT_ARR_TIME - shift(ACT_DEP_TIME)),
+    ARRIVING_LOAD = shift(ESTIMATED_LOAD),
+    SECONDS_LATE = as.integer(ACT_ARR_TIME - NOM_ARR_TIME)
   ),
   by = EVENT_NO_TRIP
 ]
 gc()
-print(vehicle_stop_history)
+
+```
+## Primitive summary
+```{r}
+primitive_summary <- vehicle_stop_history[
+  !is.na(FROM_STOP),
+  .(QUANTILES = quantiles(SECONDS_TRAVELED)),
+  by = .(FROM_STOP, STOP_ID)
+]
+gc()
 
 ```
 
-,
-    
