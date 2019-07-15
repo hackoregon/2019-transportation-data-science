@@ -17,13 +17,10 @@ qhod <- function(tstamp) {
 }
 
 # five-number summary
-quantiles <- function(x) {
-  list(c(
-    length(x),
+qx <- function(x, p) {
     quantile(
-      x, probs = c(0.05, 0.25, 0.50, 0.75, 0.95), na.rm = TRUE, names = FALSE
+      x, probs = p, na.rm = TRUE, names = FALSE
     )
-  ))
 }
 
 ```
@@ -34,12 +31,27 @@ and avoid chaining / pipes.
 ```{r}
 vehicle_stop_history <- fread("/csvs/raw_veh_stoph_2017_09.csv")
 gc()
+vehicle_stop_history <- vehicle_stop_history[
+  !is.na(NOM_ARR_TIME) &
+  !is.na(NOM_DEP_TIME) &
+  !is.na(STOP_ID) &
+  !is.na(GPS_LONGITUDE) &
+  !is.na(GPS_LATITUDE)
+]
+gc()
 
 ```
 
 ## Stop events
 ```{r}
 stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
+gc()
+stop_events <- stop_events[
+  ROUTE_NUMBER >= 1 &
+  ROUTE_NUMBER <= 291 &
+  X_COORDINATE > 0 &
+  Y_COORDINATE > 0
+]
 gc()
 
 ```
@@ -122,15 +134,38 @@ vehicle_stop_history <- vehicle_stop_history[
   by = EVENT_NO_TRIP
 ]
 gc()
+vehicle_stop_history <- vehicle_stop_history[!is.na(FROM_STOP)]
 
 ```
 ## Primitive summary
 ```{r}
-primitive_summary <- vehicle_stop_history[
-  !is.na(FROM_STOP),
-  .(QUANTILES = quantiles(SECONDS_TRAVELED)),
+stop_to_stop_seconds <- vehicle_stop_history[
+  , .(
+    .N,
+    p05 = qx(SECONDS_TRAVELED, 0.05),
+    p25 = qx(SECONDS_TRAVELED, 0.25),
+    p50 = qx(SECONDS_TRAVELED, 0.50),
+    p75 = qx(SECONDS_TRAVELED, 0.75),
+    p95 = qx(SECONDS_TRAVELED, 0.95)
+  ),
   by = .(FROM_STOP, STOP_ID)
 ]
+gc()
+stop_to_stop_seconds <- stop_to_stop_seconds[order(-N)]
+gc()
+stop_to_stop_meters <- vehicle_stop_history[
+  , .(
+    .N,
+    p05 = qx(METERS_TRAVELED, 0.05),
+    p25 = qx(METERS_TRAVELED, 0.25),
+    p50 = qx(METERS_TRAVELED, 0.50),
+    p75 = qx(METERS_TRAVELED, 0.75),
+    p95 = qx(METERS_TRAVELED, 0.95)
+  ),
+  by = .(FROM_STOP, STOP_ID)
+]
+gc()
+stop_to_stop_meters <- stop_to_stop_meters[order(-N)]
 gc()
 
 ```
