@@ -35,14 +35,19 @@ passenger_stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
 print(nrow(passenger_stop_events))
 gc()
 passenger_stop_events <- passenger_stop_events[
-  VEHICLE_NUMBER > 0 & ROUTE_NUMBER > 0 & ROUTE_NUMBER <= 291 & TRIP_NUMBER > 0 & TRAIN > 0
+  VEHICLE_NUMBER > 0 & ROUTE_NUMBER > 0 & ROUTE_NUMBER <= 291 & TRIP_NUMBER > 0 & TRAIN > 0 &
+  LOCATION_ID > 0
 ]
 print(nrow(passenger_stop_events))
 gc()
-passenger_stop_events <- passenger_stop_events[
-  X_COORDINATE > 7000000 & X_COORDINATE < 8000000 & Y_COORDINATE > 600000 & Y_COORDINATE < 800000
+stop_locations <- passenger_stop_events[
+  ,
+  .(X_COORDINATE_2913 = median(X_COORDINATE), Y_COORDINATE_2913 = median(Y_COORDINATE)),
+  by = LOCATION_ID
 ]
-print(nrow(passenger_stop_events))
+passenger_stop_events <- merge(passenger_stop_events, stop_locations, by = "LOCATION_ID")
+gc()
+passenger_stop_events <- passenger_stop_events[, !(X_COORDINATE:Y_COORDINATE)]
 gc()
 
 ```
