@@ -1,0 +1,142 @@
+---
+title: "Stop-to-stop Analysis"
+output: html_notebook
+---
+
+## Libraries
+```{r}
+library(data.table)
+library(lubridate)
+library(DT)
+
+```
+
+## Functions
+```{r}
+## quarter hour of day
+qhod <- function(tstamp) {
+  0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
+}
+
+# cleaned quantiles
+qx <- function(x, p) {
+    quantile(
+      x, probs = p, na.rm = TRUE, names = FALSE
+    )
+}
+
+```
+
+## Load stop events CSV
+Note: because this has to run in an 8GB laptop, we garbage-collect frequently and avoid chaining
+/ pipes.
+```{r}
+passenger_stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
+print(nrow(passenger_stop_events))
+gc()
+passenger_stop_events <- passenger_stop_events[
+  VEHICLE_NUMBER > 0 & ROUTE_NUMBER > 0 & ROUTE_NUMBER <= 291 & TRIP_NUMBER > 0 & TRAIN > 0
+]
+print(nrow(passenger_stop_events))
+gc()
+passenger_stop_events <- passenger_stop_events[
+  X_COORDINATE > 7000000 & X_COORDINATE < 8000000 & Y_COORDINATE > 600000 & Y_COORDINATE < 800000
+]
+print(nrow(passenger_stop_events))
+gc()
+
+```
+
+## Date computations
+```{r}
+passenger_stop_events <- passenger_stop_events[
+  , SERVICE_DATE := fast_strptime(
+    SERVICE_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT", lt = FALSE
+  )
+]
+gc()
+passenger_stop_events <- passenger_stop_events[
+  , `:=`(
+    STOP_TIME = SERVICE_DATE + STOP_TIME,
+    ARRIVE_TIME = SERVICE_DATE + ARRIVE_TIME,
+    LEAVE_TIME = SERVICE_DATE + LEAVE_TIME,
+    YEAR = year(SERVICE_DATE),
+    MONTH = month(SERVICE_DATE),
+    DAY = mday(SERVICE_DATE),
+    DAY_OF_WEEK = wday(SERVICE_DATE)
+  )
+]
+gc()
+passenger_stop_events <- passenger_stop_events[
+  , QHOUR_OF_DAY := qhod(ARRIVE_TIME)
+]
+gc()
+
+```
+
+## Compute trip table
+```{r}
+trip_table <- passenger_stop_events[
+  , .(stops = .N, start = min(ARRIVE_TIME), end = max(LEAVE_TIME)),
+  by = .(SERVICE_DATE, VEHICLE_NUMBER, TRAIN, ROUTE_NUMBER, DIRECTION, SERVICE_KEY, TRIP_NUMBER)
+]
+gc()
+
+# sort the trip table
+setkey(trip_table, SERVICE_DATE, VEHICLE_NUMBER, start, end, verbose = TRUE)
+gc()
+
+# sort the stop events table
+setkey(passenger_stop_events, SERVICE_DATE, VEHICLE_NUMBER, ARRIVE_TIME, LEAVE_TIME, verbose = TRUE)
+gc()
+
+```
+
+## Compute lagged columns
+```{r}
+passenger_stop_events <- passenger_stop_events[
+  , `:=`(
+    FROM_LOCATION = shift(LOCATION_ID),
+    DISTANCE_MILES = TRAIN_MILEAGE - shift(TRAIN_MILEAGE),
+    SECONDS_BETWEEN_STOPS = as.integer(ARRIVE_TIME - shift(ARRIVE_TIME)),
+    SECONDS_LATE = as.integer(ARRIVE_TIME - STOP_TIME)
+  ),
+  by = .(SERVICE_DATE, VEHICLE_NUMBER, TRAIN, ROUTE_NUMBER, DIRECTION, SERVICE_KEY, TRIP_NUMBER)
+]
+gc()
+
+```
+
+## Remove suspicious rows
+```{r}
+passenger_stop_events <- passenger_stop_events[!is.na(FROM_LOCATION)]
+gc()
+
+```
+
+
+## summary
+```{r}
+passenger_stop_events_summary <- passenger_stop_events[
+  , .(
+    .N,
+    median_miles = qx(DISTANCE_MILES, 0.50),
+    mean_seconds = mean(SECONDS_BETWEEN_STOPS),
+    sd = sd(SECONDS_BETWEEN_STOPS),
+    cvar = sd(SECONDS_BETWEEN_STOPS) / mean(SECONDS_BETWEEN_STOPS),
+    p05 = qx(SECONDS_BETWEEN_STOPS, 0.05),
+    p25 = qx(SECONDS_BETWEEN_STOPS, 0.25),
+    p50 = qx(SECONDS_BETWEEN_STOPS, 0.50),
+    p75 = qx(SECONDS_BETWEEN_STOPS, 0.75),
+    p95 = qx(SECONDS_BETWEEN_STOPS, 0.95)
+  ),
+  by = .(FROM_LOCATION, LOCATION_ID)
+]
+gc()
+passenger_stop_events_summary <- passenger_stop_events_summary[N > 30]
+gc()
+passenger_stop_events_summary <- passenger_stop_events_summary[order(-N)]
+gc()
+datatable(passenger_stop_events_summary)
+```
+
