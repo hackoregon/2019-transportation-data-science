@@ -10,6 +10,7 @@ library(lubridate)
 library(DT)
 library(sf)
 library(tmap)
+library(magrittr)
 
 ```
 
@@ -104,8 +105,10 @@ gc()
 setkey(trip_table, SERVICE_DATE, VEHICLE_NUMBER, start, end, verbose = TRUE)
 gc()
 
-# sort the stop events table
-setkey(passenger_stop_events, SERVICE_DATE, VEHICLE_NUMBER, ARRIVE_TIME, LEAVE_TIME, verbose = TRUE)
+# sort the stop events table by trips
+setkey(passenger_stop_events, 
+       SERVICE_DATE, VEHICLE_NUMBER, TRAIN, ROUTE_NUMBER, DIRECTION, SERVICE_KEY, TRIP_NUMBER,
+       ARRIVE_TIME, LEAVE_TIME, verbose = TRUE)
 gc()
 
 ```
@@ -123,17 +126,13 @@ passenger_stop_events <- passenger_stop_events[
 ]
 gc()
 
-```
-
-## Remove suspicious rows
-```{r}
+# remove first rows of each trip
 passenger_stop_events <- passenger_stop_events[!is.na(FROM_LOCATION)]
 gc()
 
 ```
 
-
-## summary
+## Compute summary
 ```{r}
 passenger_stop_events_summary <- passenger_stop_events[
   , .(
@@ -155,7 +154,10 @@ passenger_stop_events_summary <- passenger_stop_events_summary[N > 30]
 gc()
 passenger_stop_events_summary <- passenger_stop_events_summary[order(-N)]
 gc()
-datatable(passenger_stop_events_summary)
+datatable(passenger_stop_events_summary, filter = "top") %>% 
+  formatRound(columns = c("median_miles", "sd", "cvar"), digits = 3) %>% 
+  formatRound(columns = c("mean_seconds", "sd", "cvar"), digits = 2) %>% 
+  formatRound(columns = c("p05", "p25", "p50", "p75", "p95"), digits = 1)
 ```
 
 ## Plot stop locations
