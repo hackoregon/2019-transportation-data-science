@@ -27,24 +27,6 @@ qx <- function(x, p) {
     )
 }
 
-# get latest official TriMet stop locations
-trimet_stops <- function() {
-  here <- setwd(tempdir())
-  downloader::download(
-    url = "https://developer.trimet.org/gis/data/tm_stops.zip",
-    destfile = "tm_stops.zip"
-  )
-  utils::unzip(zipfile = "tm_stops.zip")
-  tm_stops <- sf::st_read(dsn = "tm_stops.shp")
-  gps_coordinates <- data.table::as.data.table(
-    sf::st_coordinates(st_transform(tm_stops, crs = 4326))
-  )
-  names(gps_coordinates) <- c("GPS_LONGITUDE_4326", "GPS_LATITUDE_4326")
-  tm_stops <- data.table::as.data.table(tm_stops)
-  setwd(here)
-  return(cbind(tm_stops[, stop_id:type], gps_coordinates))
-}
-
 ```
 
 ## Load stop events CSV
