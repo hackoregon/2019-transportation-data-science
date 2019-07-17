@@ -141,8 +141,6 @@ passenger_stop_events_summary <- passenger_stop_events[
     mean_seconds = mean(SECONDS_BETWEEN_STOPS),
     sd = sd(SECONDS_BETWEEN_STOPS),
     cvar = sd(SECONDS_BETWEEN_STOPS) / mean(SECONDS_BETWEEN_STOPS),
-    p05 = qx(SECONDS_BETWEEN_STOPS, 0.05),
-    p25 = qx(SECONDS_BETWEEN_STOPS, 0.25),
     p50 = qx(SECONDS_BETWEEN_STOPS, 0.50),
     p75 = qx(SECONDS_BETWEEN_STOPS, 0.75),
     p95 = qx(SECONDS_BETWEEN_STOPS, 0.95)
@@ -157,7 +155,7 @@ gc()
 datatable(passenger_stop_events_summary, filter = "top") %>% 
   formatRound(columns = c("median_miles", "sd", "cvar"), digits = 3) %>% 
   formatRound(columns = c("mean_seconds", "sd", "cvar"), digits = 2) %>% 
-  formatRound(columns = c("p05", "p25", "p50", "p75", "p95"), digits = 1)
+  formatRound(columns = c("p50", "p75", "p95"), digits = 1)
 ```
 
 ## Plot stop locations
