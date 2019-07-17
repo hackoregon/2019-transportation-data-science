@@ -9,6 +9,7 @@ library(data.table)
 library(lubridate)
 library(DT)
 library(sf)
+library(tmap)
 
 ```
 
@@ -58,6 +59,9 @@ passenger_stop_events <- merge(passenger_stop_events, stop_locations, by = "LOCA
 gc()
 passenger_stop_events <- passenger_stop_events[, !(X_COORDINATE:Y_COORDINATE)]
 gc()
+stop_locations <- st_as_sf(
+  stop_locations, coords = c("GPS_LONGITUDE_4326", "GPS_LATITUDE_4326"), crs = 4326
+)
 
 ```
 
@@ -154,3 +158,9 @@ gc()
 datatable(passenger_stop_events_summary)
 ```
 
+## Plot stop locations
+```{r}
+tmap_mode("view")
+qtm(stop_locations)
+
+```
