@@ -8,7 +8,6 @@ output: html_notebook
 library(data.table)
 library(lubridate)
 library(DT)
-library(sp)
 library(sf)
 
 ```
@@ -48,20 +47,16 @@ stop_locations <- passenger_stop_events[
   by = LOCATION_ID
 ]
 gc()
+coords_4326 <- st_coordinates(st_transform(st_sfc(st_multipoint(as.matrix(stop_locations[
+    , X_COORDINATE_2913:Y_COORDINATE_2913])), crs = 2913), 4326))
+coords_4326 <- as.data.table(coords_4326[, 1:2])
+names(coords_4326) <- c("GPS_LONGITUDE_4326", "GPS_LATITUDE_4326")
+stop_locations <- cbind(stop_locations, coords_4326)
+gc()
 
 passenger_stop_events <- merge(passenger_stop_events, stop_locations, by = "LOCATION_ID")
 gc()
 passenger_stop_events <- passenger_stop_events[, !(X_COORDINATE:Y_COORDINATE)]
-gc()
-
-stop_locations <- SpatialPointsDataFrame(
-  coords = stop_locations[, X_COORDINATE_2913:Y_COORDINATE_2913],
-  data = stop_locations,
-  proj4string = CRS("+init=epsg:2913"))
-gc()
-stop_locations <- spTransform(stop_locations, CRS("+init=epsg:4326"))
-gc()
-stop_locations <- as(stop_locations, "sf")
 gc()
 
 ```
