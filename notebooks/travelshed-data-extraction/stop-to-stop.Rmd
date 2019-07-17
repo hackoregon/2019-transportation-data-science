@@ -8,6 +8,8 @@ output: html_notebook
 library(data.table)
 library(lubridate)
 library(DT)
+library(sp)
+library(sf)
 
 ```
 
@@ -35,8 +37,8 @@ passenger_stop_events <- fread("/csvs/raw_stop_event_2017_09.csv")
 print(nrow(passenger_stop_events))
 gc()
 passenger_stop_events <- passenger_stop_events[
-  VEHICLE_NUMBER > 0 & ROUTE_NUMBER > 0 & ROUTE_NUMBER <= 291 & TRIP_NUMBER > 0 & TRAIN > 0 &
-  LOCATION_ID > 0
+  VEHICLE_NUMBER > 0 & ROUTE_NUMBER > 0 & ROUTE_NUMBER <= 291 &
+  TRIP_NUMBER > 0 & TRAIN > 0 & LOCATION_ID > 0
 ]
 print(nrow(passenger_stop_events))
 gc()
@@ -45,9 +47,21 @@ stop_locations <- passenger_stop_events[
   .(X_COORDINATE_2913 = median(X_COORDINATE), Y_COORDINATE_2913 = median(Y_COORDINATE)),
   by = LOCATION_ID
 ]
+gc()
+
 passenger_stop_events <- merge(passenger_stop_events, stop_locations, by = "LOCATION_ID")
 gc()
 passenger_stop_events <- passenger_stop_events[, !(X_COORDINATE:Y_COORDINATE)]
+gc()
+
+stop_locations <- SpatialPointsDataFrame(
+  coords = stop_locations[, X_COORDINATE_2913:Y_COORDINATE_2913],
+  data = stop_locations,
+  proj4string = CRS("+init=epsg:2913"))
+gc()
+stop_locations <- spTransform(stop_locations, CRS("+init=epsg:4326"))
+gc()
+stop_locations <- as(stop_locations, "sf")
 gc()
 
 ```
