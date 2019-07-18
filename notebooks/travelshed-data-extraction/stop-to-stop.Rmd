@@ -8,6 +8,7 @@ output: html_notebook
 library(data.table)
 library(lubridate)
 library(sf)
+library(janitor)
 
 ```
 
@@ -107,3 +108,13 @@ passenger_stop_events <- passenger_stop_events[
 gc()
 
 ```
+
+## Save output CSV file
+```{r}
+names(passenger_stop_events) <- make_clean_names(names(passenger_stop_events))
+fwrite(passenger_stop_events, file = "/csvs/passenger_stop_events_2017_09.csv",
+       verbose = TRUE)
+gc()
+
+```
+
