@@ -1,0 +1,51 @@
+---
+title: "Acquire OpenStreetMap Data"
+output: html_notebook
+---
+
+## Libraries
+```{r}
+library(osmdata)
+library(dplyr)
+library(sf)
+library(dodgr)
+
+```
+
+## Functions
+```{r}
+trimet_boundary <- function() {
+  home <- getwd()
+  setwd(tempdir())
+  download.file(url = "https://developer.trimet.org/gis/data/tm_boundary.zip",
+                destfile = "tm_boundary.zip")
+  utils::unzip("tm_boundary.zip")
+  boundary <- sf::st_read("tm_boundary.shp")
+  setwd(home)
+  sf::st_crs(boundary) <- 2913
+  return(sf::st_transform(boundary, 4326))
+}
+
+bbox_matrix <- function(sf_df) {
+  matrix(st_bbox(sf_df), 
+         nrow = 2, ncol = 2, 
+         dimnames = list(c("x", "y"), c("min", "max"))
+  )
+}
+```
+
+## Acquire data
+```{r}
+tm_boundary <- trimet_boundary()
+trimet_bbox <- bbox_matrix(tm_boundary)
+
+```
+
+
+```{r}
+gc(reset = TRUE, full = TRUE, verbose = TRUE)
+gcinfo(TRUE)
+trimet_streetnet <- dodgr_streetnet(trimet_bbox, quiet = FALSE)
+
+```
+
