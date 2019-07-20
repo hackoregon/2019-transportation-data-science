@@ -7,17 +7,6 @@ output: html_notebook
 ```{r}
 library(data.table)
 library(lubridate)
-library(sf)
-library(janitor)
-
-```
-
-## Functions
-```{r}
-## quarter hour of day
-qhod <- function(tstamp) {
-  0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
-}
 
 ```
 
@@ -34,19 +23,13 @@ passenger_stop_events <- passenger_stop_events[
 gc()
 ```
 
-## Stop location GIS computations
+## Replace stop coordinates with median values for the stop. This fixes bogus points.
 ```{r}
 # make the stop location table
 stop_locations <- passenger_stop_events[
   , .(X_COORDINATE_2913 = median(X_COORDINATE), Y_COORDINATE_2913 = median(Y_COORDINATE)),
   by = "LOCATION_ID"
 ]
-gc()
-coords_4326 <- st_coordinates(st_transform(st_sfc(st_multipoint(as.matrix(stop_locations[
-    , X_COORDINATE_2913:Y_COORDINATE_2913])), crs = 2913), 4326))
-coords_4326 <- as.data.table(coords_4326[, 1:2])
-names(coords_4326) <- c("GPS_LONGITUDE_4326", "GPS_LATITUDE_4326")
-stop_locations <- cbind(stop_locations, coords_4326)
 gc()
 
 # tag the stop event table
@@ -57,28 +40,12 @@ gc()
 
 ```
 
-## Date computations
+## Convert date to ISO standard
 ```{r}
 passenger_stop_events <- passenger_stop_events[
-  , SERVICE_DATE := fast_strptime(
+  , SERVICE_DATE := as.Date(fast_strptime(
     SERVICE_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT", lt = FALSE
-  )
-]
-gc()
-passenger_stop_events <- passenger_stop_events[
-  , `:=`(
-    STOP_TIME = SERVICE_DATE + STOP_TIME,
-    ARRIVE_TIME = SERVICE_DATE + ARRIVE_TIME,
-    LEAVE_TIME = SERVICE_DATE + LEAVE_TIME,
-    YEAR = year(SERVICE_DATE),
-    MONTH = month(SERVICE_DATE),
-    DAY = mday(SERVICE_DATE),
-    DAY_OF_WEEK = wday(SERVICE_DATE)
-  )
-]
-gc()
-passenger_stop_events <- passenger_stop_events[
-  , QHOUR_OF_DAY := qhod(ARRIVE_TIME)
+  ))
 ]
 gc()
 
@@ -111,7 +78,6 @@ gc()
 
 ## Save output CSV file
 ```{r}
-names(passenger_stop_events) <- make_clean_names(names(passenger_stop_events))
 fwrite(passenger_stop_events, file = "/csvs/passenger_stop_events_2017_09.csv",
        verbose = TRUE)
 gc()
