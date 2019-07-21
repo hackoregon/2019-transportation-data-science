@@ -45,7 +45,9 @@ trimet_bbox <- bbox_matrix(tm_boundary)
 ```{r}
 gc(reset = TRUE, full = TRUE, verbose = TRUE)
 gcinfo(TRUE)
+Sys.time()
 trimet_streetnet <- dodgr_streetnet(trimet_bbox, quiet = FALSE)
+Sys.time()
 
 ```
 
