@@ -22,16 +22,21 @@ RUN curl -Ls \
   https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz \
   | tar xzf - --directory=/usr/local/bin/
 
-# Miniconda
-RUN curl -LsO https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-  && bash Miniconda3-latest-Linux-x86_64.sh -b
-ENV CONDA_PATH=/root/miniconda3/bin
-ENV CONDA_EXECUTABLE=/root/miniconda3/bin/conda
-
-# database superuser
-RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home dbsuper
-RUN chown -R dbsuper:dbsuper /home/dbsuper
+# startup scripts and volumes
 COPY make-dbsuper.sh /docker-entrypoint-initdb.d/
 VOLUME /Raw
 VOLUME /var/lib/postgresql/data
 VOLUME /csvs
+
+# Linux database superuser account
+RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home dbsuper
+
+# Miniconda
+RUN curl -LsO https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+  && bash Miniconda3-latest-Linux-x86_64.sh -b -p /home/dbsuper/miniconda3
+ENV CONDA_PATH=/home/dbsuper/miniconda3/bin
+ENV CONDA_EXECUTABLE=/home/dbsuper/miniconda3/bin/conda
+ENV CONDA_ACTIVATION_SCRIPT=/home/dbsuper/miniconda3/bin/activate
+
+# fix ownership
+RUN chown -R dbsuper:dbsuper /home/dbsuper
