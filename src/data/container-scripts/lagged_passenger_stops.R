@@ -9,9 +9,9 @@ transform_file <- function(input_file, output_file) {
   ## Load stop events CSV
   ## Note: because this has to run in an 8GB laptop, we garbage-collect
   ##  frequently and avoid chaining / pipes.
-  passenger_stop_events <- data.table::fread(input_file)
+  lagged_passenger_stops <- data.table::fread(input_file)
   invisible(gc())
-  passenger_stop_events <- passenger_stop_events[
+  lagged_passenger_stops <- lagged_passenger_stops[
     VEHICLE_NUMBER > 0 & ROUTE_NUMBER > 0 & ROUTE_NUMBER <= 291 &
       TRIP_NUMBER > 0 & TRAIN > 0 & LOCATION_ID > 0
     ]
@@ -22,7 +22,7 @@ transform_file <- function(input_file, output_file) {
   ## So we replace the coordinates with the medians over the whole month.
 
   ### make the stop location table
-  stop_locations <- passenger_stop_events[, .(
+  stop_locations <- lagged_passenger_stops[, .(
     X_COORDINATE_2913 = median(X_COORDINATE),
     Y_COORDINATE_2913 = median(Y_COORDINATE)),
     by = "LOCATION_ID"
@@ -30,15 +30,15 @@ transform_file <- function(input_file, output_file) {
   invisible(gc())
 
   ### tag the stop event table
-  passenger_stop_events <- merge(
-    passenger_stop_events, stop_locations, by = "LOCATION_ID"
+  lagged_passenger_stops <- merge(
+    lagged_passenger_stops, stop_locations, by = "LOCATION_ID"
   )
   invisible(gc())
-  passenger_stop_events <- passenger_stop_events[, !(X_COORDINATE:Y_COORDINATE)]
+  lagged_passenger_stops <- lagged_passenger_stops[, !(X_COORDINATE:Y_COORDINATE)]
   invisible(gc())
 
   ## Convert date to ISO standard
-  passenger_stop_events <- passenger_stop_events[
+  lagged_passenger_stops <- lagged_passenger_stops[
     , SERVICE_DATE := as.Date(lubridate::fast_strptime(
       SERVICE_DATE, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT", lt = FALSE
     ))
@@ -47,11 +47,11 @@ transform_file <- function(input_file, output_file) {
 
   ## Compute lagged columns
   ### sort the stop events table by trips
-  data.table::setkeyv(passenger_stop_events, c(
+  data.table::setkeyv(lagged_passenger_stops, c(
     "SERVICE_DATE", "VEHICLE_NUMBER", "TRAIN", "ROUTE_NUMBER", "DIRECTION",
     "SERVICE_KEY", "TRIP_NUMBER", "ARRIVE_TIME", "LEAVE_TIME"), verbose = TRUE)
   invisible(gc())
-  passenger_stop_events <- passenger_stop_events[
+  lagged_passenger_stops <- lagged_passenger_stops[
     , `:=`(
       FROM_LOCATION_ID = shift(LOCATION_ID),
       FROM_LEAVE_TIME = shift(LEAVE_TIME),
@@ -68,7 +68,7 @@ transform_file <- function(input_file, output_file) {
   invisible(gc())
 
   ## Save output CSV file
-  data.table::fwrite(passenger_stop_events, file = output_file)
+  data.table::fwrite(lagged_passenger_stops, file = output_file)
   invisible(gc())
 
 }
@@ -76,12 +76,12 @@ transform_file <- function(input_file, output_file) {
 ## Create to-do list
 todo <- tibble::tribble(
   ~input_file, ~output_file,
-  "/csvs/raw_stop_event_2017_09.csv", "/csvs/passenger_stop_events_2017_09.csv",
-  "/csvs/raw_stop_event_2017_10.csv", "/csvs/passenger_stop_events_2017_10.csv",
-  "/csvs/raw_stop_event_2017_11.csv", "/csvs/passenger_stop_events_2017_11.csv",
-  "/csvs/raw_stop_event_2018_09.csv", "/csvs/passenger_stop_events_2018_09.csv",
-  "/csvs/raw_stop_event_2018_10.csv", "/csvs/passenger_stop_events_2018_10.csv",
-  "/csvs/raw_stop_event_2018_11.csv", "/csvs/passenger_stop_events_2018_11.csv"
+  "/Work/raw_stop_event_2017_09.csv", "/Work/lagged_passenger_stops_2017_09.csv",
+  "/Work/raw_stop_event_2017_10.csv", "/Work/lagged_passenger_stops_2017_10.csv",
+  "/Work/raw_stop_event_2017_11.csv", "/Work/lagged_passenger_stops_2017_11.csv",
+  "/Work/raw_stop_event_2018_09.csv", "/Work/lagged_passenger_stops_2018_09.csv",
+  "/Work/raw_stop_event_2018_10.csv", "/Work/lagged_passenger_stops_2018_10.csv",
+  "/Work/raw_stop_event_2018_11.csv", "/Work/lagged_passenger_stops_2018_11.csv"
 )
 
 ## Run the conversions

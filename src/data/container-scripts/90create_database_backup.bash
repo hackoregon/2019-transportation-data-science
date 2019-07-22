@@ -3,7 +3,7 @@
 # define parameters
 export PGUSER=transportation2019
 export PGDATABASE=transit_operations_analytics_data
-export DEST=/csvs
+export DEST=/Work
 
 #echo "Vacuuming the database"
 #/usr/bin/time psql --username=${PGUSER} --dbname=${PGDATABASE} --command="VACUUM ANALYZE;"

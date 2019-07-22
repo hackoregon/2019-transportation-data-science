@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  postgis:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgis
+    image: postgis
+    ports:
+      - $HOST_POSTGRES_PORT:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - $HOST_RAW_PATH:/Raw:ro
+      - $HOST_POSTGRESQL_DATA:/var/lib/postgresql/data:rw
+      - $HOST_WORK_PATH:/Work:rw

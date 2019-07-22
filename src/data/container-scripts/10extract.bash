@@ -2,7 +2,7 @@
 
 # set directories
 export RAW=/Raw
-export CSVS=/csvs
+export CSVS=/Work
 echo "Checksumming raw archives"
 pushd ${RAW}
 sha512sum -c *.sha512sum
@@ -89,3 +89,7 @@ xsv search "DEC2018" new_raw_tripsh.csv > raw_tripsh_2018_12.csv &
 wait
 
 popd
+
+echo "creating lagged passenger stop files"
+source $CONDA_ACTIVATION_SCRIPT
+R -e 'source("lagged_passenger_stops.R")'

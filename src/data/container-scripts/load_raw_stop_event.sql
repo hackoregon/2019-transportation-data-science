@@ -28,12 +28,12 @@ CREATE TABLE raw_stop_event (
 );
 
 \echo loading raw_stop_event
-COPY raw_stop_event FROM '/csvs/raw_stop_event_2017_09.csv' WITH csv header;
-COPY raw_stop_event FROM '/csvs/raw_stop_event_2017_10.csv' WITH csv header;
-COPY raw_stop_event FROM '/csvs/raw_stop_event_2017_11.csv' WITH csv header;
-COPY raw_stop_event FROM '/csvs/raw_stop_event_2018_09.csv' WITH csv header;
-COPY raw_stop_event FROM '/csvs/raw_stop_event_2018_10.csv' WITH csv header;
-COPY raw_stop_event FROM '/csvs/raw_stop_event_2018_11.csv' WITH csv header;
+COPY raw_stop_event FROM '/Work/raw_stop_event_2017_09.csv' WITH csv header;
+COPY raw_stop_event FROM '/Work/raw_stop_event_2017_10.csv' WITH csv header;
+COPY raw_stop_event FROM '/Work/raw_stop_event_2017_11.csv' WITH csv header;
+COPY raw_stop_event FROM '/Work/raw_stop_event_2018_09.csv' WITH csv header;
+COPY raw_stop_event FROM '/Work/raw_stop_event_2018_10.csv' WITH csv header;
+COPY raw_stop_event FROM '/Work/raw_stop_event_2018_11.csv' WITH csv header;
 
 \echo date stamps on raw_stop_event
 ALTER TABLE raw_stop_event ADD COLUMN date_stamp timestamp with time zone;

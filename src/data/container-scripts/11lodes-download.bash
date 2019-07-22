@@ -2,7 +2,7 @@
 
 # define parameters
 export BASE=https://lehd.ces.census.gov/data/lodes/LODES7
-export DESTINATION=/csvs/LODES
+export DESTINATION=/Work/LODES
 mkdir -p ${DESTINATION}; pushd ${DESTINATION}
 
 if [ ! -e "lodes_or.sha256sum" ]
@@ -46,7 +46,10 @@ fi
 echo "Checking sha256 sums"
 for state in or
 do
-  shasum --ignore-missing -a 256 -c lodes_${state}.sha256sum
+  sha256sum --ignore-missing -c lodes_${state}.sha256sum
 done
 
 popd
+source $CONDA_ACTIVATION_SCRIPT
+which python3
+python3 make_dataset_lodes.py

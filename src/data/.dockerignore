@@ -1,1 +1,9 @@
-transit_operations_analytics_data.*
+9restore-database-backup.bash
+data dictionary INIT Data.txt
+data_dictionary.md
+data_dictionary.Rmd
+env.sample
+lodes-download
+Natural Joins v2.xlsx
+performance_test_query.sql
+README.md

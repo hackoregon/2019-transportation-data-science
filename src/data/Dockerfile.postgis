@@ -13,6 +13,7 @@ RUN apt-get update \
     time \
     unar \
     unzip \
+    vim-nox \
     wget \
   && apt-get clean
 
@@ -22,21 +23,24 @@ RUN curl -Ls \
   https://github.com/BurntSushi/xsv/releases/download/0.13.0/xsv-0.13.0-x86_64-unknown-linux-musl.tar.gz \
   | tar xzf - --directory=/usr/local/bin/
 
-# startup scripts and volumes
-COPY make-dbsuper.sh /docker-entrypoint-initdb.d/
-VOLUME /Raw
-VOLUME /var/lib/postgresql/data
-VOLUME /csvs
-
 # Linux database superuser account
 RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home dbsuper
+COPY container-scripts/make-dbsuper.sh /docker-entrypoint-initdb.d/
+COPY container-scripts/01install-r-python.bash /
 
 # Miniconda
 RUN curl -LsO https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-  && bash Miniconda3-latest-Linux-x86_64.sh -b -p /home/dbsuper/miniconda3
+  && su - dbsuper -c 'bash /Miniconda3-latest-Linux-x86_64.sh -b -p /home/dbsuper/miniconda3' \
+  && su - dbsuper -c 'bash /01install-r-python.bash'
+
+# volumes and environment variables
+VOLUME /Raw
+VOLUME /var/lib/postgresql/data
+VOLUME /Work
 ENV CONDA_PATH=/home/dbsuper/miniconda3/bin
 ENV CONDA_EXECUTABLE=/home/dbsuper/miniconda3/bin/conda
 ENV CONDA_ACTIVATION_SCRIPT=/home/dbsuper/miniconda3/bin/activate
 
-# fix ownership
-RUN chown -R dbsuper:dbsuper /home/dbsuper
+# the scripts that do the work
+COPY container-scripts /home/dbsuper/scripts/
+RUN chown -R dbsuper:dbsuper /home/dbsuper/scripts
