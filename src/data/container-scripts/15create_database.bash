@@ -12,3 +12,6 @@ psql --username=postgres --dbname=postgres --command="DROP DATABASE IF EXISTS ${
 psql --username=postgres --dbname=postgres --command="CREATE DATABASE ${PGDATABASE} WITH OWNER ${PGUSER};"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --command="CREATE EXTENSION IF NOT EXISTS postgis;"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --command="CREATE SCHEMA IF NOT EXISTS raw;"
+
+# create empty partitioned tables
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file="create_partitioned_tables.sql"
