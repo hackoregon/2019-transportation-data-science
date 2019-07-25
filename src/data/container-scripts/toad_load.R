@@ -38,3 +38,14 @@ load_csv_file <- function(work_path, file_type, month_code) {
     work_path, "/", file_type, "_", month_code, ".csv")
   return(data.table::fread(filename))
 }
+
+make_partition_sql <- function(table_name, start_year, start_month) {
+  start_date <- lubridate::ymd(sprintf("%4d-%2d-01", start_year, start_month))
+  end_date <- start_date %m+% months(1)
+  sql <- paste0(
+    "CREATE TABLE ", table_name, "_y", start_year, "m", start_month,
+    " PARTITION OF ", table_name,
+    " FOR VALUES FROM ('", start_date, "') TO ('", end_date, "');"
+  )
+  return(sql)
+}
