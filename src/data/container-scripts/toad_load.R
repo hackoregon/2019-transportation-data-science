@@ -49,3 +49,17 @@ make_partition_sql <- function(table_name, start_year, start_month) {
   )
   return(sql)
 }
+
+date_convert <- function(trimet_coded_date) {
+  as.Date(lubridate::fast_strptime(
+    trimet_coded_date, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT", lt = FALSE
+  ))
+}
+
+seconds_of_day_convert <- function(date, seconds_of_day) {
+  date + seconds_of_day
+}
+
+qhod <- function(tstamp) {
+  0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
+}
