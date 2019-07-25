@@ -1,32 +1,6 @@
 #! /usr/bin/env Rscript
 
 ## Functions
-#' @title Connect to the TOAD database
-#' @name connect_toad_database
-#'
-#' @param host character the host name
-#' @param port integer the port
-#' @param user character the user name to connect as
-#' @param password character the password
-#' @param dbname character the database name
-#' @param tries integer number of time to attempt connecting (default 5)
-#' @param wait numeric number of seconds to wait between tries (default 5)
-#'
-#' @return a `connection` object if successful. Otherwise, aborts with the
-#' failure message from `dbCanConnect`
-#'
-#' @examples
-#' \dontrun{
-#' conn <- connect_toad_database(
-#'   "localhost",
-#'   5439
-#'   "transportation2019",
-#'   "sit-down-c0mic",
-#'   "transit_operations_analytics_database"
-#' )
-#' DBI::dbListTables(conn)
-#' DBI::dbListFields(conn, "bus_all_stops")
-#' }
 connect_toad_database <- function(
   host, port, user, password, dbname, tries = 5, wait = 5) {
   for (attempt in 1:tries) {
@@ -57,4 +31,10 @@ connect_toad_database <- function(
   # couldn't connect - throw an error
   stop(paste("Database is not ready - reason:", attr(db_ready, "reason")))
 
+}
+
+load_csv_file <- function(work_path, file_type, month_code) {
+  filename <- paste0(
+    work_path, "/", file_type, "_", month_code, ".csv")
+  return(data.table::fread(filename))
 }
