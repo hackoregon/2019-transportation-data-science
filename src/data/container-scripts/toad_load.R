@@ -116,3 +116,10 @@ read_stop_event <- function(month_code) {
 qhod <- function(tstamp) {
   0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
 }
+
+## Test database
+conn <- connect_toad_database()
+DBI::dbListTables(conn)
+DBI::dbListFields(conn, "trips_history")
+DBI::dbListFields(conn, "passenger_stops")
+DBI::dbListFields(conn, "bus_all_stops")
