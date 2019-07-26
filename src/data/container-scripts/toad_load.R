@@ -100,14 +100,20 @@ read_veh_stoph <- function(month_code) {
 read_stop_event <- function(month_code) {
   stop_event <- load_csv_file(file_type = "raw_stop_event", month_code)
   invisible(gc(reset = TRUE))
-  #stop_event <- stop_event[EVENT_NO_TRIP > 0 & !is.na(NOM_ARR_TIME)]
+  stop_event <- stop_event[
+    ROUTE_NUMBER > 0 &
+    TRIP_NUMBER > 0 &
+    LOCATION_ID > 0 &
+    X_COORDINATE > 0 &
+    Y_COORDINATE > 0
+  ]
   invisible(gc(reset = TRUE))
   stop_event <- stop_event[, `:=`(SERVICE_DATE = date_convert(SERVICE_DATE))]
   invisible(gc(reset = TRUE))
   stop_event <- stop_event[, `:=`(
     LEAVE_TIME = LEAVE_TIME + SERVICE_DATE,
     STOP_TIME = STOP_TIME + SERVICE_DATE,
-    ARRIVE_TIME = ARRIVE_TIME + SERVICE_DATE,
+    ARRIVE_TIME = ARRIVE_TIME + SERVICE_DATE
   )]
   invisible(gc(reset = TRUE))
   return(stop_event)
@@ -123,3 +129,12 @@ DBI::dbListTables(conn)
 DBI::dbListFields(conn, "trips_history")
 DBI::dbListFields(conn, "passenger_stops")
 DBI::dbListFields(conn, "bus_all_stops")
+
+## Test readers
+tripsh <- read_tripsh("2018_09")
+print(tripsh)
+veh_stoph <- read_veh_stoph("2018_09")
+print(veh_stoph)
+stop_event <- read_stop_event("2018_09")
+print(stop_event)
+
