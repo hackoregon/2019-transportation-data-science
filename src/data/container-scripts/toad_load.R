@@ -66,7 +66,15 @@ date_convert <- function(trimet_coded_date) {
 read_tripsh <- function(month_code) {
   tripsh <- load_csv_file(file_type = "raw_tripsh", month_code)
   invisible(gc(reset = TRUE))
-  tripsh <- tripsh[NOM_END_TIME > 0 & !is.na(ACT_END_TIME) & PATTERN_DIRECTION != ""]
+  tripsh <- tripsh[
+    NOM_END_TIME > 0 &
+    !is.na(ACT_END_TIME) &
+    !is.na(LINE_ID) &
+    !is.na(PATTERN_DIRECTION) &
+    LINE_ID <= 291 &
+    LINE_ID > 0 &
+    PATTERN_DIRECTION != ""
+  ]
   invisible(gc(reset = TRUE))
   tripsh <- tripsh[, `:=`(OPD_DATE = date_convert(OPD_DATE))]
   invisible(gc(reset = TRUE))
