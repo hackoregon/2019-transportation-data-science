@@ -26,6 +26,7 @@ RUN curl -Ls \
 # Linux database superuser account
 RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home transportation2019
 COPY container-scripts/make-dbsuper.sh /docker-entrypoint-initdb.d/
+COPY container-scripts/alter-system.sql /docker-entrypoint-initdb.d/
 COPY container-scripts/01install-r-python.bash /
 
 # Miniconda
