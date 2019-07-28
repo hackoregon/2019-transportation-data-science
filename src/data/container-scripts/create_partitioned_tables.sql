@@ -39,10 +39,10 @@ CREATE TABLE trips_history (
   vehicle_id integer,
   event_no integer,
   meters integer,
-  act_dep_time integer,
-  nom_dep_time integer,
-  nom_end_time integer,
-  act_end_time integer,
+  act_dep_time timestamp with time zone,
+  nom_dep_time timestamp with time zone,
+  nom_end_time timestamp with time zone,
+  act_end_time timestamp with time zone,
   line_id integer,
   pattern_direction text
 ) PARTITION BY RANGE(opd_date);
