@@ -24,23 +24,23 @@ RUN curl -Ls \
   | tar xzf - --directory=/usr/local/bin/
 
 # Linux database superuser account
-RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home dbsuper
+RUN useradd --comment "Database Superuser" --uid 1000 --shell /bin/bash --user-group --create-home transportation2019
 COPY container-scripts/make-dbsuper.sh /docker-entrypoint-initdb.d/
 COPY container-scripts/01install-r-python.bash /
 
 # Miniconda
 RUN curl -LsO https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-  && su - dbsuper -c 'bash /Miniconda3-latest-Linux-x86_64.sh -b -p /home/dbsuper/miniconda3' \
-  && su - dbsuper -c 'bash /01install-r-python.bash'
+  && su - transportation2019 -c 'bash /Miniconda3-latest-Linux-x86_64.sh -b -p /home/transportation2019/miniconda3' \
+  && su - transportation2019 -c 'bash /01install-r-python.bash'
 
 # volumes and environment variables
 VOLUME /Raw
 VOLUME /var/lib/postgresql/data
 VOLUME /Work
-ENV CONDA_PATH=/home/dbsuper/miniconda3/bin
-ENV CONDA_EXECUTABLE=/home/dbsuper/miniconda3/bin/conda
-ENV CONDA_ACTIVATION_SCRIPT=/home/dbsuper/miniconda3/bin/activate
+ENV CONDA_PATH=/home/transportation2019/miniconda3/bin
+ENV CONDA_EXECUTABLE=/home/transportation2019/miniconda3/bin/conda
+ENV CONDA_ACTIVATION_SCRIPT=/home/transportation2019/miniconda3/bin/activate
 
 # the scripts that do the work
-COPY container-scripts /home/dbsuper/scripts/
-RUN chown -R dbsuper:dbsuper /home/dbsuper/scripts
+COPY container-scripts /home/transportation2019/scripts/
+RUN chown -R transportation2019:transportation2019 /home/transportation2019/scripts

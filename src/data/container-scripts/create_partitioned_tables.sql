@@ -28,10 +28,9 @@ CREATE TABLE passenger_stops (
   month integer,
   day integer,
   day_of_week integer,
-  id serial
+  arrive_quarter_hour double precision
 ) PARTITION BY RANGE(service_date);
 CREATE INDEX ON passenger_stops (service_date);
-ALTER TABLE passenger_stops ADD PRIMARY KEY (service_date, id);
 
 \echo creating trips_history table
 DROP TABLE IF EXISTS trips_history CASCADE;
@@ -48,7 +47,6 @@ CREATE TABLE trips_history (
   pattern_direction text
 ) PARTITION BY RANGE(opd_date);
 CREATE INDEX ON trips_history (opd_date);
-ALTER TABLE trips_history ADD PRIMARY KEY (opd_date, id);
 
 \echo creating bus_all_stops table
 DROP TABLE IF EXISTS bus_all_stops CASCADE;
@@ -76,7 +74,28 @@ CREATE TABLE bus_all_stops (
   month integer,
   day integer,
   day_of_week integer,
-  id serial
+  arrive_quarter_hour double precision
 ) PARTITION BY RANGE(opd_date) ;
 CREATE INDEX ON bus_all_stops (opd_date);
-ALTER TABLE bus_all_stops ADD PRIMARY KEY (opd_date, id);
+
+\echo creating disturbance_stops table
+SET timezone = 'PST8PDT';
+DROP TABLE IF EXISTS disturbance_stops CASCADE;
+CREATE TABLE disturbance_stops (
+  opd_date date not null,
+  service_key text,
+  year integer,
+  month integer,
+  day integer,
+  day_of_week integer,
+  act_arr_time timestamp with time zone,
+  act_dep_time timestamp with time zone,
+  start_quarter_hour real,
+  end_quarter_hour real,
+  duration interval,
+  line_id integer,
+  pattern_direction text,
+  longitude double precision,
+  latitude double precision
+) PARTITION BY RANGE(opd_date) ;
+CREATE INDEX ON disturbance_stops (opd_date);

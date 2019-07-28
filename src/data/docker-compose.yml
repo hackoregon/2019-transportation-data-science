@@ -8,9 +8,16 @@ services:
     ports:
       - $HOST_POSTGRES_PORT:5432
     environment:
+      - POSTGRES_HOST=postgis
+      - POSTGRES_PORT=5432
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=postgres
+      - TOAD_HOST=postgis
+      - TOAD_PORT=5432
+      - TOAD_USER=transportation2019
+      - TOAD_PASSWORD=${POSTGRES_PASSWORD}
+      - TOAD_DB=transit_operations_analytics_data
     volumes:
       - $HOST_RAW_PATH:/Raw:ro
       - $HOST_POSTGRESQL_DATA:/var/lib/postgresql/data:rw
