@@ -139,6 +139,18 @@ qhod <- function(tstamp) {
   0.25 * trunc(4 * hour(tstamp) + minute(tstamp) / 15)
 }
 
+# month outline
+## read trips_history
+## save to database
+## read vehicle stop history
+## join with trips history
+## save to database
+## compute disturbance stops
+## save to database
+## read stop event
+## save to database
+
+
 ## Test database
 conn <- connect_toad_database()
 DBI::dbListTables(conn)
