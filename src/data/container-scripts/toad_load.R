@@ -154,4 +154,3 @@ veh_stoph <- read_veh_stoph("2018_09")
 print(veh_stoph)
 stop_event <- read_stop_event("2018_09")
 print(stop_event)
-
