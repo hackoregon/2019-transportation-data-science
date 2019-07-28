@@ -154,11 +154,11 @@ qhod <- function(tstamp) {
 
 ## Test database
 conn <- connect_toad_database()
-DBI::dbListTables(conn)
-DBI::dbListFields(conn, "trips_history")
-DBI::dbListFields(conn, "passenger_stops")
-DBI::dbListFields(conn, "bus_all_stops")
-DBI::dbListFields(conn, "disturbance_stops")
+print(DBI::dbListTables(conn))
+print(DBI::dbListFields(conn, "trips_history"))
+print(DBI::dbListFields(conn, "passenger_stops"))
+print(DBI::dbListFields(conn, "bus_all_stops"))
+print(DBI::dbListFields(conn, "disturbance_stops"))
 
 ## Test readers
 tripsh <- read_tripsh("2018_09")
