@@ -42,10 +42,11 @@ connect_toad_database <- function(tries = 5, wait = 5) {
 }
 
 make_partition_sql <- function(table_name, start_year, start_month) {
-  start_date <- lubridate::ymd(sprintf("%4d-%2d-01", start_year, start_month))
-  end_date <- start_date %m+% months(1)
+  start_date <- lubridate::ymd(sprintf("%4d-%02d-01", start_year, start_month))
+  end_date <- start_date + months(1)
+  month_code <- sprintf("%4d_%02d", start_year, start_month)
   sql <- paste0(
-    "CREATE TABLE ", table_name, "_y", start_year, "m", start_month,
+    "CREATE TABLE ", table_name, "_", month_code,
     " PARTITION OF ", table_name,
     " FOR VALUES FROM ('", start_date, "') TO ('", end_date, "');"
   )
@@ -162,6 +163,12 @@ DBI::dbListFields(conn, "disturbance_stops")
 ## Test readers
 tripsh <- read_tripsh("2018_09")
 print(tripsh)
+DBI::dbExecute(
+  conn, make_partition_sql("trips_history", start_year = 2018, start_month = 9)
+)
+names(tripsh) <- janitor::make_clean_names(names(tripsh))
+DBI::dbAppendTable(conn, "trips_history", tripsh)
+
 veh_stoph <- read_veh_stoph("2018_09")
 print(veh_stoph)
 stop_event <- read_stop_event("2018_09")
