@@ -1,12 +1,12 @@
 #! /usr/bin/env Rscript
 
 ## Environment variables
-PGHOST <- Sys.getenv("PGHOST")
-PGPORT <- Sys.getenv("PGPORT")
-PGUSER <- Sys.getenv("PGUSER")
-PGPASSWORD <- Sys.getenv("PGPASSWORD")
-PGDATABASE <- Sys.getenv("PGDATABASE")
-WORK_PATH <- Sys.getenv("WORK_PATH")
+PGHOST <- "localhost"
+PGPORT <- 5439
+PGUSER <- "transportation2019"
+PGPASSWORD <- "sit-down-c0mic"
+PGDATABASE <- "transit_operations_analytics_data"
+WORK_PATH <- "/home/container-csvs/"
 
 ## Functions
 ### PostgreSQL
@@ -91,7 +91,12 @@ read_tripsh <- function(month_code) {
 read_veh_stoph <- function(month_code) {
   veh_stoph <- load_csv_file(file_type = "raw_veh_stoph", month_code)
   invisible(gc(reset = TRUE))
-  veh_stoph <- veh_stoph[EVENT_NO_TRIP > 0 & !is.na(NOM_ARR_TIME)]
+  veh_stoph <- veh_stoph[
+    EVENT_NO_TRIP > 0 &
+    !is.na(NOM_ARR_TIME) &
+    !is.na(GPS_LONGITUDE) &
+    !is.na(GPS_LATITUDE)
+  ]
   invisible(gc(reset = TRUE))
   veh_stoph <- veh_stoph[, `:=`(OPD_DATE = date_convert(OPD_DATE))]
   invisible(gc(reset = TRUE))
@@ -110,8 +115,11 @@ read_stop_event <- function(month_code) {
   invisible(gc(reset = TRUE))
   stop_event <- stop_event[
     ROUTE_NUMBER > 0 &
+    ROUTE_NUMBER <= 291 &
     TRIP_NUMBER > 0 &
     LOCATION_ID > 0 &
+    !is.na(X_COORDINATE) &
+    !is.na(Y_COORDINATE) &
     X_COORDINATE > 0 &
     Y_COORDINATE > 0
   ]
@@ -137,6 +145,7 @@ DBI::dbListTables(conn)
 DBI::dbListFields(conn, "trips_history")
 DBI::dbListFields(conn, "passenger_stops")
 DBI::dbListFields(conn, "bus_all_stops")
+DBI::dbListFields(conn, "disturbance_stops")
 
 ## Test readers
 tripsh <- read_tripsh("2018_09")
