@@ -6,7 +6,7 @@ PGPORT <- 5439
 PGUSER <- "transportation2019"
 PGPASSWORD <- "sit-down-c0mic"
 PGDATABASE <- "transit_operations_analytics_data"
-WORK_PATH <- "/container-csvs/"
+WORK_PATH <- "/home/container-csvs/"
 
 ## Functions
 ### PostgreSQL
@@ -86,6 +86,7 @@ read_trips_history <- function(month_code) {
     ACT_END_TIME = ACT_END_TIME + OPD_DATE
   )]
   invisible(gc(reset = TRUE))
+  names(trips_history) <- tolower(names(trips_history))
   return(trips_history)
 }
 
@@ -108,6 +109,7 @@ read_bus_all_stops <- function(month_code) {
     ACT_ARR_TIME = ACT_ARR_TIME + OPD_DATE
   )]
   invisible(gc(reset = TRUE))
+  names(bus_all_stops) <- tolower(names(bus_all_stops))
   return(bus_all_stops)
 }
 
@@ -133,6 +135,7 @@ read_passenger_stops <- function(month_code) {
     ARRIVE_TIME = ARRIVE_TIME + SERVICE_DATE
   )]
   invisible(gc(reset = TRUE))
+  names(passenger_stops) <- tolower(names(passenger_stops))
   return(passenger_stops)
 }
 
@@ -167,11 +170,11 @@ print(partition_sql <- make_partition_sql(
   "trips_history", start_year = 2018, start_month = 9
 ))
 DBI::dbExecute(conn, partition_sql)
-names(trips_history) <- tolower(names(trips_history))
-stop()
 DBI::dbWriteTable(conn, "trips_history", trips_history, append = TRUE)
 
 bus_all_stops <- read_bus_all_stops("2018_09")
 print(bus_all_stops)
+stop()
+
 passenger_stops <- read_passenger_stops("2018_09")
 print(passenger_stops)
