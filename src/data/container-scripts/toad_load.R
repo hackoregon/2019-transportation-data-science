@@ -64,10 +64,10 @@ date_convert <- function(trimet_coded_date) {
   as.POSIXct(strptime(trimet_coded_date, format = "%d%b%Y:%H:%M:%S", tz = "PST8PDT"))
 }
 
-read_tripsh <- function(month_code) {
-  tripsh <- load_csv_file(file_type = "raw_tripsh", month_code)
+read_trips_history <- function(month_code) {
+  trips_history <- load_csv_file(file_type = "raw_tripsh", month_code)
   invisible(gc(reset = TRUE))
-  tripsh <- tripsh[
+  trips_history <- trips_history[
     NOM_END_TIME > 0 &
     !is.na(ACT_END_TIME) &
     !is.na(LINE_ID) &
@@ -77,44 +77,44 @@ read_tripsh <- function(month_code) {
     PATTERN_DIRECTION != ""
   ]
   invisible(gc(reset = TRUE))
-  tripsh <- tripsh[, `:=`(OPD_DATE = date_convert(OPD_DATE))]
+  trips_history <- trips_history[, `:=`(OPD_DATE = date_convert(OPD_DATE))]
   invisible(gc(reset = TRUE))
-  tripsh <- tripsh[, `:=`(
+  trips_history <- trips_history[, `:=`(
     NOM_DEP_TIME = NOM_DEP_TIME + OPD_DATE,
     ACT_DEP_TIME = ACT_DEP_TIME + OPD_DATE,
     NOM_END_TIME = NOM_END_TIME + OPD_DATE,
     ACT_END_TIME = ACT_END_TIME + OPD_DATE
   )]
   invisible(gc(reset = TRUE))
-  return(tripsh)
+  return(trips_history)
 }
 
-read_veh_stoph <- function(month_code) {
-  veh_stoph <- load_csv_file(file_type = "raw_veh_stoph", month_code)
+read_bus_all_stops <- function(month_code) {
+  bus_all_stops <- load_csv_file(file_type = "raw_veh_stoph", month_code)
   invisible(gc(reset = TRUE))
-  veh_stoph <- veh_stoph[
+  bus_all_stops <- bus_all_stops[
     EVENT_NO_TRIP > 0 &
     !is.na(NOM_ARR_TIME) &
     !is.na(GPS_LONGITUDE) &
     !is.na(GPS_LATITUDE)
   ]
   invisible(gc(reset = TRUE))
-  veh_stoph <- veh_stoph[, `:=`(OPD_DATE = date_convert(OPD_DATE))]
+  bus_all_stops <- bus_all_stops[, `:=`(OPD_DATE = date_convert(OPD_DATE))]
   invisible(gc(reset = TRUE))
-  veh_stoph <- veh_stoph[, `:=`(
+  bus_all_stops <- bus_all_stops[, `:=`(
     NOM_DEP_TIME = NOM_DEP_TIME + OPD_DATE,
     ACT_DEP_TIME = ACT_DEP_TIME + OPD_DATE,
     NOM_ARR_TIME = NOM_ARR_TIME + OPD_DATE,
     ACT_ARR_TIME = ACT_ARR_TIME + OPD_DATE
   )]
   invisible(gc(reset = TRUE))
-  return(veh_stoph)
+  return(bus_all_stops)
 }
 
-read_stop_event <- function(month_code) {
-  stop_event <- load_csv_file(file_type = "raw_stop_event", month_code)
+read_passenger_stops <- function(month_code) {
+  passenger_stops <- load_csv_file(file_type = "raw_stop_event", month_code)
   invisible(gc(reset = TRUE))
-  stop_event <- stop_event[
+  passenger_stops <- passenger_stops[
     ROUTE_NUMBER > 0 &
     ROUTE_NUMBER <= 291 &
     TRIP_NUMBER > 0 &
@@ -125,15 +125,15 @@ read_stop_event <- function(month_code) {
     Y_COORDINATE > 0
   ]
   invisible(gc(reset = TRUE))
-  stop_event <- stop_event[, `:=`(SERVICE_DATE = date_convert(SERVICE_DATE))]
+  passenger_stops <- passenger_stops[, `:=`(SERVICE_DATE = date_convert(SERVICE_DATE))]
   invisible(gc(reset = TRUE))
-  stop_event <- stop_event[, `:=`(
+  passenger_stops <- passenger_stops[, `:=`(
     LEAVE_TIME = LEAVE_TIME + SERVICE_DATE,
     STOP_TIME = STOP_TIME + SERVICE_DATE,
     ARRIVE_TIME = ARRIVE_TIME + SERVICE_DATE
   )]
   invisible(gc(reset = TRUE))
-  return(stop_event)
+  return(passenger_stops)
 }
 
 qhod <- function(tstamp) {
@@ -161,17 +161,17 @@ print(DBI::dbListFields(conn, "bus_all_stops"))
 print(DBI::dbListFields(conn, "disturbance_stops"))
 
 ## Test readers
-tripsh <- read_tripsh("2018_09")
-print(tripsh)
+trips_history <- read_trips_history("2018_09")
+print(trips_history)
 print(partition_sql <- make_partition_sql(
   "trips_history", start_year = 2018, start_month = 9
 ))
 DBI::dbExecute(conn, partition_sql)
-names(tripsh) <- tolower(names(tripsh))
+names(trips_history) <- tolower(names(trips_history))
 stop()
-DBI::dbWriteTable(conn, "trips_history", tripsh, append = TRUE)
+DBI::dbWriteTable(conn, "trips_history", trips_history, append = TRUE)
 
-veh_stoph <- read_veh_stoph("2018_09")
-print(veh_stoph)
-stop_event <- read_stop_event("2018_09")
-print(stop_event)
+bus_all_stops <- read_bus_all_stops("2018_09")
+print(bus_all_stops)
+passenger_stops <- read_passenger_stops("2018_09")
+print(passenger_stops)
