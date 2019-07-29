@@ -90,7 +90,7 @@ read_trips_history <- function(month_code) {
   return(trips_history)
 }
 
-read_bus_all_stops <- function(month_code) {
+read_bus_all_stops <- function(month_code, trips_history) {
   bus_all_stops <- load_csv_file(file_type = "raw_veh_stoph", month_code)
   invisible(gc(reset = TRUE))
   bus_all_stops <- bus_all_stops[
@@ -110,6 +110,21 @@ read_bus_all_stops <- function(month_code) {
   )]
   invisible(gc(reset = TRUE))
   names(bus_all_stops) <- tolower(names(bus_all_stops))
+  bus_all_stops <- merge(
+    bus_all_stops,
+    trips_history[, .(event_no, line_id, pattern_direction)],
+    by.x = "event_no_trip", by.y = "event_no"
+  )
+  invisible(gc(reset = TRUE))
+  bus_all_stops <- bus_all_stops[
+    , `:=`(
+      year = year(act_arr_time),
+      month = month(act_arr_time),
+      day = mday(act_arr_time),
+      day_of_week = wday(act_arr_time),
+      arrive_quarter_hour = qhod(act_arr_time)
+    )
+  ]
   return(bus_all_stops)
 }
 
@@ -172,8 +187,14 @@ print(partition_sql <- make_partition_sql(
 DBI::dbExecute(conn, partition_sql)
 DBI::dbWriteTable(conn, "trips_history", trips_history, append = TRUE)
 
-bus_all_stops <- read_bus_all_stops("2018_09")
+bus_all_stops <- read_bus_all_stops("2018_09", trips_history)
 print(bus_all_stops)
+print(partition_sql <- make_partition_sql(
+  "bus_all_stops", start_year = 2018, start_month = 9
+))
+DBI::dbExecute(conn, partition_sql)
+DBI::dbWriteTable(conn, "bus_all_stops", bus_all_stops, append = TRUE)
+
 stop()
 
 passenger_stops <- read_passenger_stops("2018_09")
