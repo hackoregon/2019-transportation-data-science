@@ -6,7 +6,7 @@ PGPORT <- 5439
 PGUSER <- "transportation2019"
 PGPASSWORD <- "sit-down-c0mic"
 PGDATABASE <- "transit_operations_analytics_data"
-WORK_PATH <- "/home/container-csvs/"
+WORK_PATH <- "/container-csvs/"
 
 ## Functions
 ### PostgreSQL
