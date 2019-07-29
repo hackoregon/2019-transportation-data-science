@@ -163,11 +163,13 @@ print(DBI::dbListFields(conn, "disturbance_stops"))
 ## Test readers
 tripsh <- read_tripsh("2018_09")
 print(tripsh)
-DBI::dbExecute(
-  conn, make_partition_sql("trips_history", start_year = 2018, start_month = 9)
-)
-names(tripsh) <- janitor::make_clean_names(names(tripsh))
-DBI::dbAppendTable(conn, "trips_history", tripsh)
+print(partition_sql <- make_partition_sql(
+  "trips_history", start_year = 2018, start_month = 9
+))
+DBI::dbExecute(conn, partition_sql)
+names(tripsh) <- tolower(names(tripsh))
+stop()
+DBI::dbWriteTable(conn, "trips_history", tripsh, append = TRUE)
 
 veh_stoph <- read_veh_stoph("2018_09")
 print(veh_stoph)
