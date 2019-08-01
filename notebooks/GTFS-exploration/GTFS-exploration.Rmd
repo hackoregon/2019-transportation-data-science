@@ -9,8 +9,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Libraries
 ```{r}
+library(tidyverse)
 library(tidytransit)
-library(dplyr)
+
+
 ```
 
 ## Acquire latest TriMet GTFS
@@ -26,47 +28,37 @@ summary(trimet_gtfs)
 
 ```
 
-## Timetable
+## Service patterns
 ```{r}
 trimet_gtfs <- trimet_gtfs %>% tidytransit::set_hms_times()
 gc(reset = TRUE)
-
-# get the id of the first stop in the trip's stop sequence
-first_stop_id <- trimet_gtfs$stop_times %>% 
-  dplyr::group_by(trip_id) %>% 
-  dplyr::summarise(stop_id = stop_id[which.min(stop_sequence)])
+trimet_gtfs <- trimet_gtfs %>% tidytransit::set_date_service_table()
 gc(reset = TRUE)
+holidays <- tibble::tribble(
+  ~date, ~holiday,
+  lubridate::ymd("2019-09-02"), "Labor Day",
+  lubridate::ymd("2019-11-28"), "Thanksgiving"
+)
+calendar = tibble::tibble(date = unique(trimet_gtfs$.$date_service_table$date)) %>% 
+  dplyr::mutate(
+    weekday = (function(date) {
+      c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+        "Saturday")[as.POSIXlt(date)$wday + 1]
+    })(date)
+  )
+calendar <- calendar %>% dplyr::left_join(holidays, by = "date")
 
-# join with the stops table to get the stop_name
-first_stop_names <- dplyr::left_join(first_stop_id, trimet_gtfs$stops, by="stop_id")
-gc(reset = TRUE)
+trimet_gtfs <- trimet_gtfs %>% tidytransit::set_servicepattern()
+n_services <-  length(unique(trimet_gtfs$trips$service_id))
+n_servicepatterns <- length(unique(trimet_gtfs$.$service_pattern$servicepattern_id))
 
-# rename the first stop_name as trip_origin
-trip_origins <- first_stop_names %>% 
-  dplyr::select(trip_id, trip_origin = stop_name)
-gc(reset = TRUE)
+date_servicepattern_table <- trimet_gtfs$.$date_servicepattern_table %>%
+  dplyr::left_join(calendar, by = "date")
 
-# join the trip origins back onto the trips
-trimet_gtfs$trips <- dplyr::left_join(trimet_gtfs$trips, trip_origins, by = "trip_id")
-gc(reset = TRUE)
-trimet_gtfs$trips %>%
-  dplyr::select(route_id, trip_origin) %>%
-  head()
-gc(reset = TRUE)
-
-if(!exists("trip_headsign", where = trimet_gtfs$trips)) {
-
-  # get the last id of the trip's stop sequence
-  trip_headsigns <- trimet_gtfs$stop_times %>%
-    dplyr::group_by(trip_id) %>%
-    dplyr::summarise(stop_id = stop_id[which.max(stop_sequence)]) %>%
-    dplyr::left_join(trimet_gtfs$stops, by="stop_id") %>%
-    dplyr::select(trip_id, trip_headsign.computed = stop_name)
-
-  # assign the headsign to the gtfs object
-  trimet_gtfs$trips <- 
-    dplyr::left_join(trimet_gtfs$trips, trip_headsigns, by = "trip_id")
-}
+ggplot(date_servicepattern_table) + theme_bw() + 
+  geom_point(aes(x = date, y = servicepattern_id, color = weekday), size = 1) +
+  scale_x_date(breaks = scales::date_breaks("1 month")) +
+  theme(legend.position = "bottom")
 
 ```
 
