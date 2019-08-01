@@ -21,6 +21,7 @@ trimet_gtfs <- tidytransit::read_gtfs(
   quiet = FALSE,
   geometry = TRUE)
 gc(reset = TRUE)
+
 summary(trimet_gtfs)
 
 ```
