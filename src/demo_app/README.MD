@@ -19,4 +19,6 @@ You'll need to clone this repo, but you only need to use the demo_app directory.
 
 Which should launch the app @ `localhost:8052`.
 
+NOTE: Right now it is set up to run from local `.csv` files in the `data` dir. The `.env` file points it to use local. If you have local running copy of the API, you can change that flag to work from the API instead.
+
 Let me know if you have problems! - Jeff
