@@ -1,0 +1,71 @@
+---
+title: "GTFS Exploration"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Libraries
+```{r}
+library(tidytransit)
+library(dplyr)
+```
+
+## Acquire latest TriMet GTFS
+```{r}
+trimet_gtfs <- tidytransit::read_gtfs(
+  path = "https://developer.trimet.org/schedule/gtfs.zip",
+  local = FALSE,
+  quiet = FALSE,
+  geometry = TRUE)
+gc(reset = TRUE)
+summary(trimet_gtfs)
+
+```
+
+## Timetable
+```{r}
+trimet_gtfs <- trimet_gtfs %>% tidytransit::set_hms_times()
+gc(reset = TRUE)
+
+# get the id of the first stop in the trip's stop sequence
+first_stop_id <- trimet_gtfs$stop_times %>% 
+  dplyr::group_by(trip_id) %>% 
+  dplyr::summarise(stop_id = stop_id[which.min(stop_sequence)])
+gc(reset = TRUE)
+
+# join with the stops table to get the stop_name
+first_stop_names <- dplyr::left_join(first_stop_id, trimet_gtfs$stops, by="stop_id")
+gc(reset = TRUE)
+
+# rename the first stop_name as trip_origin
+trip_origins <- first_stop_names %>% 
+  dplyr::select(trip_id, trip_origin = stop_name)
+gc(reset = TRUE)
+
+# join the trip origins back onto the trips
+trimet_gtfs$trips <- dplyr::left_join(trimet_gtfs$trips, trip_origins, by = "trip_id")
+gc(reset = TRUE)
+trimet_gtfs$trips %>%
+  dplyr::select(route_id, trip_origin) %>%
+  head()
+gc(reset = TRUE)
+
+if(!exists("trip_headsign", where = trimet_gtfs$trips)) {
+
+  # get the last id of the trip's stop sequence
+  trip_headsigns <- trimet_gtfs$stop_times %>%
+    dplyr::group_by(trip_id) %>%
+    dplyr::summarise(stop_id = stop_id[which.max(stop_sequence)]) %>%
+    dplyr::left_join(trimet_gtfs$stops, by="stop_id") %>%
+    dplyr::select(trip_id, trip_headsign.computed = stop_name)
+
+  # assign the headsign to the gtfs object
+  trimet_gtfs$trips <- 
+    dplyr::left_join(trimet_gtfs$trips, trip_headsigns, by = "trip_id")
+}
+
+```
+
