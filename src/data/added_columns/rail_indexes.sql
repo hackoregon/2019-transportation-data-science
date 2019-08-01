@@ -1,3 +1,6 @@
-CREATE INDEX ON rail_passenger_stops(route_number, direction);
-CREATE INDEX ON rail_passenger_stops(service_key);
-CREATE INDEX ON rail_passenger_stops(arrive_quarter_hour);
+CREATE INDEX ON rail_passenger_stops(
+	route_number,
+	direction,
+	service_key,
+	arrive_quarter_hour
+);
