@@ -58,6 +58,8 @@ target/
 
 # DotEnv configuration
 .env
+# allows this one.
+!/src/demo_app/.env
 
 # Database
 *.db

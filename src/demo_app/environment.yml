@@ -7,3 +7,4 @@ dependencies:
     - dash-html-components
     - pandas
     - folium
+    - python-dotenv
