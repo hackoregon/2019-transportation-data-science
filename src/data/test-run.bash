@@ -1,7 +1,7 @@
 #! /bin/bash
 
 docker-compose down
-sudo rm -fr /home/container-postgres
+sudo rm -fr /container-postgres
 docker-compose up -d --build
 sleep 10
 docker logs data_postgis_1
