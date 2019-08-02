@@ -23,6 +23,9 @@ unar -D "${RAW}/April 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*tri
 unar -D "${RAW}/May 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
 unzip   "${RAW}/July+2018+to+Dec+2018.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*stopevent*.csv"
 
+## Madison / 4th data received 2019-07-31
+unzip   "${RAW}/Madison4th.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
+
 ## We use "xsv" (https://github.com/BurntSushi/xsv) to standardize the CSV files for input to data science and
 ## database loading processes. It's available in some Linux distros, but we use the binary release since it's not in
 ## Debian "stretch".
@@ -32,7 +35,7 @@ export STOP_EVENT_COLS=SERVICE_DATE,VEHICLE_NUMBER,LEAVE_TIME,TRAIN,ROUTE_NUMBER
 export TRIPSH_COLS=OPD_DATE,VEHICLE_ID,EVENT_NO,METERS,ACT_DEP_TIME,NOM_DEP_TIME,NOM_END_TIME,ACT_END_TIME,LINE_ID,PATTERN_DIRECTION
 
 ## Each month contains four files. There is a large file ("cyclic") which contains all timestamped vehicle positions.
-## It appears to contain only buses, and we do not use it.
+## It appears to contain only buses, and we do not use it. Some months have a "breadcrumbs" file, which we do not use.
 ##
 ## There is a small "trips history". This appears to be buses only and lists the start and end times of all the trips.
 ## And there are two stop event tables. The first, "stop history", contains all the stops a vehicle made, whether for
@@ -48,6 +51,37 @@ export TRIPSH_COLS=OPD_DATE,VEHICLE_ID,EVENT_NO,METERS,ACT_DEP_TIME,NOM_DEP_TIME
 ## 2017, October 2017, November 2017, April 2018 and May 2018. The "new format" archives contain the six months from
 ## July 2018 through December 2018, one archive per data table type. And the columns differ between the two formats.
 ## And the December 2018 tables have fewer trips that we expected - we haven't asked TriMet about that yet.
+
+## Processing the "Madison4th" files
+## On 2019-07-31, we received a new dataset covering April 1, 2019 through July 24, 2019. We call this dataset the
+## 'Madison4th' dataset. The date stamps and file names correspond to the "old" format data (fall 2017), but the
+## archive format is ".zip" and all months are concatenated. There is both a "cyclic" and a "breadcrumbs" file in this
+## dataset, neither of which we are using.
+cd Madison4th
+echo "'Madison4th' veh_stoph column selection"
+xsv select ${VEH_STOPH_COLS}  "init_veh_stoph.csv" > new_raw_veh_stoph.csv
+echo "'Madison4th' stop_event column selection"
+xsv select ${STOP_EVENT_COLS} "trimet_stop_event.csv" > new_raw_stop_event.csv
+echo "'Madison4th' tripsh column selection"
+xsv select ${TRIPSH_COLS} "init_tripsh.csv" > new_raw_tripsh.csv
+echo "'Madison4th' veh_stoph month extraction"
+xsv search "APR2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_04.csv
+xsv search "MAY2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_05.csv
+xsv search "JUN2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_06.csv
+xsv search "JUL2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_07.csv
+
+echo "'Madison4th' stop_event month extraction"
+xsv search "APR2019" new_raw_stop_event.csv > ../raw_stop_event_2019_04.csv
+xsv search "MAY2019" new_raw_stop_event.csv > ../raw_stop_event_2019_05.csv
+xsv search "JUN2019" new_raw_stop_event.csv > ../raw_stop_event_2019_06.csv
+xsv search "JUL2019" new_raw_stop_event.csv > ../raw_stop_event_2019_07.csv
+
+echo "'Madison4th' tripsh month extraction"
+xsv search "APR2019" new_raw_tripsh.csv > ../raw_tripsh_2019_04.csv
+xsv search "MAY2019" new_raw_tripsh.csv > ../raw_tripsh_2019_05.csv
+xsv search "JUN2019" new_raw_tripsh.csv > ../raw_tripsh_2019_06.csv
+xsv search "JUL2019" new_raw_tripsh.csv > ../raw_tripsh_2019_07.csv
+cd ..
 
 ## Processing the old format files is easy - we only need to select the columns we're using
 echo "old format vehicle stop history"
@@ -145,6 +179,10 @@ popd
 ### raw_stop_event_2018_10.csv
 ### raw_stop_event_2018_11.csv
 ### raw_stop_event_2018_12.csv
+### raw_stop_event_2019_04.csv
+### raw_stop_event_2019_05.csv
+### raw_stop_event_2019_06.csv
+### raw_stop_event_2019_07.csv
 
 ## the trips history tables
 ### raw_tripsh_2017_09.csv
@@ -158,6 +196,10 @@ popd
 ### raw_tripsh_2018_10.csv
 ### raw_tripsh_2018_11.csv
 ### raw_tripsh_2018_12.csv
+### raw_tripsh_2018_04.csv
+### raw_tripsh_2018_05.csv
+### raw_tripsh_2018_06.csv
+### raw_tripsh_2018_07.csv
 
 ## the vehicle stop history tables
 ### raw_veh_stoph_2017_09.csv
@@ -171,3 +213,7 @@ popd
 ### raw_veh_stoph_2018_10.csv
 ### raw_veh_stoph_2018_11.csv
 ### raw_veh_stoph_2018_12.csv
+### raw_veh_stoph_2019_04.csv
+### raw_veh_stoph_2019_05.csv
+### raw_veh_stoph_2019_06.csv
+### raw_veh_stoph_2019_07.csv
