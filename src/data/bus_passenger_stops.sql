@@ -94,4 +94,4 @@ CREATE TABLE bus_service_keys AS
 SELECT DISTINCT service_date, service_key
 FROM bus_passenger_stops
 ORDER BY service_date;
-ALTER TABLE bus_service_keys ADD PRIMARY KEY (service_date);
+ALTER TABLE bus_service_keys ADD PRIMARY KEY (service_date, service_key);

@@ -102,4 +102,4 @@ CREATE TABLE rail_service_keys AS
 SELECT DISTINCT service_date, service_key
 FROM rail_passenger_stops
 ORDER BY service_date;
-ALTER TABLE rail_service_keys ADD PRIMARY KEY (service_date);
+ALTER TABLE rail_service_keys ADD PRIMARY KEY (service_date, service_key);
