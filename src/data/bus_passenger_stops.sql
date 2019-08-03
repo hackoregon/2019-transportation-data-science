@@ -50,6 +50,22 @@ CREATE TABLE bus_passenger_stops_y2018m11
 PARTITION OF bus_passenger_stops
 FOR VALUES FROM ('2018-11-01') TO ('2018-12-01');
 
+CREATE TABLE bus_passenger_stops_y2019m04
+PARTITION OF bus_passenger_stops
+FOR VALUES FROM ('2019-04-01') TO ('2019-05-01');
+
+CREATE TABLE bus_passenger_stops_y2019m05
+PARTITION OF bus_passenger_stops
+FOR VALUES FROM ('2019-05-01') TO ('2019-06-01');
+
+CREATE TABLE bus_passenger_stops_y2019m06
+PARTITION OF bus_passenger_stops
+FOR VALUES FROM ('2019-06-01') TO ('2019-07-01');
+
+CREATE TABLE bus_passenger_stops_y2019m07
+PARTITION OF bus_passenger_stops
+FOR VALUES FROM ('2019-07-01') TO ('2019-08-01');
+
 CREATE INDEX ON bus_passenger_stops (service_date);
 
 \echo loading
