@@ -84,3 +84,5 @@ INNER JOIN bus_service_keys ON bus_all_stops.opd_date = bus_service_keys.service
 WHERE stop_type = 3;
 \echo primary key
 ALTER TABLE disturbance_stops ADD PRIMARY KEY (opd_date, id);
+\echo truncating input table
+TRUNCATE TABLE bus_all_stops;

@@ -91,3 +91,5 @@ FROM raw.raw_veh_stoph
 INNER JOIN bus_trips ON bus_trips.event_no_trip = raw.raw_veh_stoph.event_no_trip;
 \echo primary key
 ALTER TABLE bus_all_stops ADD PRIMARY KEY (event_no_trip, opd_date, id);
+\echo truncating input table
+TRUNCATE TABLE raw.raw_veh_stoph;

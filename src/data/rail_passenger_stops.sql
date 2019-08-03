@@ -89,6 +89,8 @@ WHERE route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
 AND route_number IN (SELECT rte FROM rail_routes);
+\echo truncating input table
+TRUNCATE TABLE raw.raw_stop_event;
 
 \echo primary key
 ALTER TABLE rail_passenger_stops 

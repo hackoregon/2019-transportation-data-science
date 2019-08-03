@@ -20,3 +20,5 @@ DROP TABLE IF EXISTS bus_routes;
 CREATE TABLE bus_routes AS
 SELECT DISTINCT line_id FROM bus_trips ORDER BY line_id;
 ALTER TABLE bus_routes ADD PRIMARY KEY (line_id);
+\echo truncating input table
+TRUNCATE TABLE raw.raw_tripsh;
