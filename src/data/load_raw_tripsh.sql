@@ -24,6 +24,10 @@ COPY raw_tripsh FROM '/csvs/raw_tripsh_2017_11.csv' WITH csv header;
 COPY raw_tripsh FROM '/csvs/raw_tripsh_2018_09.csv' WITH csv header;
 COPY raw_tripsh FROM '/csvs/raw_tripsh_2018_10.csv' WITH csv header;
 COPY raw_tripsh FROM '/csvs/raw_tripsh_2018_11.csv' WITH csv header;
+COPY raw_tripsh FROM '/csvs/raw_tripsh_2019_04.csv' WITH csv header;
+COPY raw_tripsh FROM '/csvs/raw_tripsh_2019_05.csv' WITH csv header;
+COPY raw_tripsh FROM '/csvs/raw_tripsh_2019_06.csv' WITH csv header;
+COPY raw_tripsh FROM '/csvs/raw_tripsh_2019_07.csv' WITH csv header;
 
 \echo date stamps on raw_tripsh
 ALTER TABLE raw_tripsh ADD COLUMN date_stamp timestamp with time zone;
