@@ -25,16 +25,16 @@ CREATE TABLE raw_veh_stoph (
 );
 
 \echo loading raw_veh_stoph
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2017_09.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2017_10.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2017_11.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2018_09.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2018_10.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2018_11.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2019_04.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2019_05.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2019_06.csv' WITH csv header;
-COPY raw_veh_stoph FROM '/csvs/raw_veh_stoph_2019_07.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2017_09.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2017_10.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2017_11.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_09.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_10.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_11.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_04.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_05.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_06.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_07.csv' WITH csv header;
 
 \echo indexing raw_veh_stoph
 CREATE INDEX ON raw_veh_stoph (event_no_trip);

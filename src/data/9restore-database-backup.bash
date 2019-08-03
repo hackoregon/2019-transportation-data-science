@@ -1,6 +1,6 @@
 #! /bin/bash
 
-export BACKUP_PATH=/home/host-csvs
+export BACKUP_PATH=/Work
 pushd ${BACKUP_PATH}
 
 echo "Creating user and database with PostGIS as database superuser"
