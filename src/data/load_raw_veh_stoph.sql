@@ -39,6 +39,8 @@ COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_07.csv' WITH csv header;
 \echo removing stops except disturbance stops
 DELETE FROM raw_veh_stoph
 WHERE stop_type IS NULL
+OR gps_longitude IS NULL
+OR gps_latitude IS NULL
 OR stop_type != 3;
 \echo date stamps on raw_veh_stoph
 ALTER TABLE raw_veh_stoph ADD COLUMN date_stamp timestamp with time zone;
