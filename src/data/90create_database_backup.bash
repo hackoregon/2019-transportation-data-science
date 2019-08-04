@@ -6,8 +6,8 @@ export PGDATABASE=transit_operations_analytics_data
 export DEST=/Work
 
 echo "Cleaning up database"
-psql --username=${PGUSER} --dbname=${PGDATABASE} --command="DROP SCHEMA IF EXISTS raw;"
-psql --username=${PGUSER} --dbname=${PGDATABASE} --command="DROP TABLE IF EXISTS bus_all_stops;"
+psql --username=${PGUSER} --dbname=${PGDATABASE} --command="DROP SCHEMA IF EXISTS raw CASCADE;"
+psql --username=${PGUSER} --dbname=${PGDATABASE} --command="DROP TABLE IF EXISTS bus_all_stops CASCADE;"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --command="VACUUM ANALYZE;"
 echo "Creating the database backup"
 pushd ${DEST}
