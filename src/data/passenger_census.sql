@@ -13,6 +13,6 @@ CREATE TABLE passenger_census (
   x_coord double precision,
   y_coord double precision
 );
-COPY passenger_census FROM '/Work/passenger_census.csv' WITH csv header;
+COPY passenger_census FROM '/Raw/passenger_census.csv' WITH csv header;
 ALTER TABLE passenger_census ADD COLUMN id serial;
-ALTER TABLE passenger_census ADD PRIMARY KEY (serial);
+ALTER TABLE passenger_census ADD PRIMARY KEY (id);
