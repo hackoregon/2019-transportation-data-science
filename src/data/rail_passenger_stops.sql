@@ -89,6 +89,7 @@ WHERE route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
 AND route_number IN (SELECT rte FROM rail_routes);
+
 \echo truncating input table
 TRUNCATE TABLE raw.raw_stop_event;
 
@@ -103,6 +104,13 @@ SET seconds_late = extract('epoch' from (arrive_time - stop_time)),
 	date_part('minute', arrive_time AT TIME ZONE 'America/Los_Angeles')/15
   )
 ;
+
+CREATE INDEX ON rail_passenger_stops(
+  route_number,
+  direction,
+  service_key,
+  arrive_quarter_hour
+);
 
 \echo primary key
 ALTER TABLE rail_passenger_stops 

@@ -97,6 +97,13 @@ SET seconds_late = extract('epoch' from (arrive_time - stop_time)),
   )
 ;
 
+CREATE INDEX ON bus_passenger_stops(
+  route_number,
+  direction,
+  service_key,
+  arrive_quarter_hour
+);
+
 \echo primary key
 ALTER TABLE bus_passenger_stops 
 ADD PRIMARY KEY (vehicle_id, service_date, arrive_time, leave_time);
