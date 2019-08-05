@@ -8,13 +8,10 @@ export DEST=/Work
 echo "Cleaning up database"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --command="DROP SCHEMA IF EXISTS raw CASCADE;"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --command="DROP TABLE IF EXISTS bus_all_stops CASCADE;"
-psql --username=${PGUSER} --dbname=${PGDATABASE} --command="VACUUM ANALYZE;"
+/usr/bin/time psql --username=${PGUSER} --dbname=${PGDATABASE} --command="VACUUM ANALYZE;"
 echo "Creating the database backup"
 pushd ${DEST}
-pg_dump --format=c --exclude-schema=raw --dbname=${PGDATABASE} > ${PGDATABASE}.backup
+pg_dump --verbose --format=c --exclude-schema=raw --dbname=${PGDATABASE} > ${PGDATABASE}.backup
 pg_restore --list ${PGDATABASE}.backup
 sha512sum ${PGDATABASE}.backup > ${PGDATABASE}.backup.sha512sum
-echo "Creating ERD"
-postgresql_autodoc -d ${PGDATABASE} -t html \
---table=bus_passenger_stops,bus_trips,disturbance_stops,rail_passenger_stops,traffic_signals
 popd
