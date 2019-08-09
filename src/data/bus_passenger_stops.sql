@@ -23,7 +23,8 @@ CREATE TABLE bus_passenger_stops (
   offs integer,
   estimated_load integer,
   train_mileage double precision,
-  geom_point_4326 geometry(POINT, 4326)
+  geom_point_4326 geometry(POINT, 4326),
+  id serial
 ) PARTITION BY RANGE(service_date);
 
 CREATE TABLE bus_passenger_stops_y2017m09
@@ -114,7 +115,7 @@ CREATE INDEX ON bus_passenger_stops(
 
 \echo primary key
 ALTER TABLE bus_passenger_stops 
-ADD PRIMARY KEY (vehicle_id, service_date, arrive_time, leave_time);
+ADD PRIMARY KEY (service_date, id);
 
 \echo bus service keys
 DROP TABLE IF EXISTS bus_service_keys;
