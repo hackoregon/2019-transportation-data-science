@@ -18,13 +18,14 @@ popd
 echo "Extracting the CSVs"
 pushd ${CSVS}
 rm *.csv
-unar -D "${RAW}/scrapes.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
-unar -D "${RAW}/April 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
-unar -D "${RAW}/May 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
-unzip   "${RAW}/July+2018+to+Dec+2018.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*stopevent*.csv"
+unar -D  "${RAW}/scrapes.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
+unar -D  "${RAW}/April 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
+unar -D  "${RAW}/May 2018.rar" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
+unzip -o "${RAW}/July+2018+to+Dec+2018.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*stopevent*.csv"
 
-## Madison / 4th data received 2019-07-31
-unzip   "${RAW}/Madison4th.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
+## Madison / 4th data received 2019-07-31 and 2019-08-08
+unzip -o "${RAW}/Madison4th.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
+unzip -o "${RAW}/Mad4th+0725-3119.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
 
 ## We use "xsv" (https://github.com/BurntSushi/xsv) to standardize the CSV files for input to data science and
 ## database loading processes. It's available in some Linux distros, but we use the binary release since it's not in
@@ -56,32 +57,34 @@ export TRIPSH_COLS=OPD_DATE,VEHICLE_ID,EVENT_NO,METERS,ACT_DEP_TIME,NOM_DEP_TIME
 ## On 2019-07-31, we received a new dataset covering April 1, 2019 through July 24, 2019. We call this dataset the
 ## 'Madison4th' dataset. The date stamps and file names correspond to the "old" format data (fall 2017), but the
 ## archive format is ".zip" and all months are concatenated. There is both a "cyclic" and a "breadcrumbs" file in this
-## dataset, neither of which we are using.
-cd Madison4th
+## dataset, neither of which we are using. On 2019-08-08 we received the rest of July 2019.
 echo "'Madison4th' veh_stoph column selection"
-xsv select ${VEH_STOPH_COLS}  "init_veh_stoph.csv" > new_raw_veh_stoph.csv
+xsv cat rows "Madison4th/init_veh_stoph.csv" "Mad4th 0725-3119/init_veh_stoph 0725to3119.csv" \
+  | xsv select ${VEH_STOPH_COLS} > mad4th_raw_veh_stoph.csv
 echo "'Madison4th' stop_event column selection"
-xsv select ${STOP_EVENT_COLS} "trimet_stop_event.csv" > new_raw_stop_event.csv
+xsv cat rows "Madison4th/trimet_stop_event.csv" "Mad4th 0725-3119/trimet_stop_event 0725to3119.csv" \
+  | xsv select ${STOP_EVENT_COLS} > mad4th_raw_stop_event.csv
 echo "'Madison4th' tripsh column selection"
-xsv select ${TRIPSH_COLS} "init_tripsh.csv" > new_raw_tripsh.csv
+xsv cat rows "Madison4th/init_tripsh.csv" "Mad4th 0725-3119/init_tripsh 0725to3119.csv" \
+  | xsv select ${TRIPSH_COLS} > mad4th_raw_tripsh.csv
 echo "'Madison4th' veh_stoph month extraction"
-xsv search "APR2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_04.csv
-xsv search "MAY2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_05.csv
-xsv search "JUN2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_06.csv
-xsv search "JUL2019" new_raw_veh_stoph.csv > ../raw_veh_stoph_2019_07.csv
+xsv search "APR2019" mad4th_raw_veh_stoph.csv > raw_veh_stoph_2019_04.csv
+xsv search "MAY2019" mad4th_raw_veh_stoph.csv > raw_veh_stoph_2019_05.csv
+xsv search "JUN2019" mad4th_raw_veh_stoph.csv > raw_veh_stoph_2019_06.csv
+xsv search "JUL2019" mad4th_raw_veh_stoph.csv > raw_veh_stoph_2019_07.csv
 
 echo "'Madison4th' stop_event month extraction"
-xsv search "APR2019" new_raw_stop_event.csv > ../raw_stop_event_2019_04.csv
-xsv search "MAY2019" new_raw_stop_event.csv > ../raw_stop_event_2019_05.csv
-xsv search "JUN2019" new_raw_stop_event.csv > ../raw_stop_event_2019_06.csv
-xsv search "JUL2019" new_raw_stop_event.csv > ../raw_stop_event_2019_07.csv
+xsv search "APR2019" mad4th_raw_stop_event.csv > raw_stop_event_2019_04.csv
+xsv search "MAY2019" mad4th_raw_stop_event.csv > raw_stop_event_2019_05.csv
+xsv search "JUN2019" mad4th_raw_stop_event.csv > raw_stop_event_2019_06.csv
+xsv search "JUL2019" mad4th_raw_stop_event.csv > raw_stop_event_2019_07.csv
 
 echo "'Madison4th' tripsh month extraction"
-xsv search "APR2019" new_raw_tripsh.csv > ../raw_tripsh_2019_04.csv
-xsv search "MAY2019" new_raw_tripsh.csv > ../raw_tripsh_2019_05.csv
-xsv search "JUN2019" new_raw_tripsh.csv > ../raw_tripsh_2019_06.csv
-xsv search "JUL2019" new_raw_tripsh.csv > ../raw_tripsh_2019_07.csv
-cd ..
+xsv search "APR2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_04.csv
+xsv search "MAY2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_05.csv
+xsv search "JUN2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_06.csv
+xsv search "JUL2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_07.csv
+#cd ..
 
 ## Processing the old format files is easy - we only need to select the columns we're using
 echo "old format vehicle stop history"
