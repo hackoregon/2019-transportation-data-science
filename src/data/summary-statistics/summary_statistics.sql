@@ -12,7 +12,6 @@ CREATE TABLE bus_passenger_stops_summary AS
   GROUP BY year, month, arrive_quarter_hour
   ORDER BY year, month, arrive_quarter_hour
 ;
-COPY bus_passenger_stops_summary TO '/Work/bus_passenger_stops_summary.csv' WITH CSV HEADER;
 
 DROP TABLE IF EXISTS rail_passenger_stops_summary;
 CREATE TABLE rail_passenger_stops_summary AS
@@ -28,7 +27,6 @@ CREATE TABLE rail_passenger_stops_summary AS
   GROUP BY year, month, arrive_quarter_hour
   ORDER BY year, month, arrive_quarter_hour
 ;
-COPY rail_passenger_stops_summary TO '/Work/rail_passenger_stops_summary.csv' WITH CSV HEADER;
 
 DROP TABLE IF EXISTS disturbance_stops_summary;
 CREATE TABLE disturbance_stops_summary AS
@@ -41,4 +39,3 @@ CREATE TABLE disturbance_stops_summary AS
   GROUP BY year, month, start_quarter_hour
   ORDER BY year, month, start_quarter_hour
 ;
-COPY disturbance_stops_summary TO '/Work/disturbance_stops_summary.csv' WITH CSV HEADER;
