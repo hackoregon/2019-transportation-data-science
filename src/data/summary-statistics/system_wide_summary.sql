@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS bus_passenger_stops_summary;
-CREATE TABLE bus_passenger_stops_summary AS
+DROP TABLE IF EXISTS bus_system_wide_summary;
+CREATE TABLE bus_system_wide_summary AS
   SELECT extract('year' from service_date) AS year,
     extract('month' from service_date) AS month,
     arrive_quarter_hour, count(seconds_late) as samples,
@@ -17,8 +17,8 @@ CREATE TABLE bus_passenger_stops_summary AS
   ORDER BY year, month, arrive_quarter_hour
 ;
 
-DROP TABLE IF EXISTS rail_passenger_stops_summary;
-CREATE TABLE rail_passenger_stops_summary AS
+DROP TABLE IF EXISTS rail_system_wide_summary;
+CREATE TABLE rail_system_wide_summary AS
   SELECT extract('year' from service_date) AS year,
     extract('month' from service_date) AS month,
     arrive_quarter_hour, count(seconds_late) as samples,
@@ -36,8 +36,8 @@ CREATE TABLE rail_passenger_stops_summary AS
   ORDER BY year, month, arrive_quarter_hour
 ;
 
-DROP TABLE IF EXISTS disturbance_stops_summary;
-CREATE TABLE disturbance_stops_summary AS
+DROP TABLE IF EXISTS disturbance_system_wide_summary;
+CREATE TABLE disturbance_system_wide_summary AS
   SELECT year, month, start_quarter_hour, count(duration) as samples,
     percentile_cont(0.05) within group (order by extract('epoch' from duration)) AS p05_duration,
     percentile_cont(0.25) within group (order by extract('epoch' from duration)) AS q1_duration,
