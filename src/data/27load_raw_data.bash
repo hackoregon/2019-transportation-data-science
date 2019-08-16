@@ -6,10 +6,9 @@ export PGDATABASE=transit_operations_analytics_data
 export DEST=/Work
 
 # load the raw data with SQL
-psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_stop_event.sql &
-psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_tripsh.sql &
-psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_veh_stoph.sql &
-wait
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_stop_event.sql
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_tripsh.sql
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_veh_stoph.sql
 
 echo "Creating raw database backup"
 pushd ${DEST}
