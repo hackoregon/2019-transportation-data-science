@@ -8,7 +8,7 @@ CREATE TABLE bus_system_wide_summary AS
     percentile_cont(0.95) within group (order by seconds_late) AS p95_seconds_late,
     percentile_cont(0.75) within group (order by seconds_late) -
     percentile_cont(0.25) within group (order by seconds_late) AS iqr_seconds_late,
-    sum(ons) AS monthly_total_ons, sum(offs) AS monthly_total_offs
+    sum(ons) AS total_ons, sum(offs) AS total_offs
   FROM bus_passenger_stops
   WHERE service_key = 'W'
   GROUP BY arrive_quarter_hour
@@ -27,7 +27,7 @@ CREATE TABLE rail_system_wide_summary AS
     percentile_cont(0.95) within group (order by seconds_late) AS p95_seconds_late,
     percentile_cont(0.75) within group (order by seconds_late) -
     percentile_cont(0.25) within group (order by seconds_late) AS iqr_seconds_late,
-    sum(ons) AS monthly_total_ons, sum(offs) AS monthly_total_offs
+    sum(ons) AS total_ons, sum(offs) AS total_offs
   FROM rail_passenger_stops
   WHERE service_key = 'A'
   GROUP BY arrive_quarter_hour
