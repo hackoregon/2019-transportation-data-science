@@ -99,9 +99,6 @@ AND route_number <= 291
 AND route_number >= 1
 AND route_number IN (SELECT rte FROM rail_routes);
 
-\echo truncating input table
-TRUNCATE TABLE raw.raw_stop_event;
-
 ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS seconds_late integer;
 ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS arriving_load integer;
 ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS arrive_quarter_hour double precision;

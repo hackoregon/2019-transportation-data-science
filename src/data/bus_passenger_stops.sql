@@ -93,6 +93,9 @@ AND route_number <= 291
 AND route_number >= 1
 AND route_number IN (SELECT line_id FROM bus_routes);
 
+\echo truncating input table
+TRUNCATE TABLE raw.raw_stop_event;
+
 \echo new columns
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS seconds_late integer;
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS arriving_load integer;
