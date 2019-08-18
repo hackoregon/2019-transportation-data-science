@@ -1,5 +1,3 @@
--- there are no entries for MAX in the other tables, just buses
--- so we have separate bus and rail passenger stop tables
 SET timezone = 'PST8PDT';
 
 \echo creating bus_passenger_stops table
@@ -76,6 +74,9 @@ PARTITION OF bus_passenger_stops
 FOR VALUES FROM ('2019-07-01') TO ('2019-08-01');
 
 CREATE INDEX ON bus_passenger_stops (service_date);
+CREATE INDEX bus_trip_index ON bus_passenger_stops (
+   vehicle_id, train, trip_number, service_date, service_key, route_number, direction
+);
 
 \echo loading
 INSERT INTO bus_passenger_stops
@@ -97,13 +98,25 @@ AND route_number IN (SELECT line_id FROM bus_routes);
 TRUNCATE TABLE raw.raw_stop_event;
 
 \echo new columns
+ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS longitude double precision;
+ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS latitude double precision;
+ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS year integer;
+ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS month integer;
+ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS day integer;
+ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS day_of_week integer;
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS seconds_late integer;
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS arriving_load integer;
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS arrive_quarter_hour double precision;
 UPDATE bus_passenger_stops
-SET seconds_late = extract('epoch' from (arrive_time - stop_time)),
-  arriving_load = estimated_load - ons + offs,
-  arrive_quarter_hour = 0.25*trunc(
+SET longitude = ST_X(geom_point_4326),
+    latitude = ST_Y(geom_point_4326),
+    year = date_part('year', service_date),
+    month = date_part('month', service_date),
+    day = date_part('day', service_date),
+    day_of_week = date_part('dow', service_date),
+    seconds_late = extract('epoch' from (arrive_time - stop_time)),
+    arriving_load = estimated_load - ons + offs,
+    arrive_quarter_hour = 0.25*trunc(
 	4*date_part('hour', arrive_time AT TIME ZONE 'America/Los_Angeles') +
 	date_part('minute', arrive_time AT TIME ZONE 'America/Los_Angeles')/15
   )
