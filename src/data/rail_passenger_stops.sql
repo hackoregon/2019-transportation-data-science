@@ -1,13 +1,13 @@
 SET timezone = 'PST8PDT';
 
-\echo creating rail route table
+--\echo creating rail route table
 DROP TABLE IF EXISTS rail_routes;
 CREATE TABLE rail_routes AS
 SELECT DISTINCT rte FROM trimet_gis.tm_routes 
 WHERE type = 'MAX'
 ORDER BY rte;
 
-\echo creating rail_passenger_stops table
+--\echo creating rail_passenger_stops table
 DROP TABLE IF EXISTS rail_passenger_stops CASCADE;
 CREATE TABLE rail_passenger_stops (
   vehicle_id integer,
@@ -81,11 +81,8 @@ PARTITION OF rail_passenger_stops
 FOR VALUES FROM ('2019-07-01') TO ('2019-08-01');
 
 CREATE INDEX ON rail_passenger_stops (service_date);
-CREATE INDEX rail_trip_index ON rail_passenger_stops (
-   vehicle_id, train, trip_number, service_date, service_key, route_number, direction
-);
 
-\echo loading
+--\echo loading
 INSERT INTO rail_passenger_stops
 SELECT vehicle_number AS vehicle_id, train, trip_number,
   date_stamp::date AS service_date, service_key,
@@ -98,7 +95,10 @@ FROM raw.raw_stop_event
 WHERE route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
-AND route_number IN (SELECT rte FROM rail_routes);
+AND route_number IN (SELECT rte FROM rail_routes)
+AND vehicle_number > 0
+AND trip_number > 0
+AND service_key IS NOT NULL;
 
 ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS longitude double precision;
 ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS latitude double precision;
@@ -119,9 +119,9 @@ SET longitude = ST_X(geom_point_4326),
     seconds_late = extract('epoch' from (arrive_time - stop_time)),
     arriving_load = estimated_load - ons + offs,
     arrive_quarter_hour = 0.25*trunc(
-	4*date_part('hour', arrive_time AT TIME ZONE 'America/Los_Angeles') +
-	date_part('minute', arrive_time AT TIME ZONE 'America/Los_Angeles')/15
-  )
+      4*date_part('hour', arrive_time AT TIME ZONE 'America/Los_Angeles') +
+      date_part('minute', arrive_time AT TIME ZONE 'America/Los_Angeles')/15
+    )
 ;
 
 CREATE INDEX ON rail_passenger_stops(
@@ -131,11 +131,11 @@ CREATE INDEX ON rail_passenger_stops(
   arrive_quarter_hour
 );
 
-\echo primary key
+--\echo primary key
 ALTER TABLE rail_passenger_stops 
 ADD PRIMARY KEY (service_date, id);
 
-\echo rail service keys
+--\echo rail service keys
 DROP TABLE IF EXISTS rail_service_keys;
 CREATE TABLE rail_service_keys AS
 SELECT DISTINCT service_date, service_key

@@ -1,6 +1,6 @@
 SET timezone = 'PST8PDT';
 
-\echo creating bus_passenger_stops table
+--\echo creating bus_passenger_stops table
 DROP TABLE IF EXISTS bus_passenger_stops CASCADE;
 CREATE TABLE bus_passenger_stops (
   vehicle_id integer,
@@ -74,11 +74,8 @@ PARTITION OF bus_passenger_stops
 FOR VALUES FROM ('2019-07-01') TO ('2019-08-01');
 
 CREATE INDEX ON bus_passenger_stops (service_date);
-CREATE INDEX bus_trip_index ON bus_passenger_stops (
-   vehicle_id, train, trip_number, service_date, service_key, route_number, direction
-);
 
-\echo loading
+--\echo loading
 INSERT INTO bus_passenger_stops
 SELECT vehicle_number AS vehicle_id, train, trip_number,
   date_stamp::date AS service_date, service_key,
@@ -88,16 +85,18 @@ SELECT vehicle_number AS vehicle_id, train, trip_number,
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
   ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326
 FROM raw.raw_stop_event
-WHERE (service_key = 'W' OR service_key = 'S' OR service_key = 'U' OR service_key = 'X')
-AND route_number IS NOT NULL
+WHERE route_number IS NOT NULL
 AND route_number <= 291
 AND route_number >= 1
-AND route_number IN (SELECT line_id FROM bus_routes);
+AND route_number NOT IN (SELECT rte FROM rail_routes)
+AND vehicle_number > 0
+AND trip_number > 0
+AND service_key IS NOT NULL;
 
-\echo truncating input table
+--\echo truncating input table
 TRUNCATE TABLE raw.raw_stop_event;
 
-\echo new columns
+--\echo new columns
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS longitude double precision;
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS latitude double precision;
 ALTER TABLE bus_passenger_stops ADD COLUMN IF NOT EXISTS year integer;
@@ -117,9 +116,9 @@ SET longitude = ST_X(geom_point_4326),
     seconds_late = extract('epoch' from (arrive_time - stop_time)),
     arriving_load = estimated_load - ons + offs,
     arrive_quarter_hour = 0.25*trunc(
-	4*date_part('hour', arrive_time AT TIME ZONE 'America/Los_Angeles') +
-	date_part('minute', arrive_time AT TIME ZONE 'America/Los_Angeles')/15
-  )
+      4*date_part('hour', arrive_time AT TIME ZONE 'America/Los_Angeles') +
+      date_part('minute', arrive_time AT TIME ZONE 'America/Los_Angeles')/15
+    )
 ;
 
 CREATE INDEX ON bus_passenger_stops(
@@ -129,11 +128,11 @@ CREATE INDEX ON bus_passenger_stops(
   arrive_quarter_hour
 );
 
-\echo primary key
+--\echo primary key
 ALTER TABLE bus_passenger_stops 
 ADD PRIMARY KEY (service_date, id);
 
-\echo bus service keys
+--\echo bus service keys
 DROP TABLE IF EXISTS bus_service_keys;
 CREATE TABLE bus_service_keys AS
 SELECT DISTINCT service_date, service_key
