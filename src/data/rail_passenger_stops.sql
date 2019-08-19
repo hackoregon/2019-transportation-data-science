@@ -98,6 +98,7 @@ AND route_number >= 1
 AND route_number IN (SELECT rte FROM rail_routes)
 AND vehicle_number > 0
 AND trip_number > 0
+AND location_id > 0
 AND service_key IS NOT NULL;
 
 ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS longitude double precision;
@@ -116,7 +117,7 @@ SET longitude = ST_X(geom_point_4326),
     month = date_part('month', service_date),
     day = date_part('day', service_date),
     day_of_week = date_part('dow', service_date),
-    seconds_late = extract('epoch' from (arrive_time - stop_time)),
+    seconds_late = greatest(0, extract('epoch' from (arrive_time - stop_time))),
     arriving_load = estimated_load - ons + offs,
     arrive_quarter_hour = 0.25*trunc(
       4*date_part('hour', arrive_time AT TIME ZONE 'America/Los_Angeles') +
