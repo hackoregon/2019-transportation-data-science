@@ -6,7 +6,7 @@ CREATE INDEX bus_trip_index ON bus_passenger_stops (
 DROP TABLE IF EXISTS bus_stop_to_stop;
 CREATE TABLE bus_stop_to_stop AS
 SELECT vehicle_id, train, trip_number, service_date, route_number, direction,
-  year, month, day, day_of_week, longitude, latitude, geom_point_4326,
+  year, month, day, day_of_week, longitude, latitude,
   location_id, LAG(location_id) OVER (
 	  PARTITION BY vehicle_id, train, trip_number, service_date, route_number, direction
 	  ORDER BY arrive_time
