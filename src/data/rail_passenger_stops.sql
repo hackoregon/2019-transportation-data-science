@@ -29,6 +29,18 @@ CREATE TABLE rail_passenger_stops (
   estimated_load integer,
   train_mileage double precision,
   geom_point_4326 geometry(POINT, 4326),
+  longitude double precision,
+  latitude double precision,
+  year integer,
+  month integer,
+  day integer,
+  day_of_week integer,
+  seconds_late integer,
+  arriving_load integer,
+  arrive_quarter_hour double precision,
+  previous_location_id integer,
+  previous_arrive_time timestamp with time zone,
+  previous_train_mileage double precision,
   id serial
 ) PARTITION BY RANGE(service_date);
 
@@ -90,7 +102,31 @@ SELECT vehicle_number AS vehicle_id, train, trip_number,
   date_stamp + leave_time * interval '1 sec' AS leave_time, 
   date_stamp + stop_time * interval '1 sec' AS stop_time, 
   route_number, direction, location_id, dwell, door, lift, ons, offs, estimated_load, train_mileage,
-  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326
+  ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326) AS geom_point_4326,
+  ST_X(ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326)) AS longitude,
+  ST_Y(ST_Transform(ST_SetSRID(ST_MakePoint(x_coordinate, y_coordinate), 2913), 4326)) AS latitude,
+  date_part('year', date_stamp) AS year,
+  date_part('month', date_stamp) AS month,
+  date_part('day', date_stamp) AS day,
+  date_part('dow', date_stamp) AS day_of_week,
+  greatest(0, arrive_time - stop_time) AS seconds_late,
+  estimated_load - ons + offs AS arriving_load,
+  0.25*trunc(
+    4*date_part('hour', (date_stamp + arrive_time * interval '1 sec') AT TIME ZONE 'America/Los_Angeles') +
+    date_part('minute', (date_stamp + arrive_time * interval '1 sec') AT TIME ZONE 'America/Los_Angeles')/15
+  ) AS arrive_quarter_hour,
+  LAG(location_id) OVER (
+    PARTITION BY vehicle_number, train, trip_number, service_date, route_number, direction
+    ORDER BY arrive_time
+  ) AS previous_location_id,
+  date_stamp + (LAG(arrive_time) OVER (
+    PARTITION BY vehicle_number, train, trip_number, service_date, route_number, direction
+    ORDER BY arrive_time
+  )) * interval '1 sec' AS previous_arrive_time,
+  LAG(train_mileage) OVER (
+    PARTITION BY vehicle_number, train, trip_number, service_date, route_number, direction
+    ORDER BY arrive_time
+  ) AS previous_train_mileage
 FROM raw.raw_stop_event
 WHERE route_number IS NOT NULL
 AND route_number <= 291
@@ -99,31 +135,8 @@ AND route_number IN (SELECT rte FROM rail_routes)
 AND vehicle_number > 0
 AND trip_number > 0
 AND location_id > 0
-AND service_key IS NOT NULL;
-
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS longitude double precision;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS latitude double precision;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS year integer;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS month integer;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS day integer;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS day_of_week integer;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS seconds_late integer;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS arriving_load integer;
-ALTER TABLE rail_passenger_stops ADD COLUMN IF NOT EXISTS arrive_quarter_hour double precision;
-UPDATE rail_passenger_stops
-SET longitude = ST_X(geom_point_4326),
-    latitude = ST_Y(geom_point_4326),
-    year = date_part('year', service_date),
-    month = date_part('month', service_date),
-    day = date_part('day', service_date),
-    day_of_week = date_part('dow', service_date),
-    seconds_late = greatest(0, extract('epoch' from (arrive_time - stop_time))),
-    arriving_load = estimated_load - ons + offs,
-    arrive_quarter_hour = 0.25*trunc(
-      4*date_part('hour', arrive_time AT TIME ZONE 'America/Los_Angeles') +
-      date_part('minute', arrive_time AT TIME ZONE 'America/Los_Angeles')/15
-    )
-;
+AND service_key IS NOT NULL
+ORDER BY service_date, vehicle_id, arrive_time;
 
 CREATE INDEX ON rail_passenger_stops(
   route_number,
