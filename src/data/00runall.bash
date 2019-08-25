@@ -7,4 +7,4 @@
 /usr/bin/time ./24load_reference.bash
 /usr/bin/time ./27load_raw_data.bash
 /usr/bin/time ./30create_partitioned_tables.bash
-/usr/bin/time ./90create_database_backup.bash
+/usr/bin/time ./70create_database_backup.bash
