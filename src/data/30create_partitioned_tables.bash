@@ -12,8 +12,9 @@ psql --username=${PGUSER} --dbname=${PGDATABASE} --file=bus_all_stops.sql &
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=bus_passenger_stops.sql &
 wait
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=disturbance_stops.sql &
-psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/by_stop_summary.sql &
-wait
-psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/rush_hour_summaries.sql &
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/system_wide_summary.sql &
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/passenger_stop_locations.sql &
+wait
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/by_stop_summary.sql &
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/rush_hour_summaries.sql &
 wait
