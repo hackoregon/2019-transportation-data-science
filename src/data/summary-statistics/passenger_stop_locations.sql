@@ -38,3 +38,7 @@ UNION SELECT * FROM old_stop_locations
 ORDER BY stop_id
 ;
 ALTER TABLE passenger_stop_locations ADD PRIMARY KEY (stop_id);
+ALTER TABLE passenger_stop_locations
+  ALTER COLUMN geom_point_4326 TYPE geometry(POINT, 4326)
+    USING ST_SetSRID(geom_point_4326, 4326)
+;
