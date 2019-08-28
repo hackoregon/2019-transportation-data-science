@@ -44,11 +44,14 @@ do
 done
 
 echo "Importing TIGER/Line® shapefiles"
-export WHERE="https://www2.census.gov/geo/tiger/TIGER2018"
+export WHERE="https://www2.census.gov/geo/tiger/TIGER2019"
 for i in \
-  ${WHERE}/TABBLOCK/tl_2018_41_tabblock10.zip \
-  ${WHERE}/BG/tl_2018_41_bg.zip \
-  ${WHERE}/TRACT/tl_2018_41_tract.zip
+  ${WHERE}/TABBLOCK/tl_2019_41_tabblock10.zip \
+  ${WHERE}/BG/tl_2019_41_bg.zip \
+  ${WHERE}/TRACT/tl_2019_41_tract.zip \
+  ${WHERE}/TABBLOCK/tl_2019_53_tabblock10.zip \
+  ${WHERE}/BG/tl_2019_53_bg.zip \
+  ${WHERE}/TRACT/tl_2019_53_tract.zip
 do
   echo $i
   wget --no-clobber --quiet $i
