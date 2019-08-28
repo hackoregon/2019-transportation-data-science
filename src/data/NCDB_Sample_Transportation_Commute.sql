@@ -26,7 +26,7 @@ CREATE TABLE ncdb_sample_transportation_commute (
   opp_zone boolean,
   opp_zone_elig text
 );
-\COPY ncdb_sample_transportation_commute FROM '/Work/NCDB_Sample_Transportation_Commute.csv' WITH csv header
+\COPY ncdb_sample_transportation_commute FROM '/Raw/NCDB_Sample_Transportation_Commute.csv' WITH csv header
 
 -- remove tracts not in Portland - Vancouver - Hillsboro CBSA
 DELETE FROM ncdb_sample_transportation_commute
