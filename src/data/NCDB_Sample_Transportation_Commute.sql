@@ -39,3 +39,12 @@ DELETE FROM ncdb_sample_transportation_commute
   AND tract_geo_fips NOT LIKE '53059%' -- Skamania
 ;
 ALTER TABLE ncdb_sample_transportation_commute ADD PRIMARY KEY (tract_geo_fips);
+
+-- add boundary multipolygon
+ALTER TABLE ncdb_sample_transportation_commute
+ADD COLUMN IF NOT EXISTS geom_multpoly_4326 geometry(MULTIPOLYGON, 4326);
+UPDATE ncdb_sample_transportation_commute
+SET geom_multpoly_4326 = census_tract_boundaries.geom_multpoly_4326
+FROM census_tract_boundaries
+WHERE census_tract_boundaries.geoid = ncdb_sample_transportation_commute.tract_geo_fips
+;

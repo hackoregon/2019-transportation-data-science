@@ -64,3 +64,6 @@ do
     PG:"dbname=${PGDATABASE} active_schema=census_gis" /vsizip/$i
 done
 popd
+
+echo "Creating census_tract_boundaries"
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=census_tract_boundaries.sql
