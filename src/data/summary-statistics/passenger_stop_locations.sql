@@ -1,12 +1,12 @@
 DROP TABLE IF EXISTS current_stop_locations;
-CREATE TABLE current_stop_locations AS
+CREATE TEMPORARY TABLE current_stop_locations AS
 SELECT DISTINCT stop_id, ST_X(wkb_geometry) AS longitude, ST_Y(wkb_geometry) AS latitude,
   wkb_geometry AS geom_point_4326
 FROM trimet_gis.tm_route_stops
 ORDER BY stop_id;
 
 DROP TABLE IF EXISTS old_stop_locations;
-CREATE TABLE old_stop_locations AS
+CREATE TEMPORARY TABLE old_stop_locations AS
   SELECT 
     location_id AS stop_id, 
     percentile_cont(0.50) within group (order by longitude) AS longitude,
