@@ -17,4 +17,5 @@ psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/passe
 wait
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/by_stop_summary.sql &
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/rush_hour_summaries.sql &
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=summary-statistics/large_table_catalogs.sql &
 wait
