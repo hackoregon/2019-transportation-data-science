@@ -37,6 +37,7 @@ DELETE FROM ncdb_sample_transportation_commute
   AND tract_geo_fips NOT LIKE '41071%' -- Yamhill
   AND tract_geo_fips NOT LIKE '53011%' -- Clark
   AND tract_geo_fips NOT LIKE '53059%' -- Skamania
+  AND tract_geo_fips NOT LIKE '11001%' -- Washington, DC
 ;
 ALTER TABLE ncdb_sample_transportation_commute ADD PRIMARY KEY (tract_geo_fips);
 
