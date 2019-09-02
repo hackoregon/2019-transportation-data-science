@@ -1,0 +1,47 @@
+---
+title: "Converting `sp` Spatial Data Frames to GeoJSON"
+author: M. Edward (Ed) Borasky
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Why would we do this?
+There are two reasons we might want to do this:
+
+1. A user doesn't have R and thus can't do anything with an `sp` data frame, or
+2. We want to store the data frame in a database, and the database doesn't have a way to read an R data file.
+
+## Why GeoJSON?
+
+1. It's a standard open source format.
+2. It can be easily read by `QGIS` and many JavaScript mapping tools.
+3. It can be uploaded to a PostGIS database.
+
+## What libraries do we need?
+```{r}
+library(sp)
+library(readr)
+library(rgdal)
+
+```
+
+## Read the R data frame
+```{r}
+bus_stop_catchment_zone <- readr::read_rds("/Raw/busstop_catchment_zone_shp.RDS")
+
+```
+
+## Write the GeoJSON
+```{r}
+rgdal::writeOGR(bus_stop_catchment_zone, 
+                dsn = "/Work/bus_stop_catchment_zone.geojson", 
+                layer = "bus_stop_catchment_zone", 
+                driver = "GeoJSON",
+                overwrite_layer = TRUE
+)
+
+```
+
