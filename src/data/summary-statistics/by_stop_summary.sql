@@ -10,7 +10,7 @@ CREATE TABLE bus_by_stop_summary AS
     percentile_cont(0.95) within group (order by seconds_late) AS p95_seconds_late,
     percentile_cont(0.75) within group (order by seconds_late) -
     percentile_cont(0.25) within group (order by seconds_late) AS iqr_seconds_late,
-    sum(ons) AS monthly_total_ons, sum(offs) AS monthly_total_offs
+    sum(ons) AS total_ons, sum(offs) AS total_offs
   FROM bus_passenger_stops
   INNER JOIN passenger_stop_locations ON (location_id = stop_id)
   WHERE service_key = 'W'
@@ -34,7 +34,7 @@ CREATE TABLE rail_by_stop_summary AS
     percentile_cont(0.95) within group (order by seconds_late) AS p95_seconds_late,
     percentile_cont(0.75) within group (order by seconds_late) -
     percentile_cont(0.25) within group (order by seconds_late) AS iqr_seconds_late,
-    sum(ons) AS monthly_total_ons, sum(offs) AS monthly_total_offs
+    sum(ons) AS total_ons, sum(offs) AS total_offs
   FROM rail_passenger_stops
   INNER JOIN passenger_stop_locations ON (location_id = stop_id)
   WHERE service_key = 'A'
