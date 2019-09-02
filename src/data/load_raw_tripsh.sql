@@ -23,6 +23,8 @@ COPY raw_tripsh FROM '/Work/raw_tripsh_2017_10.csv' WITH csv header;
 COPY raw_tripsh FROM '/Work/raw_tripsh_2017_11.csv' WITH csv header;
 COPY raw_tripsh FROM '/Work/raw_tripsh_2018_04.csv' WITH csv header;
 COPY raw_tripsh FROM '/Work/raw_tripsh_2018_05.csv' WITH csv header;
+COPY raw_tripsh FROM '/Work/raw_tripsh_2018_07.csv' WITH csv header;
+COPY raw_tripsh FROM '/Work/raw_tripsh_2018_08.csv' WITH csv header;
 COPY raw_tripsh FROM '/Work/raw_tripsh_2018_09.csv' WITH csv header;
 COPY raw_tripsh FROM '/Work/raw_tripsh_2018_10.csv' WITH csv header;
 COPY raw_tripsh FROM '/Work/raw_tripsh_2018_11.csv' WITH csv header;

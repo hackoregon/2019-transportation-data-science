@@ -30,6 +30,8 @@ COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2017_10.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2017_11.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_04.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_05.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_07.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_08.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_09.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_10.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2018_11.csv' WITH csv header;
