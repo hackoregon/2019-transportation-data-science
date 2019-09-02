@@ -57,6 +57,14 @@ CREATE TABLE bus_passenger_stops_y2018m05
 PARTITION OF bus_passenger_stops
 FOR VALUES FROM ('2018-05-01') TO ('2018-06-01');
 
+CREATE TABLE bus_passenger_stops_y2018m07
+PARTITION OF bus_passenger_stops
+FOR VALUES FROM ('2018-07-01') TO ('2018-08-01');
+
+CREATE TABLE bus_passenger_stops_y2018m08
+PARTITION OF bus_passenger_stops
+FOR VALUES FROM ('2018-08-01') TO ('2018-09-01');
+
 CREATE TABLE bus_passenger_stops_y2018m09
 PARTITION OF bus_passenger_stops
 FOR VALUES FROM ('2018-09-01') TO ('2018-10-01');
