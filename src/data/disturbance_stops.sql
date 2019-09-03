@@ -97,7 +97,10 @@ SELECT opd_date, service_key, year, month, day, day_of_week, act_arr_time, act_d
   geom_point_4326
 FROM bus_all_stops
 INNER JOIN bus_service_keys ON bus_all_stops.opd_date = bus_service_keys.service_date
-WHERE stop_type = 3;
+WHERE stop_type = 3
+AND gps_longitude IS NOT NULL
+AND gps_latitude IS NOT NULL
+;
 \echo primary key
 ALTER TABLE disturbance_stops ADD PRIMARY KEY (opd_date, id);
 \echo truncating input table
