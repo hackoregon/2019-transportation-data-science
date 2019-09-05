@@ -27,6 +27,9 @@ unzip -o "${RAW}/July+2018+to+Dec+2018.zip" "*init_tripsh*.csv" "*init_veh_stoph
 unzip -o "${RAW}/Madison4th.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
 unzip -o "${RAW}/Mad4th+0725-3119.zip" "*init_tripsh*.csv" "*init_veh_stoph*.csv" "*trimet_stop_event*.csv"
 
+## August 2019 data received 2019-09-04
+unzip -o "${RAW}/August+2019.zip"
+
 ## We use "xsv" (https://github.com/BurntSushi/xsv) to standardize the CSV files for input to data science and
 ## database loading processes. It's available in some Linux distros, but we use the binary release since it's not in
 ## Debian "stretch".
@@ -84,7 +87,6 @@ xsv search "APR2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_04.csv
 xsv search "MAY2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_05.csv
 xsv search "JUN2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_06.csv
 xsv search "JUL2019" mad4th_raw_tripsh.csv > raw_tripsh_2019_07.csv
-#cd ..
 
 ## Processing the old format files is easy - we only need to select the columns we're using
 echo "old format vehicle stop history"
@@ -93,11 +95,13 @@ xsv select ${VEH_STOPH_COLS} "init_veh_stoph 1-31OCT2017.csv" > raw_veh_stoph_20
 xsv select ${VEH_STOPH_COLS} "init_veh_stoph 1-30NOV2017.csv" > raw_veh_stoph_2017_11.csv
 xsv select ${VEH_STOPH_COLS} "init_veh_stoph 1-30APR2018.csv" > raw_veh_stoph_2018_04.csv
 xsv select ${VEH_STOPH_COLS} "init_veh_stoph 1-31MAY2018.csv" > raw_veh_stoph_2018_05.csv
+xsv select ${VEH_STOPH_COLS} "init_veh_stoph Aug 2019.csv"    > raw_veh_stoph_2019_08.csv
 rm "init_veh_stoph 1-30SEP2017.csv"
 rm "init_veh_stoph 1-31OCT2017.csv"
 rm "init_veh_stoph 1-30NOV2017.csv"
 rm "init_veh_stoph 1-30APR2018.csv"
 rm "init_veh_stoph 1-31MAY2018.csv"
+rm "init_veh_stoph Aug 2019.csv"
 
 echo "old format stop events"
 xsv select ${STOP_EVENT_COLS} "trimet_stop_event 1-30SEP2017.csv" > raw_stop_event_2017_09.csv
@@ -105,11 +109,13 @@ xsv select ${STOP_EVENT_COLS} "trimet_stop_event 1-31OCT2017.csv" > raw_stop_eve
 xsv select ${STOP_EVENT_COLS} "trimet_stop_event 1-30NOV2017.csv" > raw_stop_event_2017_11.csv
 xsv select ${STOP_EVENT_COLS} "trimet_stop_event 1-30APR2018.csv" > raw_stop_event_2018_04.csv
 xsv select ${STOP_EVENT_COLS} "trimet_stop_event 1-31MAY2018.csv" > raw_stop_event_2018_05.csv
+xsv select ${STOP_EVENT_COLS} "trimet_stop_event Aug 2019.csv"    > raw_stop_event_2019_08.csv
 rm "trimet_stop_event 1-30SEP2017.csv"
 rm "trimet_stop_event 1-31OCT2017.csv"
 rm "trimet_stop_event 1-30NOV2017.csv"
 rm "trimet_stop_event 1-30APR2018.csv"
 rm "trimet_stop_event 1-31MAY2018.csv"
+rm "trimet_stop_event Aug 2019.csv"
 
 echo "old format trips history"
 xsv select ${TRIPSH_COLS} "init_tripsh 1-30SEP2017.csv" > raw_tripsh_2017_09.csv
@@ -117,11 +123,13 @@ xsv select ${TRIPSH_COLS} "init_tripsh 1-31OCT2017.csv" > raw_tripsh_2017_10.csv
 xsv select ${TRIPSH_COLS} "init_tripsh 1-30NOV2017.csv" > raw_tripsh_2017_11.csv
 xsv select ${TRIPSH_COLS} "init_tripsh 1-30APR2018.csv" > raw_tripsh_2018_04.csv
 xsv select ${TRIPSH_COLS} "init_tripsh 1-31MAY2018.csv" > raw_tripsh_2018_05.csv
+xsv select ${TRIPSH_COLS} "init_tripsh Aug 2019.csv"    > raw_tripsh_2019_08.csv
 rm "init_tripsh 1-30SEP2017.csv"
 rm "init_tripsh 1-31OCT2017.csv"
 rm "init_tripsh 1-30NOV2017.csv"
 rm "init_tripsh 1-30APR2018.csv"
 rm "init_tripsh 1-31MAY2018.csv"
+rm "init_tripsh Aug 2019.csv"
 
 ## The old format files had date stamps of the form "ddMMMyyyy" and the new ones are of the form "ddMMMyy". So we 
 ## standardize on the old format using "sed".
@@ -186,6 +194,7 @@ popd
 ### raw_stop_event_2019_05.csv
 ### raw_stop_event_2019_06.csv
 ### raw_stop_event_2019_07.csv
+### raw_stop_event_2019_08.csv
 
 ## the trips history tables
 ### raw_tripsh_2017_09.csv
@@ -203,6 +212,7 @@ popd
 ### raw_tripsh_2018_05.csv
 ### raw_tripsh_2018_06.csv
 ### raw_tripsh_2018_07.csv
+### raw_tripsh_2018_08.csv
 
 ## the vehicle stop history tables
 ### raw_veh_stoph_2017_09.csv
@@ -220,3 +230,4 @@ popd
 ### raw_veh_stoph_2019_05.csv
 ### raw_veh_stoph_2019_06.csv
 ### raw_veh_stoph_2019_07.csv
+### raw_veh_stoph_2019_08.csv
