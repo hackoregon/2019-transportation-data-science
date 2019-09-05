@@ -1,1 +1,1 @@
-# Declarative Paritioning
+# Declarative Partitioning
