@@ -77,6 +77,10 @@ CREATE TABLE disturbance_stops_y2019m07
 PARTITION OF disturbance_stops
 FOR VALUES FROM ('2019-07-01') TO ('2019-08-01');
 
+CREATE TABLE disturbance_stops_y2019m08
+PARTITION OF disturbance_stops
+FOR VALUES FROM ('2019-08-01') TO ('2019-09-01');
+
 CREATE INDEX ON disturbance_stops (opd_date);
 CREATE INDEX ON disturbance_stops (line_id, pattern_direction);
 CREATE INDEX ON disturbance_stops (year);

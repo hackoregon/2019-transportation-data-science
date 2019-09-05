@@ -85,6 +85,10 @@ CREATE TABLE bus_all_stops_y2019m07
 PARTITION OF bus_all_stops
 FOR VALUES FROM ('2019-07-01') TO ('2019-08-01');
 
+CREATE TABLE bus_all_stops_y2019m08
+PARTITION OF bus_all_stops
+FOR VALUES FROM ('2019-08-01') TO ('2019-09-01');
+
 CREATE INDEX ON bus_all_stops (opd_date);
 
 \echo loading
