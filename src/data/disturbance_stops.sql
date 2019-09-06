@@ -107,3 +107,6 @@ AND gps_latitude IS NOT NULL
 ;
 \echo primary key
 ALTER TABLE disturbance_stops ADD PRIMARY KEY (opd_date, id);
+
+\echo done with bus_all_stops - dropping
+DROP TABLE IF EXISTS bus_all_stops CASCADE;
