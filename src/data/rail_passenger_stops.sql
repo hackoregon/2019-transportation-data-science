@@ -1,13 +1,6 @@
 SET timezone = 'PST8PDT';
 
---\echo creating rail route table
-DROP TABLE IF EXISTS rail_routes;
-CREATE TABLE rail_routes AS
-SELECT DISTINCT rte FROM trimet_gis.tm_routes 
-WHERE type = 'MAX'
-ORDER BY rte;
-
---\echo creating rail_passenger_stops table
+\echo creating rail_passenger_stops table
 DROP TABLE IF EXISTS rail_passenger_stops CASCADE;
 CREATE TABLE rail_passenger_stops (
   vehicle_id integer,
@@ -106,7 +99,7 @@ FOR VALUES FROM ('2019-08-01') TO ('2019-09-01');
 
 CREATE INDEX ON rail_passenger_stops (service_date);
 
---\echo loading
+\echo loading
 INSERT INTO rail_passenger_stops
 SELECT vehicle_number AS vehicle_id, train, trip_number,
   date_stamp::date AS service_date, service_key,
@@ -150,11 +143,11 @@ AND location_id > 0
 AND service_key IS NOT NULL
 ORDER BY service_date, vehicle_id, arrive_time;
 
---\echo primary key
+\echo primary key
 ALTER TABLE rail_passenger_stops 
 ADD PRIMARY KEY (service_date, id);
 
---\echo rail service keys
+\echo rail service keys
 DROP TABLE IF EXISTS rail_service_keys;
 CREATE TABLE rail_service_keys AS
 SELECT DISTINCT service_date, service_key

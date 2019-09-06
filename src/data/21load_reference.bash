@@ -70,3 +70,6 @@ popd
 
 echo "Creating census_tract_boundaries"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=census_tract_boundaries.sql
+
+echo "Creating rail routes table"
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=rail_routes.sql
