@@ -146,13 +146,6 @@ ORDER BY service_date, vehicle_id, arrive_time;
 --\echo truncating input table
 TRUNCATE TABLE raw.raw_stop_event;
 
-CREATE INDEX ON bus_passenger_stops(
-  route_number,
-  direction,
-  service_key,
-  arrive_quarter_hour
-);
-
 --\echo primary key
 ALTER TABLE bus_passenger_stops 
 ADD PRIMARY KEY (service_date, id);
