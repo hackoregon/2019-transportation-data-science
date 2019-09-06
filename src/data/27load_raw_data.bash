@@ -10,6 +10,7 @@ psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_tripsh.sql
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_stop_event.sql &
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=load_raw_veh_stoph.sql &
 wait
+psql --username=${PGUSER} --dbname=${PGDATABASE} --file=stop_event_trip_index.sql
 
 echo "Creating raw database backup"
 pushd ${DEST}
