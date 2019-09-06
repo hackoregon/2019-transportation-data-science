@@ -143,9 +143,6 @@ AND location_id > 0
 AND service_key IS NOT NULL
 ORDER BY service_date, vehicle_id, arrive_time;
 
---\echo truncating input table
-TRUNCATE TABLE raw.raw_stop_event;
-
 --\echo primary key
 ALTER TABLE bus_passenger_stops 
 ADD PRIMARY KEY (service_date, id);

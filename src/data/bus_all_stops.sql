@@ -115,5 +115,3 @@ AND gps_latitude IS NOT NULL
 ;
 \echo primary key
 ALTER TABLE bus_all_stops ADD PRIMARY KEY (event_no_trip, opd_date, id);
-\echo truncating input table
-TRUNCATE TABLE raw.raw_veh_stoph;

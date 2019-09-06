@@ -107,5 +107,3 @@ AND gps_latitude IS NOT NULL
 ;
 \echo primary key
 ALTER TABLE disturbance_stops ADD PRIMARY KEY (opd_date, id);
-\echo truncating input table
-TRUNCATE TABLE bus_all_stops;
