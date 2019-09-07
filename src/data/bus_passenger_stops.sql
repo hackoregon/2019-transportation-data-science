@@ -1,6 +1,6 @@
 SET timezone = 'PST8PDT';
 
---\echo creating bus_passenger_stops table
+\echo creating bus_passenger_stops table
 DROP TABLE IF EXISTS bus_passenger_stops CASCADE;
 CREATE TABLE bus_passenger_stops (
   vehicle_id integer,
@@ -93,9 +93,13 @@ CREATE TABLE bus_passenger_stops_y2019m07
 PARTITION OF bus_passenger_stops
 FOR VALUES FROM ('2019-07-01') TO ('2019-08-01');
 
+CREATE TABLE bus_passenger_stops_y2019m08
+PARTITION OF bus_passenger_stops
+FOR VALUES FROM ('2019-08-01') TO ('2019-09-01');
+
 CREATE INDEX ON bus_passenger_stops (service_date);
 
---\echo loading
+\echo loading
 INSERT INTO bus_passenger_stops
 SELECT vehicle_number AS vehicle_id, train, trip_number,
   date_stamp::date AS service_date, service_key,
@@ -139,21 +143,11 @@ AND location_id > 0
 AND service_key IS NOT NULL
 ORDER BY service_date, vehicle_id, arrive_time;
 
---\echo truncating input table
-TRUNCATE TABLE raw.raw_stop_event;
-
-CREATE INDEX ON bus_passenger_stops(
-  route_number,
-  direction,
-  service_key,
-  arrive_quarter_hour
-);
-
---\echo primary key
+\echo primary key
 ALTER TABLE bus_passenger_stops 
 ADD PRIMARY KEY (service_date, id);
 
---\echo bus service keys
+\echo bus service keys
 DROP TABLE IF EXISTS bus_service_keys;
 CREATE TABLE bus_service_keys AS
 SELECT DISTINCT service_date, service_key

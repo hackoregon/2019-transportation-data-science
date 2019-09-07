@@ -39,6 +39,7 @@ COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_04.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_05.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_06.csv' WITH csv header;
 COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_07.csv' WITH csv header;
+COPY raw_veh_stoph FROM '/Work/raw_veh_stoph_2019_08.csv' WITH csv header;
 
 \echo date stamps on raw_veh_stoph
 ALTER TABLE raw_veh_stoph ADD COLUMN date_stamp timestamp with time zone;

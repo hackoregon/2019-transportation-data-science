@@ -1,1 +1,19 @@
 site_name: TOAD Documentation
+nav:
+- Introduction:
+    - 'Project Goals': 'goals.md'
+    - 'The Team': 'team.md'
+- ETL Processing:
+    - 'Raw Data': 'raw-data.md'
+    - 'Loading the Raw Data': 'loading.md'
+- Building the Database:
+    - 'Declarative Partitioning': 'declarative-partitioning.md'
+    - 'SQL Processing': 'sql-processing.md'
+- The Tables and API:
+    - 'Bus Passenger Stops': 'bus-passenger-stops.md'
+    - 'Rail Passenger Stops': 'rail-passenger-stops.md'
+    - 'Disturbance Stops': 'disturbance-stops.md'
+    - 'Summary Tables': 'summary-tables.md'
+- Looking Ahead:
+    - 'Refactoring for Continous Operation': 'refactoring.md'
+    - 'API wrappers': 'api-wrappers.md'
