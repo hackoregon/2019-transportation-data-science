@@ -12,4 +12,5 @@
 /usr/bin/time ./32bus_passenger_stops.bash
 /usr/bin/time ./34disturbance_stops.bash
 /usr/bin/time ./36summary_statistics.bash
+/usr/bin/time ./38index_passenger_stops.bash
 /usr/bin/time ./70create_database_backup.bash
