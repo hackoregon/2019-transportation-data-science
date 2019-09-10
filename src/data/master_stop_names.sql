@@ -4,7 +4,6 @@ CREATE TEMPORARY TABLE raw_stop_names AS
     UNION SELECT stop_id, stop_name FROM trimet_gis.tm_route_stops
     UNION SELECT DISTINCT location_id AS stop_id,
 	    public_location_description AS stop_name FROM passenger_census
-	UNION SELECT stop_code AS stop_id, stop_name FROM trimet_gtfs_stops
 ;
 DROP TABLE IF EXISTS master_stop_names;
 CREATE TABLE master_stop_names AS

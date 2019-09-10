@@ -73,6 +73,3 @@ psql --username=${PGUSER} --dbname=${PGDATABASE} --file=census_tract_boundaries.
 
 echo "Creating rail routes table"
 psql --username=${PGUSER} --dbname=${PGDATABASE} --file=rail_routes.sql
-
-echo "Current GTFS stop table"
-psql --username=${PGUSER} --dbname=${PGDATABASE} --file=trimet_gtfs_stops.sql
