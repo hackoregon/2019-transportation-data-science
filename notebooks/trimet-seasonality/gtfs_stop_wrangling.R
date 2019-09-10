@@ -1,7 +1,9 @@
 library(tidytransit)
-trimet_gtfs <- read_gtfs("~/Downloads/Civic/gtfs.zip", local = TRUE, geometry = TRUE)
 library(data.table)
-data.table::fwrite(trimet_gtfs[["stops"]], file = "/Raw/trimet_gtfs_stops.csv")
+library(dplyr)
+trimet_gtfs <- read_gtfs("https://developer.trimet.org/schedule/gtfs.zip", local = FALSE, geometry = TRUE)
+work <- trimet_gtfs[["stops"]] %>% dplyr::filter(!is.na(stop_code))
+data.table::fwrite(work, file = "/Raw/trimet_gtfs_stops.csv")
 library(readr)
 trimet_gtfs_stops <- read_csv(
   "/Raw/trimet_gtfs_stops.csv", col_types = cols(
