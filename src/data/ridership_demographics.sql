@@ -18,7 +18,8 @@ SELECT route_number, direction, location_id,
   medrentval_10, medrentval_17, medrentval_17 - medrentval_10 AS delta_medrentval,
   100.0 * (medrentval_17 / medrentval_10 - 1.0) AS pct_chg_medrentval,
   povrate_10, povrate_17, povrate_17 - povrate_10 AS delta_povrate,
-  100.0 * (povrate_17 / povrate_10 - 1.0) AS pct_chg_povrate
+  100.0 * (povrate_17 / povrate_10 - 1.0) AS pct_chg_povrate,
+  wkb_geometry
 FROM raw_ridership_demographics
 ;
 ALTER TABLE ridership_demographics ADD COLUMN id serial;
